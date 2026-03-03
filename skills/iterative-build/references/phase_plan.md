@@ -1,0 +1,50 @@
+# Phase [N]: [Name]
+
+## Goal
+
+[One sentence: what this phase accomplishes]
+
+## Research Notes
+
+[Research notes organized with subheadings and bullets if necessary/useful]
+
+## Interface Contracts
+
+> Required for implementation phases that will have a corresponding test phase. These contracts are the source of truth for test generation — tests are written from these contracts in a separate session, not from reading implementation code. Omit this section for setup, data layer, polish, and test phases.
+
+### [function_name]
+
+- **Signature:** `function_name(param: type, ...) -> return_type`
+- **Purpose:** [one sentence — what it does]
+- **Invariants:** [rules that always hold, e.g., "return value >= 0", "output list length <= input list length"]
+- **Valid inputs:** [constraints on parameters]
+- **Error conditions:** [what triggers errors and what error looks like]
+- **Edge cases to test:** [zero, empty, boundary values, null/None where applicable]
+
+## Tasks
+
+### Task 1: [Name]
+
+**Files:** [files to create or modify] **Action:** [what to do — specific and unambiguous] **Verify:** [how to confirm it worked] **Done when:** [concrete completion criteria]
+
+### Task 2: [Name]
+
+...
+
+## Dependencies
+
+[anything from previous phases this builds on]
+
+## Security Checklist
+
+- [Description of security practice utilized in this phase, if applicable]
+
+## Issues Discovered During Verification Stage
+
+### Issue 1: [Name]
+
+**Description:** [description of issue] **Fix Requires User Input:** [If yes, ask user for direction. If no, research and fix the issue.] **Resolution:** [description of fix applied]
+
+### Issue 2: [Name]
+
+...
