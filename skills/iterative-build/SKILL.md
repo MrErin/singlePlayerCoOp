@@ -37,45 +37,57 @@ All planning state lives in `_planning/` at the project root. This is the single
 _planning/
 ├── roadmap.md              # Phase breakdown with status markers
 ├── state.md                # Current progress, session log, blockers
-├── decisions.md            # Key decisions with rationale (append-only, never archived)
+├── decisions.md            # Architectural decisions with rationale (append-only, permanent)
+├── deferred.md             # Cross-phase flags: items noticed now, relevant to a future phase
 ├── codebase.md             # Stack, structure, architecture (generated)
-├── requirements.md         # Living requirements document — always current truth
+├── requirements.md         # Current active scope (this feature or initial build)
 ├── technical_debt.md       # Details of existing problems in codebase
 ├── test_audit.md           # Test suite analysis and recommendations
+├── project-requirements/   # Accumulated permanent requirements across all shipped features
+│   ├── index.md            # Dense one-liner per area + file refs; load for project context
+│   ├── core.md             # Non-feature requirements: data model, auth, constraints
+│   └── [feature-name].md  # Per-feature permanent requirements; created at archive time
 ├── archive/                # Frozen snapshots of completed work
-│   ├── mvp/
-│   │   ├── requirements_v1.md
-│   │   └── phases/...
-│   └── feature-user-profiles/
+│   └── [feature-name]/
+│       ├── requirements.md # Snapshot of requirements.md at archive time
+│       ├── roadmap.md      # Snapshot of roadmap at archive time
+│       └── phases/...
 └── phases/
-    └── [NN-phase-name]/     # One directory per phase
-        ├── plan.md          # What will be built (task list)
+    └── [NN-phase-name]/    # One directory per phase
+        ├── plan.md         # What will be built (task list)
         ├── phase_summary.md # What was built (post-build)
-        ├── ua_testing.md    # UAT verification steps + results
+        ├── ua_testing.md   # UAT verification steps + results
         └── user_feedback.md # User comments after code review
 ```
 
 ## Requirements Location
 
-User will place `requirements.md` in `_planning` directory. On `/plan:init`, if it doesn't exist, ask user where requirements are located.
+**Two tiers, two different jobs:**
 
-On `/plan:interrogate`, create or update the requirements document according to discussion with user.
+`requirements.md` is the **current active scope** — what is being built right now. It is short and focused. Created or updated by `/plan:interrogate`. Read by all phase commands. Cleared by `/plan:archive` when a feature ships.
+
+`project-requirements/` is the **accumulated project truth** — permanent behaviors extracted from every shipped feature. Load `index.md` when you need full project context (integration work, brownfield features, understanding what already exists). Load a specific feature file only if the current work directly touches that area. Do not load these files by default in routine phases.
+
+**When `project-requirements/` does not exist:** the project has not yet archived its first feature. Work from `requirements.md` only.
 
 ## Requirements as Living Document
 
-`requirements.md` at the project root is always the current truth. When a feature changes existing behavior, update this file directly. When archiving completed work, copy (don't move) requirements into the archive as `requirements_v{N}.md` — the root copy continues to evolve.
+`requirements.md` is always the current feature scope. It gets cleared at archive time once its permanent behaviors have been extracted into `project-requirements/`.
 
-If a requirement is superseded, add a note to the `## Superseded Requirements` section at the bottom of `requirements.md` with a reference to the relevant `decisions.md` entry.
+`project-requirements/index.md` is the living project-wide record. It grows at each archive. When a new feature changes behavior already captured in `project-requirements/`, update the relevant detail file and `index.md` at archive time.
 
 ## Archive Directory
 
-The archive directory exists to preserve historical documentation. Do not load or read items in the directory unless user requests you to do so.
+The archive directory exists to preserve historical documentation. Do not load or read items in the directory unless the user requests it.
 
-When archiving:
+Archiving is done via `/plan:archive`. When archiving:
 
-- Copy planning docs to a named archive subdirectory (e.g., `archive/mvp/`)
-- `decisions.md` is never archived — it's an append-only running log
-- `requirements.md` gets a versioned copy in the archive; the root copy stays and continues to evolve
+- Phase directories are moved to `archive/[name]/phases/`
+- `requirements.md` is copied to the archive as a snapshot, then cleared at root
+- `roadmap.md` is copied to the archive as a snapshot, then reset at root
+- `decisions.md` is never archived — append-only, permanent
+- `deferred.md`, `codebase.md` stay at root — they are continuous across features
+- Permanent requirements are extracted into `project-requirements/` before clearing `requirements.md`
 
 # Document Formats
 
@@ -83,7 +95,10 @@ Markdown template files for all document formats are in the `templates` director
 
 - **Roadmap** (`roadmap.md`): Phase breakdown with checkboxes
 - **State** (`state.md`): Current phase, session log, blockers
-- **Decisions** (`decisions.md`): Key decisions with rationale
+- **Decisions** (`decisions.md`): Permanent record of architectural and design decisions — why unconventional choices were made, what alternatives were rejected, what constraints shaped the design. Append-only, never archived or deleted. If a decision is superseded, note that in a follow-up entry rather than removing the original.
+- **Deferred** (`deferred.md`): Items noticed during a phase that need attention in a future phase. Format: `- [ ] **Phase N** *(noted in Phase X)*: description`. Use "before [area]" if the target phase isn't known. Remove entries once addressed — this file should stay lean.
+- **Project Requirements Index** (`project-requirements/index.md`): Dense one-liner summaries of all permanent requirements organized by area, with references to detail files. Format: `## [Area] (→ [file].md)` followed by one-liner bullets. Load this when you need full project context. Never pad it — maximum signal per token.
+- **Project Requirements Detail** (`project-requirements/core.md`, `project-requirements/[feature-name].md`): Full permanent requirements for a given area. `core.md` holds non-feature requirements (data model, auth, constraints). Feature files hold per-feature permanent behaviors. Load only when the current phase directly touches that area.
 - **Codebase** (`codebase.md`): Generated during `/plan:init` (brownfield) or after Phase 0 (greenfield). Updated when structure changes significantly. Answers "what exists and how is it organized."
 - **Plan** (`phase_plan.md`): Tasks targeting identifiable files with verify/done criteria. "Issues Discovered During Verification Stage" filled out after code is written if iterations needed.
 - **Testing** (`ua_testing.md`): Verification steps to be performed by user
@@ -158,7 +173,9 @@ Automatically and silently:
 4. Read plan and summary files from previous phases
 5. Check if user modified any code since last phase
 6. Read `decisions.md` for constraints
-7. Adapt plan to incorporate changes
+7. Read `deferred.md` — note any items targeting this phase
+8. If this phase integrates with or modifies existing functionality, read `project-requirements/index.md`. Load specific detail files only if the current phase directly touches that area.
+9. Adapt plan to incorporate changes
 
 # After Each Phase
 
@@ -166,9 +183,10 @@ Automatically and silently:
 2. Create `user_feedback.md` in the phase directory
 3. Update `state.md` with completion status and session log
 4. Update `roadmap.md` checkbox
-5. If new directories, dependencies, or architectural patterns were introduced, update `codebase.md`
-6. Output completion message with testing checklist
-7. **STOP completely. Wait for explicit approval to continue.**
+5. Update `deferred.md` — add any cross-phase items noticed during this phase; remove any that were addressed
+6. If new directories, dependencies, or architectural patterns were introduced, update `codebase.md`
+7. Output completion message with testing checklist
+8. **STOP completely. Wait for explicit approval to continue.**
 
 All three artifacts (ua_testing.md, user_feedback.md, phase_summary.md) are required for every phase. Do not skip any.
 

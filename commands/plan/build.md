@@ -46,9 +46,10 @@ For test phases: use the `test-writer` subagent for all test generation tasks.
     - Expected behaviors
     - Edge cases to check
     - Phase completion checklist
-8. **Update planning state:**    
+8. **Update planning state:**
     - `_planning/state.md` — log what was built, set status to "review"
     - `_planning/roadmap.md` — check off the completed phase
+    - `_planning/deferred.md` — add any cross-phase items noticed during this build; remove any items that were addressed
     - `_planning/codebase.md`:
         - **Setup phase:** Generate it (captures the project structure just created)
         - **Other phases:** Update only if new directories, dependencies, or architectural patterns were introduced. Skip if structure unchanged.

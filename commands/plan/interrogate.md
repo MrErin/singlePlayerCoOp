@@ -27,15 +27,17 @@ Read the project directory before asking anything. Determine which mode applies:
 
 **Signals:** `_planning/` exists, a codebase exists, user invokes with a feature name or description.
 
-**Read first:** `_planning/roadmap.md`, `_planning/decisions.md`, `_planning/codebase.md`, and any phase summaries that exist. Use what you find — don't ask questions you can already answer from context.
+**Read first:** `_planning/roadmap.md`, `_planning/decisions.md`, `_planning/codebase.md`, any phase summaries that exist, and `_planning/project-requirements/index.md` if it exists. Use what you find — don't ask questions you can already answer from context.
 
-**Action:** Scoped interview covering what's new and how it integrates with what already exists. **Output:** `_planning/feature-[name]-requirements.md`
+**Check:** If `_planning/requirements.md` already has active content (not the empty placeholder), warn the user: "requirements.md has content from a previous feature scope. If that feature is complete, run `/plan:archive` before starting new requirements — otherwise new content will overwrite it. Proceed anyway?"
+
+**Action:** Scoped interview covering what's new and how it integrates with what already exists. **Output:** `_planning/requirements.md`
 
 ### Mode C: Clarify Existing Requirements
 
 **Signals:** `_planning/requirements.md` exists with content. User invokes to fill gaps or resolve ambiguity.
 
-**Read first:** The existing requirements doc, plus `_planning/decisions.md` if it exists.
+**Read first:** `_planning/requirements.md`, `_planning/decisions.md` if it exists, and `_planning/project-requirements/index.md` if it exists.
 
 **Action:** Identify gaps, vague acceptance criteria, undecided data model questions, and contradictions. Interview only about those areas. Don't re-litigate settled decisions. **Output:** Update `_planning/requirements.md` in place.
 
@@ -301,7 +303,7 @@ Read `_planning/decisions.md`, `_planning/codebase.md`, and relevant phase summa
 
 Treat `decisions.md` entries as settled ground unless the user explicitly raises one.
 
-Output to `_planning/feature-[name]-requirements.md`.
+Output to `_planning/requirements.md`.
 
 ---
 
