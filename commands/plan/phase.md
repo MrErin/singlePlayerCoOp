@@ -38,7 +38,7 @@ Load `iterative-build` and `my-style` skills. No git commits.
     - Invariants (rules that always hold)
     - Valid inputs and constraints
     - Error conditions and what the errors look like
-    - Edge cases to test
+    - Edge cases to test — each must include the expected return value, not just a description (e.g., "empty list input → returns `0`, not an error" not just "empty list")
     - These contracts are written from requirements and expected behaviors — not from implementation code, which doesn't exist yet. DO read existing code to understand available interfaces and patterns.
 8. **Check phase size:** If the plan has more than ~10 tasks, it's too big for one phase. Split the work into multiple sequential phases and plan only the first one now. Inform the user of the proposed split and update the `roadmap.md` accordingly.
 9. **For test phases:** The plan should reference:

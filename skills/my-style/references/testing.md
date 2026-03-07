@@ -67,6 +67,28 @@ If the answer is "no," the test is insufficient. Fix it before moving on.
 
 Never reimplement the production calculation inside a test and assert they match. Tests must assert against independently-determined expected values. If `calculate_xp` multiplies by 5, the test asserts `== 25` for input 5, not `== 5 * input`.
 
+### Tautological Assertions
+
+Never assert that setup data matches itself. A test that asserts a field equals the value you used to construct the object tests nothing — you're verifying your own setup, not the function's behavior.
+
+```python
+# ❌ Tautology — tests the constructor, not the function
+user = User(name="Alice")
+result = get_user("Alice")
+assert result.name == "Alice"  # you set this up; of course it's Alice
+
+# ✅ Tests actual behavior — function retrieved and transformed data
+user = User(name="Alice", role="admin")
+result = get_display_name(user)
+assert result == "Alice (admin)"  # function had to combine fields
+```
+
+Ask: "Was this value **computed** by the function under test, or did I put it there?" If you put it there, it's not evidence the function did anything.
+
+### No Section Dividers
+
+Do not use commented dividers to separate sections within a test file (no `# ---`, `# ===`, flowerboxes, or any variation). Class names are the grouping mechanism. Dividers are visual clutter that diverge in format across files and add nothing a class boundary doesn't already express.
+
 ### No Generic Assertions
 
 These assertions are never acceptable as the sole assertion in a test:

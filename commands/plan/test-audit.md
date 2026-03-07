@@ -15,13 +15,13 @@ Load `my-style` skill. No git commits.
     1. If the `_planning` directory does not exist, STOP. Instruct the user to run the /plan:init command first
 2. **Map the test landscape**: Identify all test files, the test framework(s) in use, and which source modules have corresponding tests
 3. **Analyze each test file** against the standards below. For every issue found, create an investigation card (see card templates)
-4. **Run coverage analysis** if a coverage tool is configured (e.g., `pytest --cov`, `vitest --coverage`). If not configured, note this in the setup section and skip
-5. **Identify mutation testing readiness**: Check if `mutmut` (Python) or `stryker` (TypeScript) is installed. Record status in the setup section.
-	1. If it is installed and has been run, incorporate mutation cards in step 7
-	2. If it is not installed, add instructions in the setup section
-6. **Generate**: a file in the `_planning` directory called `test_audit.md` using the template below
-7. **Generate cards**: Create investigation cards organized by type, then shuffle the final deck into a recommended session order that alternates card types for variety
-8. **Classify** each card by difficulty (🟢 Quick 10-15 min, 🟡 Medium 20-30 min, 🔴 Deep Dive 30-45 min)
+4. **Get coverage results**: Check for an existing `.coverage` file in the project root. If found, run `coverage report` to read it — do not re-run tests. If not found, check for `htmlcov/index.html`. If neither exists and a coverage tool is installed, run `pytest --cov=src --cov-report=html` to generate it. If no coverage tool is installed, note this in the setup section and skip.
+5. **Get mutation testing results**: Check for a `.mutmut-cache` file in the project root. If found, run `mutmut results` to read the existing results. If not found, run `mutmut run` to generate them — this may take several minutes depending on project size. Incorporate surviving mutants as cards in step 8.
+6. **For any trivial changes, just make the edits**: If there are weak assertions (>= where == should be), untested fields in a return object, or other trivial changes that would improve the test suite, make those changes during the audit rather than handing them back to the user. 
+	1. If the collected trivial changes break tests, ask user to handle test adjustments for all trivial fixes as one card in step 8.
+7. **Generate**: a file in the `_planning` directory called `test_audit.md` using the template below
+8. **Generate cards**: Create investigation cards organized by type, then shuffle the final deck into a recommended session order that groups tests for related modules together for efficiency
+9. **Classify** each card by difficulty (🟢 Quick 10-15 min, 🟡 Medium 20-30 min, 🔴 Deep Dive 30-45 min)
 
 ## Standards to Evaluate Against
 
@@ -40,6 +40,7 @@ Load `my-style` skill. No git commits.
 - [ ] No conditional logic (if/else) inside tests
 - [ ] No loops generating dynamic assertions
 - [ ] Setup/teardown is proportional to what's being tested (no over-mocking)
+- [ ] No two tests exercise the exact same code path with the same assertions
 
 ### Coverage Quality (not just quantity)
 
@@ -47,6 +48,8 @@ Load `my-style` skill. No git commits.
 - [ ] Edge cases are covered (nulls, empty collections, boundary values, zero, negative)
 - [ ] Error paths are tested, not just happy paths
 - [ ] Tests would fail if the core logic changed (not just if an exception is thrown)
+- [ ] Pure functions with clear invariants have property-based tests (Hypothesis/fast-check), not just example-based tests
+- [ ] Integration boundaries between modules have at least one test exercising the full handoff
 
 ### Test Independence
 
@@ -61,6 +64,12 @@ Load `my-style` skill. No git commits.
 - [ ] Tests aren't only checking happy-path with convenient round numbers
 - [ ] Test descriptions aren't generic boilerplate ("should work correctly")
 - [ ] Mock setups aren't so extensive they've replaced the actual logic being tested
+
+### Obsolete Tests
+
+- [ ] No tests reference functions, classes, or modules that no longer exist
+- [ ] No tests cover behavior that has been removed or replaced
+- [ ] Tests for renamed functionality have been updated, not left targeting the old name
 
 ## Investigation Card Templates
 
@@ -107,6 +116,60 @@ Load `my-style` skill. No git commits.
 - **Time box**: [minutes]
 ```
 
+### 🧪 Upgrade Card
+
+```markdown
+### 🧪 UPGRADE-[NNN]: [Function Name]
+- **Difficulty**: [🟢 | 🟡 | 🔴]
+- **File**: [test file path]::[test function name(s)]
+- **Subject**: [production function/class being tested]
+- **Why it's a candidate**: [what property or invariant makes this suitable for property-based testing — e.g., "pure calculation", "output always subset of input", "serialization roundtrip"]
+- **What's missing**: [the invariant to test — stated as a rule, not an example]
+- **Your mission**: Add Hypothesis (Python) or fast-check (TypeScript) tests for the invariant. Keep existing example-based tests — don't replace them.
+- **Done when**: At least one property-based test exists that would catch a violation of the stated invariant
+- **Time box**: [minutes]
+```
+
+### 🔗 Seam Card
+
+```markdown
+### 🔗 SEAM-[NNN]: [Module A → Module B]
+- **Difficulty**: [🟢 | 🟡 | 🔴]
+- **Boundary**: [the call site — function in Module A that calls into Module B]
+- **What crosses the boundary**: [the data or behavior being handed off]
+- **Why it's untested**: [both sides have unit tests but the handoff itself has no test]
+- **What could go wrong**: [specific failure mode that unit tests on each side would miss]
+- **Your mission**: Write one integration test that exercises the full path through both modules at this boundary. No mocking of the boundary itself.
+- **Done when**: A test exists that would fail if the contract between the two modules broke
+- **Time box**: [minutes]
+```
+
+### 🔁 Redundancy Card
+
+```markdown
+### 🔁 REDUNDANT-[NNN]: [Description]
+- **Difficulty**: [🟢 | 🟡 | 🔴]
+- **Files**: [test file(s) and function names]
+- **What's duplicated**: [the code path or behavior both tests exercise]
+- **Why it matters**: [maintenance cost — if the behavior changes, N tests break for one logical change]
+- **Your mission**: Confirm these tests are truly redundant (same path, same assertions). If so, delete the weaker one and verify the remaining test still covers the behavior. If they differ in a meaningful way, document what each one adds.
+- **Done when**: Either one test is deleted, or you've documented why both are needed
+- **Time box**: [minutes]
+```
+
+### 👻 Orphan Card
+
+```markdown
+### 👻 ORPHAN-[NNN]: [Test Name]
+- **Difficulty**: [🟢 | 🟡 | 🔴]
+- **File**: [test file path]::[test function name]
+- **Subject**: [the function/class/behavior the test appears to target]
+- **Why it may be obsolete**: [what changed — function removed, renamed, logic gutted, behavior moved]
+- **Your mission**: Confirm whether this test still tests anything real. If the subject no longer exists or has changed enough that the test is a passenger, delete it. If it's salvageable, update it to match current behavior.
+- **Done when**: Either the test is deleted, or it's updated and tests a real current behavior
+- **Time box**: [minutes]
+```
+
 ### 👾 Boss Battle Card
 
 ```markdown
@@ -143,7 +206,7 @@ Load `my-style` skill. No git commits.
 | Tests with no meaningful assertions | [n] | |
 | Tests with smell flags | [n] | |
 | Source modules with zero test coverage | [n] | list below |
-| Investigation cards generated | [n] | 🔍 [n] 🎯 [n] 💀 [n] 👾 [n] |
+| Investigation cards generated | [n] | 🔍 [n] 🎯 [n] 💀 [n] 👾 [n] 👻 [n] 🧪 [n] 🔗 [n] 🔁 [n] |
 
 ### Untested Modules
 [List any production code modules/files with no corresponding tests]
@@ -194,7 +257,7 @@ These areas were evaluated:
 
 > **How to use**: Pick a card — any card. Each one is self-contained. Work through them in the order below (shuffled for variety) or pick randomly. Check them off as you go. No need to do them all in one session.
 > 
-> **Card types**: 🔍 Smell Check | 🎯 Coverage Gap | 💀 Mutant Hunt | 👾 Boss Battle
+> **Card types**: 🔍 Smell Check | 🎯 Coverage Gap | 💀 Mutant Hunt | 👾 Boss Battle | 👻 Orphan | 🧪 Upgrade | 🔗 Seam | 🔁 Redundancy
 > 
 > **Difficulty**: 🟢 Quick (10-15 min) | 🟡 Medium (20-30 min) | 🔴 Deep Dive (30-45 min)
 
@@ -223,7 +286,7 @@ These areas were evaluated:
 
 - Do NOT rewrite any code in the codebase
 - Do NOT make git commits
-- Do NOT run mutation testing tools (only check if they're installed and provide setup instructions)
+- Prefer reading existing `.mutmut-cache` results over re-running — only run `mutmut run` if no cache exists or the user requests a refresh
 - Do provide brief corrected examples inside cards when the fix is obvious (e.g., adding an assertion)
 - Do provide information for WHY the test is insufficient — connect to what bug it would miss
 - Do prioritize business logic tests over utility/helper tests

@@ -21,7 +21,7 @@ For test phases: use the `test-writer` subagent for all test generation tasks.
     - Follow each task's action description.
     - After each task, verify against the task's verify criteria.
     - If a task can't be completed as planned, note why and adapt.
-    - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment.
+    - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.
 6. **Verify the build:** 
     - Run the application/tests and confirm no errors
 	    - If the application is not yet runnable (setup or early data layer phase), verify by running available checks instead:

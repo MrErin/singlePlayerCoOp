@@ -31,6 +31,26 @@ You MAY NOT use to design test cases:
 3. Read `my-style` references/testing.md for test rules
 4. Read type definitions and model files to understand data structures
 
+## Before Writing Any Tests
+
+For each function under test, before writing a single line of test code:
+
+1. List every behavior to verify (from the interface contract): happy path variants, each edge case, each error condition
+2. For each behavior, state the **expected return value explicitly** — not "should return a list" but "should return `[Item(id=1, active=True)]`"
+3. Check the ratio: for every 2 positive cases, ensure at least 1 negative/error case is in the list
+
+This inventory is your test plan for that function. Write it as a comment block before the test group. If a behavior has no concrete expected value, you don't understand it well enough to test it yet — re-read the contract.
+
+## Per-Test Completion Check
+
+After writing each test, before writing the next one:
+
+1. **Wrong data check:** Could the implementation return wrong values and this test still pass?
+2. **Tautology check:** Are you asserting data you constructed yourself, rather than data the function computed?
+3. **Field check:** If the function returns an object or dict, are all fields asserted?
+
+If any answer is concerning, fix the test before continuing.
+
 ## Test Writing Rules
 
 From `testing.md` — these are mandatory:
@@ -40,7 +60,6 @@ From `testing.md` — these are mandatory:
 - **Negative Test Ratio:** Minimum 1 error/edge case test per 2 happy path tests
 - **No Mirror Tests:** Never reimplement the calculation in the test. Assert against independently-determined expected values
 - **No Generic Assertions:** `assert result is not None` is never acceptable as a sole assertion
-- **"Would This Fail?" Check:** After each test, verify: if the implementation returned wrong data, would this test catch it?
 
 ## Property-Based Tests
 
