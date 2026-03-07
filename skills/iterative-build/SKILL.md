@@ -14,16 +14,17 @@ Build applications in digestible phases. Maintain persistent planning state that
 
 This skill works with commands in `.claude/commands/plan/`:
 
-| Command             | Purpose                                                               |
-| ------------------- | --------------------------------------------------------------------- |
-| `/plan:interrogate` | Discuss and synthesize or clarify requirements for project or feature |
-| `/plan:init`        | Initialize `_planning/` directory and generate roadmap                |
-| `/plan:phase`       | Plan the next (or specified) phase                                    |
-| `/plan:build`       | Execute the current planned phase                                     |
-| `/plan:status`      | Read state, show progress, suggest next action                        |
-| `/plan:review`      | Generate testing doc for completed phase                              |
-| `/plan:debt`        | Generate document detailing technical debt of an existing codebase    |
-| `/plan:test-audit`  | Generate investigation cards for reviewing/improving test suite       |
+| Command             | Purpose                                                                                    |
+|---------------------|--------------------------------------------------------------------------------------------|
+| `/plan:interrogate` | Discuss and synthesize or clarify requirements for project or feature                      |
+| `/plan:init`        | Initialize `_planning/` directory and generate roadmap                                     |
+| `/plan:phase`       | Plan the next (or specified) phase                                                         |
+| `/plan:build`       | Execute the current planned phase                                                          |
+| `/plan:status`      | Read state, show progress, suggest next action                                             |
+| `/plan:review`      | Generate testing doc for completed phase                                                   |
+| `/plan:debt`        | Generate document detailing technical debt of an existing codebase                         |
+| `/plan:test-audit`  | Generate investigation cards for reviewing/improving test suite                            |
+| `/plan:archive`     | Archive all _planning documentation from a given phase and update the project requirements |
 
 If a command is invoked, follow its instructions. If the user says "use iterative-build" without a command, use this skill directly and determine the appropriate phase.
 
@@ -91,7 +92,7 @@ Archiving is done via `/plan:archive`. When archiving:
 
 # Document Formats
 
-Markdown template files for all document formats are in the `templates` directory of the `iterative-build` skill.
+Markdown template files for all document formats are in the `references` directory of the `iterative-build` skill.
 
 - **Roadmap** (`roadmap.md`): Phase breakdown with checkboxes
 - **State** (`state.md`): Current phase, session log, blockers

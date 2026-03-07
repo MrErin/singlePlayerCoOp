@@ -32,13 +32,13 @@ Load `iterative-build` and `my-style` skills. Read `_planning/state.md` before s
     - **Connection to Previous Phases:** What data or patterns from earlier phases this builds on, and what it sets up for later phases 
     - Skip obvious code (CRUD operations, config, boilerplate) — only explain what's worth explaining 
     - Keep it concise — this is a reference for maintaining your mental model, not a code walkthrough
-- 9. **Verify all phase artifacts exist** before proceeding:
+9. **Verify all phase artifacts exist** before proceeding:
 	- [ ] `ua_testing.md` exists in the phase directory
 	- [ ] `user_feedback.md` exists in the phase directory
 	- [ ] `phase_summary.md` exists in the phase directory
 	- [ ] `state.md` reflects current phase status
 	- If any are missing, create them before continuing.
-1. **When phase is approved:**    
+10. **When phase is approved:**    
     - Update `state.md` — set phase status to "complete", log session
     - Update `roadmap.md` — check off the phase
     - Suggest: "Ready for next phase. Run `/plan:phase` to plan it."

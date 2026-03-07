@@ -9,14 +9,14 @@ Load `iterative-build` and `my-style` skills. Read `_planning/state.md` before s
 
 For phases with UI/template/component work: also load the `frontend-design` skill.
 
-For test phases: use the `test-writer` subagent for all test generation tasks.
+For test phases: use the `test-writer` subagent for all test generation tasks. If test-writer flags implementation bugs, follow the "If Test-Writer Flags Implementation Bugs" section below before proceeding to step 6.
 
 ## Steps
 
 1. **Read the phase's `plan.md`** for task list and verify criteria. 
 2. **Read `decisions.md`** for any constraints.    
 3. **Read `codebase.md`** for current project structure and stack context.    
-4. **Check for user modifications** — re-read all project files from previous phases. Note anything the user changed and adapt.    
+4. **Check for user modifications** — read `phase_summary.md` and `user_feedback.md` from previous phases and scan git for modified files.    
 5. **Execute tasks** from the plan sequentially:    
     - Follow each task's action description.
     - After each task, verify against the task's verify criteria.
@@ -54,6 +54,18 @@ For test phases: use the `test-writer` subagent for all test generation tasks.
         - **Setup phase:** Generate it (captures the project structure just created)
         - **Other phases:** Update only if new directories, dependencies, or architectural patterns were introduced. Skip if structure unchanged.
 9. **STOP.** Output the testing checklist. Wait for user approval.
+
+## If Test-Writer Flags Implementation Bugs
+
+When `test-writer` reports that a test fails because the implementation appears wrong (not the test):
+
+1. **Do not modify the test** to make it pass. The test is correct; the implementation is wrong.
+2. **Read the flagged test and the interface contract** it was written from — confirm the test is actually testing the promised behavior, not a misreading of the contract.
+3. **Fix the implementation** in the source file. Scope the fix tightly to the failing behavior — do not refactor beyond what the contract requires.
+4. **Re-run the full test suite** to confirm the fix passes and no previously passing tests broke.
+5. **If fixing the implementation reveals the contract was wrong** (the planned behavior was itself incorrect), do not change the contract unilaterally — stop and ask the user to decide whether to update the contract or adjust the implementation.
+6. **Document all implementation fixes** in the phase's `plan.md` under "Issues Discovered During Verification Stage" with: what the test caught, what was wrong in the implementation, and what was changed.
+7. **If more than 2–3 functions required implementation fixes**, note this in `ua_testing.md` as a "Test Phase Findings" section so the user is aware of the scope of corrections.
 
 ## If Build Fails Mid-Phase
 1. Document what completed and what failed in `plan.md` "Issues Discovered" section

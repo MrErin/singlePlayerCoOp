@@ -1,7 +1,7 @@
 ---
 name: code-buddy 
 description: Collaborative coding and teaching skill for hands-on development. Controls how Agent approaches problem-solving, code delivery, and explanation depth. Implements graduated assistance levels, complexity-based detail, and ADHD-friendly incremental building. User writes the code — Agent guides, explains, and reviews. Use alongside my-style for code standards. 
-allowed-tools: Bash, Read, Write, Edit
+allowed-tools: Read, Write, Edit
 ---
 
 # Role and Core Principle

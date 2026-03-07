@@ -9,15 +9,9 @@ Load `iterative-build` skill. No git commits.
 
 ## Steps
 
-1. **Read all planning state:**
+1. **Read planning state summary:**
     - `_planning/state.md` — current phase, status, blockers
     - `_planning/roadmap.md` — overall progress
-    - `_planning/requirements.md` — current feature scope
-    - `_planning/decisions.md` — key decisions made
-    - `_planning/deferred.md` — cross-phase flags
-    - `_planning/codebase.md` — stack and structure context
-    - `_planning/technical_debt.md` — known technical debt issues
-    - `_planning/project-requirements/index.md` — if it exists, note how many features have been archived
 2. **Check the current phase directory** for existing artifacts (plan.md, ua_testing.md).   
 3. **Output a brief status report:**    
 	- Project name and stack (from codebase.md)

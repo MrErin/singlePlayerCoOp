@@ -6,7 +6,3 @@ Items flagged for a future phase. Check at the start of each planning phase. Rem
 
 - [ ] **Phase [N]** *(noted in Phase [X])*: [description]
 - [ ] **Before [work area]** *(noted in Phase [X])*: [description — use this form when the target phase isn't known]
-
-## Resolved
-
-- [x] ~~**Phase [N]** *(noted in Phase [X])*: [description]~~ — [brief note on how it was addressed]

@@ -7,7 +7,7 @@ damage your system or change file permissions.
 
 ```bash
 # 1. Build the image. Run this from ~/.claude/docker
-docker build -t ai-safe-env - f aidev.Dockerfile .
+docker build -t ai-safe-env -f aidev.Dockerfile .
 
 # 2. Copy the seccomp profile where the functions expect it
 cp seccomp-no-chmod.json ~/.claude/docker/

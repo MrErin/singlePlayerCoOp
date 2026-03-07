@@ -29,10 +29,18 @@ Load `iterative-build` and `my-style` skills. No git commits.
     - `state.md` — Set current phase, record requirements location, start session log.
     - `decisions.md` — Empty template, ready for entries.
     - `deferred.md` — Empty template, ready for entries.
-    - `project-requirements/index.md` — Empty template with format instructions.
-    - `project-requirements/core.md` — Empty template for non-feature requirements.
     - `codebase.md` — (brownfield only, see step 3)
     - `phases/` subdirectories for each planned phase.
+    - `project-requirements/` — populated differently depending on project type:
+
+    **Greenfield:** Create both files as empty templates. Nothing has shipped yet; they will be populated at the first `/plan:archive`.
+    - `project-requirements/index.md` — empty template with format instructions only
+    - `project-requirements/core.md` — empty template with section headings only
+
+    **Brownfield:** Populate from the requirements and codebase analysis done in steps 1–3. Do not leave these empty.
+    - `project-requirements/core.md` — extract system-wide, non-feature-specific content from `requirements.md` and `codebase.md`: data model structure (entities and relationships), auth model, non-functional constraints (performance targets, accessibility level, platform), and any architectural patterns that apply regardless of which feature is being built. Do NOT extract feature-specific behavior — that stays in `requirements.md` and will move to a feature file at archive time.
+    - `project-requirements/index.md` — write one-liner summaries of everything captured in `core.md`, organized by area with a reference to `core.md`. Format: `## [Area] (→ core.md)` followed by one-liner bullets. Maximum signal per token — no prose.
+    - Present both files to the user: "Review `project-requirements/` — edit directly if anything is missing or wrong." Wait for confirmation before continuing.
 5. **Create initial plan.md** for the first phase only.    
 6. **Output:** Once all documents are created, notify user that initialization is complete. Do not write any code.    
 
