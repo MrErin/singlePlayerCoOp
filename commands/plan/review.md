@@ -19,17 +19,13 @@ Load `iterative-build` and `my-style` skills. Read `_planning/state.md` before s
     - Research if you are uncertain about a pattern or architectural decision
     - Alert the user if problems are found
 4. **Read the phase's `user_feedback.md` if it exists.**
-5. **If `ua_testing.md` doesn't exist yet:** Generate it with:    
-    - Summary of what was built
-    - Instructions for running automated tests, if they exist
-    - Manual testing steps with expected outcomes
-    - Edge cases to verify
-    - Completion checklist
+5. **If `ua_testing.md` doesn't exist yet:** Generate it from the `ua_testing` template located in `/iterative-build` references.
 6. **If ua_testing.md exists:** Ask the user what needs updating. Common scenarios:    
     - Tests failed — document what went wrong, suggest fixes
     - User found issues — record them, adjust
     - Everything passed — mark phase complete
-7. **Generate or update `phase_summary.md`** in the phase directory with: 
+7. **If issues surface during review** add them to a new section of `ua_testing` rather than reporting exclusively in the terminal.
+8. **Generate or update `phase_summary.md`** in the phase directory with: 
     - **What Was Built:** A plain-language paragraph describing what this phase accomplished — not a file list 
     - **Key Decisions:** Why things were built this way, including entries from `decisions.md` for this phase and any implicit decisions visible in the code 
     - **Complex Logic Explained:** The 2-3 most non-obvious logical flows in plain language — the parts where reading the code alone wouldn't make the "why" clear 
