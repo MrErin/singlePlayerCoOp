@@ -1,6 +1,6 @@
 ---
 description: Plan a specific phase. Reads requirements and current state, then generates a detailed plan.md with tasks, verify criteria, and done conditions. Pass phase number as argument (e.g., /plan:phase 2) or omit to plan the next incomplete phase. 
-allowed-tools: bash_tool create_file str_replace view
+allowed-tools: Bash, Read, Write, Edit
 ---
 
 # Plan a Phase

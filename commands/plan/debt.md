@@ -1,6 +1,6 @@
 ---
 description: Generate or update the technical_debt document for a brownfield project. Use to assess existing code base against preferences and best practices outlined in my-style skill
-allowed-tools: bash_tool create_file str_replace view
+allowed-tools: Bash, Read, Write, Grep, Glob
 ---
 
 # Assess Technical Debt
@@ -33,16 +33,38 @@ Load `my-style` skill. No git commits.
 1. **Recommend**: a priority order for addressing issues incrementally, optimizing for focusing effort in the same parts of the app at a given time, prioritizing most severe/critical fixes
 
 ## Standards to Evaluate Against
+
+**Architecture**
 - [ ] No invisible dependencies (injected, not instantiated)
 - [ ] No global state
 - [ ] No hard-coded config/secrets
 - [ ] No swallowed errors
 - [ ] No unvalidated input at boundaries
+- [ ] Error handling uses expected/unexpected split
+- [ ] File organization follows feature-folder pattern
+
+**Code Quality**
 - [ ] Type hints on all public functions
 - [ ] Functions under complexity signals
-- [ ] File organization follows feature-folder pattern
-- [ ] Error handling uses expected/unexpected split
+
+**Comments & Documentation**
+- [ ] No stale comments (comments describing removed or changed behavior)
+- [ ] Non-trivial files have module-level docstrings (purpose, relationships, key concepts)
+- [ ] Public functions have interface contracts (what they return, error cases, side effects — not implementation)
+
+**Logging**
+- [ ] Business logic has no direct logging calls (logging at service/boundary layer only)
+
+**Testing**
 - [ ] Tests exist for business logic (pure, no IO)
+
+**Database** *(if applicable)*
+- [ ] DB connections use context managers (no manual open/close)
+- [ ] All queries use parameterized syntax (no string concatenation or f-strings)
+
+**Web Accessibility** *(if applicable)*
+- [ ] Semantic HTML used appropriately (not div-for-everything)
+- [ ] Interactive elements have ARIA labels, keyboard navigation, and focus management
 
 ## technical_debt.md
 ```markdown

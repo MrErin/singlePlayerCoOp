@@ -1,6 +1,6 @@
 ---
 description: Generate or update the testing document for a completed phase. Use after building to create verification steps, or after testing to record results. Pass phase number as argument or omit to review the most recently completed phase. 
-allowed-tools: bash_tool create_file str_replace view
+allowed-tools: Read, Write
 ---
 
 # Review Phase

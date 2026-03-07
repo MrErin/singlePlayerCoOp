@@ -1,6 +1,6 @@
 ---
 description: Check project progress and suggest next action. Reads all planning state and provides a clear summary. Use when resuming work, switching sessions, or unsure where things stand. 
-allowed-tools: bash_tool view
+allowed-tools: Bash, Read
 ---
 
 # Check Project Status

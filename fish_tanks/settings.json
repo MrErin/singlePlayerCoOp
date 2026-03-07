@@ -14,6 +14,7 @@
       "mcp__context7__*",
       "mcp__jcodemunch__*",
       "mcp__web_reader__*",
+      "mcp__sequential-thinking__*",
       "Bash(claude*)",
       "Bash(pytest*)",
       "Bash(python3 -m pytest*)",

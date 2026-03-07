@@ -1,7 +1,7 @@
 ---
 name: post-build-review 
 description: Generate comprehensive review documentation after completing a build. Creates ADHD-friendly guides with checkboxes, time estimates, and progressive disclosure to help users test, understand, and extend the codebase without feeling overwhelmed. 
-allowed-tools: view create_file
+allowed-tools: Read, Write
 ---
 
 # Post-Build Review Skill

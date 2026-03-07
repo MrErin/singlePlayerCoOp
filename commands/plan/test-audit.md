@@ -1,6 +1,6 @@
 ---
 description: Audit the test suite for quality, effectiveness, and coverage gaps. Generates investigation cards — small, self-contained tasks for manually verifying and improving tests. Does NOT rewrite code. 
-allowed-tools: bash_tool create_file str_replace view
+allowed-tools: Bash, Read, Write, Grep, Glob
 ---
 
 # Audit Test Suite

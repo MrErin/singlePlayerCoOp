@@ -1,6 +1,6 @@
 ---
 description: Conduct a structured requirements interview to produce a completed requirements.md. Adapts to three contexts - new project (full interview from scratch), new feature (scoped to the feature and its integration points), or clarify existing (targeted gap analysis). Ask one topic at a time, push back on vague answers, discuss tradeoffs critically. Synthesize responses into a running draft that updates after each section. Use before /plan:init on any new project or feature. 
-allowed-tools: bash_tool create_file str_replace view
+allowed-tools: Read, Write
 ---
 
 # Requirements Interrogation

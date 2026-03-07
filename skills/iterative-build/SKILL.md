@@ -1,7 +1,7 @@
 ---
 name: iterative-build 
 description: Build applications in digestible phases with persistent planning state. Combines spec-driven planning artifacts with human-controlled phase gates. Use when creating new apps, adding features, or working on multi-step development tasks. Supports Python, TypeScript, React, and fullstack projects. Works with slash commands in .claude/commands/plan/. 
-allowed-tools: bash_tool create_file str_replace view present_files
+allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
 
 # Core Principle

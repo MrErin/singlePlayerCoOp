@@ -1,7 +1,7 @@
 ---
 name: my-style 
 description: Coding standards and preferences that apply across all projects. Focuses on clean readable code, accessibility-first web development, and testable design. Load reference files in the `references/` subdirectory when working in specific languages or areas. 
-allowed-tools: view
+allowed-tools: Read
 ---
 
 # Core Directive

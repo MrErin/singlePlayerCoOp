@@ -1,6 +1,6 @@
 ---
 description: Initialize a new project's _planning/ directory. Creates roadmap, state tracking, and phase structure from requirements. Use at the start of any new project or when _planning/ doesn't exist yet.
-allowed-tools: bash_tool create_file str_replace view
+allowed-tools: Bash, Read, Write
 ---
 
 # Initialize Project Planning

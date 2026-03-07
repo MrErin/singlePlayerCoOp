@@ -1,6 +1,6 @@
 ---
 description: Execute the current planned phase. Reads the plan.md for the active phase and builds it task by task. Generates ua_testing.md when complete. Use after /plan:phase has been approved.
-allowed-tools: bash_tool create_file str_replace view present_files
+allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
 
 # Build Current Phase

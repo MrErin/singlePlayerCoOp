@@ -1,6 +1,6 @@
 ---
 description: Archive a completed feature or initial build. Moves phase documents to archive, extracts permanent requirements into project-requirements/, and clears the workspace for the next feature. Run after all phases in the current roadmap are complete and reviewed.
-allowed-tools: bash_tool create_file str_replace view
+allowed-tools: Bash, Read, Write
 ---
 
 # Archive Feature
