@@ -30,7 +30,7 @@ Load `my-style` skill. No git commits.
 	- **Files affected**
   	- **Time estimate** for the fix  
 	```
-1. **Recommend**: a priority order for addressing issues incrementally, optimizing for focusing effort in the same parts of the app at a given time, prioritizing most severe/critical fixes
+7. **Generate the cluster deck**: Group all issues into clusters by the files and modules they affect — all issues touching the same module or area belong in one cluster. Within each cluster, order cards from highest to lowest severity. Order clusters so higher-severity clusters come first; if two clusters have equal severity, prioritize the one whose files are also touched by other clusters. Assign a BOSS card to any cluster with 3 or more issues. Use the Debt Card Templates below.
 
 ## Standards to Evaluate Against
 
@@ -65,6 +65,43 @@ Load `my-style` skill. No git commits.
 **Web Accessibility** *(if applicable)*
 - [ ] Semantic HTML used appropriately (not div-for-everything)
 - [ ] Interactive elements have ARIA labels, keyboard navigation, and focus management
+
+## Debt Card Templates
+
+All card types (🔥 ARCH, ⚙️ DESIGN, 🧹 QUALITY, 🗃️ DATA, ♿ ACCESS) use the standard template. ACCESS cards always have Low risk. BOSS cards use their own template.
+
+**Card type prefix guide:**
+- 🔥 **ARCH** — architecture violations (invisible deps, global state, hard-coded config, swallowed errors)
+- ⚙️ **DESIGN** — design principle violations (SRP, DI, separation of concerns)
+- 🧹 **QUALITY** — code quality, comments, logging (long functions, missing types, stale comments)
+- 🗃️ **DATA** — database/SQL issues (context managers, parameterized queries)
+- ♿ **ACCESS** — web accessibility (semantic HTML, ARIA, keyboard nav) — risk is always Low
+- 👾 **BOSS** — cluster entry point for modules with 3+ issues
+
+### Standard Card
+
+```markdown
+### [TYPE]-[NNN]: [Issue Name]
+- **Difficulty**: [🟢 Quick (<30 min) | 🟡 Medium (30–60 min) | 🔴 Large (1–3 hr) | ⚫ XL (3+ hr)]
+- **Risk**: [Low — isolated change | Medium — shared interface | High — core component, test carefully]
+- **Files**: [affected file paths]
+- **Fix**: [specific action — what exactly to do, not just "refactor"]
+- **Done when**: [clear completion criteria — what does done look like?]
+- **Time box**: [N minutes]
+```
+
+### 👾 Boss Battle Card
+
+```markdown
+### 👾 BOSS-[NNN]: [Module Name]
+- **Difficulty**: 🔴
+- **Risk**: [Low | Medium | High — overall risk for this cluster]
+- **Module**: [source module or feature area]
+- **Issues**: [count] — references: [card numbers, e.g., ARCH-001, QUALITY-003]
+- **The situation**: [2-3 sentences on why this module needs coordinated work and what the combined effect of these issues is]
+- **Done when**: All referenced cards are complete
+- **Time box**: [N min total — or split across sessions]
+```
 
 ## technical_debt.md
 ```markdown
@@ -113,16 +150,37 @@ These areas were checked and found compliant:
 
 ___
 
-## Recommended Priority Order and Checklist
+## 🃏 The Cluster Deck
 
-[Items in this table/list should appear in priority order]
+> **How to use**: Work through one cluster at a time — you're already in the code, fix everything in the area before moving on. Within each cluster, cards run highest-to-lowest severity. Boss cards are the entry point for clusters with 3+ issues. Check off cards as you go.
+>
+> **Card types**: 🔥 Arch | ⚙️ Design | 🧹 Quality | 🗃️ Data | ♿ Access | 👾 Boss
+>
+> **Difficulty**: 🟢 Quick (<30 min) | 🟡 Medium (30–60 min) | 🔴 Large (1–3 hr) | ⚫ XL (3+ hr)
+>
+> **Risk**: Low (isolated) | Medium (shared interface) | High (core component — test carefully)
 
-| Checkbox | Issue Number | Brief Description of Fix | Estimation of Time, Risk to Application, etc. |
-|----------|--------|-------|-------|  
-| [ ] | [Number] | [Description] | [e.g. 1 hour, zero risk] |
-...
+### Cluster: [Module / File Area]
 
-**Total Estimated Effort:** [hour estimate]
+Files: `[file paths]`
+Total: [n] cards | Est. effort: [time] | Risk ceiling: [highest risk level in cluster]
+
+| # | Done | Card | Type | Difficulty | Risk | Time |
+|---|------|------|------|------------|------|------|
+| 1 | [ ] | [BOSS-001] | 👾 | 🔴 | High | 90 min |
+| 2 | [ ] | [ARCH-001] | 🔥 | 🔴 | High | 45 min |
+| 3 | [ ] | [QUALITY-002] | 🧹 | 🟡 | Low | 20 min |
+
+### Cluster: [Next Module / File Area]
+
+Files: `[file paths]`
+Total: [n] cards | Est. effort: [time] | Risk ceiling: [highest risk level in cluster]
+
+| # | Done | Card | Type | Difficulty | Risk | Time |
+|---|------|------|------|------------|------|------|
+| ... | | | | | | |
+
+**Total estimated effort**: [hour estimate]
 
 ```
 

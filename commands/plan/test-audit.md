@@ -20,7 +20,7 @@ Load `my-style` skill. No git commits.
 6. **For any trivial changes, just make the edits**: If there are weak assertions (>= where == should be), untested fields in a return object, or other trivial changes that would improve the test suite, make those changes during the audit rather than handing them back to the user. 
 	1. If the collected trivial changes break tests, ask user to handle test adjustments for all trivial fixes as one card in step 8.
 7. **Generate**: a file in the `_planning` directory called `test_audit.md` using the template below
-8. **Generate cards**: Create investigation cards organized by type, then shuffle the final deck into a recommended session order that groups tests for related modules together for efficiency
+8. **Generate cards**: Create investigation cards, then organize them into clusters by source module — all cards covering tests for the same module belong in one cluster. Within each cluster, order cards from hardest to easiest (tackle the deep work while your context is fresh). Assign a BOSS card to any cluster with 3 or more issues.
 9. **Classify** each card by difficulty (🟢 Quick 10-15 min, 🟡 Medium 20-30 min, 🔴 Deep Dive 30-45 min)
 
 ## Standards to Evaluate Against
@@ -255,24 +255,33 @@ These areas were evaluated:
 
 ## 🃏 The Deck
 
-> **How to use**: Pick a card — any card. Each one is self-contained. Work through them in the order below (shuffled for variety) or pick randomly. Check them off as you go. No need to do them all in one session.
-> 
+> **How to use**: Work through one cluster at a time — all cards in a cluster cover the same source module, so your context stays focused. Within each cluster, cards run hardest-to-easiest. Boss cards are the entry point for clusters with 3+ issues. Check off cards as you go.
+>
 > **Card types**: 🔍 Smell Check | 🎯 Coverage Gap | 💀 Mutant Hunt | 👾 Boss Battle | 👻 Orphan | 🧪 Upgrade | 🔗 Seam | 🔁 Redundancy
-> 
+>
 > **Difficulty**: 🟢 Quick (10-15 min) | 🟡 Medium (20-30 min) | 🔴 Deep Dive (30-45 min)
 
-### Session-Ready Order
+### Cluster: [Module Name]
 
-[Cards arranged to alternate types and difficulty for sustained engagement]
+Source: `[module path]` | Tests: `[test file path]`
+Total: [n] cards | Est. effort: [time]
 
-|#|Done|Card|Type|Difficulty|File|Time|
-|---|---|---|---|---|---|---|
-|1|[ ]|[SMELL-001]|🔍|🟢|[file]|15 min|
-|2|[ ]|[GAP-001]|🎯|🟡|[file]|25 min|
-|3|[ ]|[SMELL-002]|🔍|🟢|[file]|10 min|
-|...|||||||
+|#|Done|Card|Type|Difficulty|Time|
+|---|---|---|---|---|---|
+|1|[ ]|[BOSS-001]|👾|🔴|45 min|
+|2|[ ]|[GAP-001]|🎯|🔴|30 min|
+|3|[ ]|[SMELL-001]|🔍|🟢|15 min|
 
-**Total estimated effort**: [hour estimate] **Suggested pace**: [n] cards per session, [estimated sessions] sessions total
+### Cluster: [Next Module Name]
+
+Source: `[module path]` | Tests: `[test file path]`
+Total: [n] cards | Est. effort: [time]
+
+|#|Done|Card|Type|Difficulty|Time|
+|---|---|---|---|---|---|
+|...|||||
+
+**Total estimated effort**: [hour estimate]
 
 ---
 
@@ -290,5 +299,5 @@ These areas were evaluated:
 - Do provide brief corrected examples inside cards when the fix is obvious (e.g., adding an assertion)
 - Do provide information for WHY the test is insufficient — connect to what bug it would miss
 - Do prioritize business logic tests over utility/helper tests
-- Do alternate card types in the session-ready order to maintain variety
+- Do cluster cards by source module — all cards for a given module stay together
 - If the test suite is very large, focus on the modules identified as critical in the `_planning` documents and note which areas were not audited
