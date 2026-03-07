@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "MultiEdit",
+      "Glob",
+      "Grep",
+      "Bash(ls *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "mcp__context7",
+      "mcp__jcodemunch",
+      "mcp__web_reader",
+      "pytest",
+      "pytest-cov",
+      "coverage",
+      "mutmut",
+      "hypothesis"
+    ],
+    "deny": [
+      "Bash(sudo *)",
+      "Bash(sudo:*)",
+      "Bash(rm -rf /)*",
+      "Bash(rm -rf $HOME)*",
+      "Bash(umask *)",
+      "Bash(chmod *)",
+      "Bash(chown *)",
+      "Bash(chgrp *)",
+      "Bash(setfacl *)",
+      "Bash(killall *)",
+      "Bash(pkill *)",
+      "Bash(kill -9 *)",
+      "Bash(shutdown *)",
+      "Bash(reboot *)",
+      "Bash(systemctl *)",
+      "Bash(dd *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/secrets/*)",
+      "Read(**/*credential*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-git.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-dangerous.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/format-on-save.py",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "sandbox": {
+    "mode": "auto-allow",
+    "allowedDomains": [
+      "registry.npmjs.org",
+      "pypi.org",
+      "api.github.com",
+      "raw.githubusercontent.com"
+    ]
+  },
+  "skills": {
+    "global": []
+  },
+  "effortLevel": "high"
+}

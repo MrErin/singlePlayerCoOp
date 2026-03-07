@@ -1,0 +1,21 @@
+{
+  "comment": "Allows all syscalls EXCEPT chmod/chown family. Combined with --cap-drop=ALL this provides strong isolation.",
+  "defaultAction": "SCMP_ACT_ALLOW",
+  "syscalls": [
+    {
+      "names": [
+        "chmod",
+        "fchmod",
+        "fchmodat",
+        "fchmodat2",
+        "chown",
+        "fchown",
+        "fchownat",
+        "lchown"
+      ],
+      "action": "SCMP_ACT_ERRNO",
+      "errnoRet": 1,
+      "comment": "Block all permission/ownership changes — this is the chmod fix"
+    }
+  ]
+}
