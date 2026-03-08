@@ -36,6 +36,7 @@ _planning/
 ├── state.md                # Current progress, session log, blockers
 ├── decisions.md            # Architectural decisions (append-only)
 ├── deferred.md             # Cross-phase flags
+├── lessons.md              # Issues caught during builds (append-only)
 ├── codebase.md             # Stack, structure, architecture
 ├── requirements.md         # Current active scope
 ├── technical_debt.md       # Existing codebase problems
@@ -109,6 +110,7 @@ If unclear: "I see existing code and `_planning/`. Continue previous work, add f
 | `references/roadmap.md` | Creating/updating roadmap |
 | `references/state.md` | Creating/updating state |
 | `references/decisions.md` | Creating decisions file |
+| `references/lessons.md` | Creating lessons file |
 | `references/phase_plan.md` | Writing a phase plan |
 | `references/phase_summary.md` | Writing phase summary |
 | `references/ua_testing.md` | Writing testing doc |

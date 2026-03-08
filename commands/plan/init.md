@@ -21,14 +21,21 @@ allowed-tools: Bash, Read, Write
     - Read package.json / requirements.txt / Cargo.toml for stack and dependencies
     - Read directory structure (src/ level depth, not individual files)
     - Identify key patterns: routing, state management, data flow
+    - **Capture patterns & conventions:**
+        - Key patterns used (repository, service layer, factory, etc.)
+        - Naming conventions for files, functions, classes, constants
+        - Module boundaries and responsibilities
+        - Dependency flow direction
+        - Import conventions and aliases
     - Check for external integrations (API calls, database connections, env vars)
-    - Generate `_planning/codebase.md` from what you find
+    - Generate `_planning/codebase.md` from what you find — see `iterative-build/references/codebase.md` for full template
     - If greenfield, skip this step — codebase.md is generated after Phase 0 build
 4. **Create `_planning/` directory** with:
     - `roadmap.md` — Phase breakdown with checkboxes. Customize phase names to match the project's actual scope.
     - `state.md` — Set current phase, record requirements location, start session log.
     - `decisions.md` — Empty template, ready for entries.
     - `deferred.md` — Empty template, ready for entries.
+    - `lessons.md` — Empty template for capturing issues discovered during builds. See `iterative-build/references/lessons.md` for format.
     - `codebase.md` — (brownfield only, see step 3)
     - `phases/` subdirectories for each planned phase.
     - `project-requirements/` — populated differently depending on project type:

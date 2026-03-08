@@ -1,6 +1,6 @@
 ---
-description: Plan a specific phase. Reads requirements and current state, then generates a detailed plan.md with tasks, verify criteria, and done conditions. Pass phase number as argument (e.g., /plan:phase 2) or omit to plan the next incomplete phase. 
-allowed-tools: Bash, Read, Write, Edit
+description: Plan a specific phase. Reads requirements and current state, then generates a detailed plan.md with tasks, verify criteria, and done conditions. Pass phase number as argument (e.g., /plan:phase 2) or omit to plan the next incomplete phase.
+allowed-tools: Read, Write, Edit
 ---
 
 # Plan a Phase
@@ -15,6 +15,7 @@ allowed-tools: Bash, Read, Write, Edit
     - `_planning/roadmap.md` — what's the phase breakdown?
     - `_planning/decisions.md` — any constraints to honor?
     - `_planning/codebase.md` — understand existing structure
+    - `_planning/lessons.md` — avoid repeating known pitfalls
 2. **Determine which phase to plan:**
     - If argument provided: plan that phase number.
     - If no argument: find the next incomplete phase from roadmap.
@@ -50,5 +51,11 @@ allowed-tools: Bash, Read, Write, Edit
 - One plan per phase. If too big, split into multiple phases.
 - Interface contracts required for implementation phases with test phases.
 - Reference `iterative-build` skill for plan.md format.
+
+## Do Not
+
+- Do not generate tasks for work outside this phase's scope
+- Do not assume technology choices — research first, flag options for user
+- Do not skip interface contracts for implementation phases that have test phases
 
 $ARGUMENTS
