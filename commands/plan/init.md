@@ -5,8 +5,8 @@ allowed-tools: Bash, Read, Write
 
 # Initialize Project Planning
 
-## Defaults
-Load `iterative-build` and `my-style` skills. No git commits.
+**Skills:** Load `iterative-build`, `my-style`
+**No git commits.** User controls all git operations.
 
 ## Steps
 
@@ -64,9 +64,8 @@ This is a retroactive setup — applying the two-tier requirements structure to 
 
 ## Rules
 
-- Read the requirements thoroughly before generating anything.
-- Do NOT start building. Planning only.
-- Do NOT make git commits.
-- Reference the `iterative-build` skill for directory structure and document formats.
+- Read requirements thoroughly before generating.
+- Planning only. Do not start building.
+- Reference `iterative-build` skill for directory structure and formats.
 
 $ARGUMENTS

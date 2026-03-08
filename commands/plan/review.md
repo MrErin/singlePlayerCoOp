@@ -5,8 +5,9 @@ allowed-tools: Read, Write
 
 # Review Phase
 
-## Defaults
-Load `iterative-build` and `my-style` skills. Read `_planning/state.md` before starting. No git commits.
+**Skills:** Load `iterative-build`, `my-style`
+**Read first:** `_planning/state.md`
+**No git commits.**
 
 ## Steps
 
@@ -45,9 +46,8 @@ Load `iterative-build` and `my-style` skills. Read `_planning/state.md` before s
 
 ## Rules
 
-- Do NOT start building the next phase.
-- Do NOT make git commits.
-- Testing documents should be practical — real steps a human can follow in 15 minutes.
-- All phase artifacts (ua_testing.md, user_feedback.md, phase_summary.md) are required. Do not skip any.
+- Do not start building next phase.
+- Testing docs should be practical — real steps, 15 min max.
+- All phase artifacts required (ua_testing.md, user_feedback.md, phase_summary.md).
 
 $ARGUMENTS

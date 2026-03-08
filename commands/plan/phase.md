@@ -4,8 +4,9 @@ allowed-tools: Bash, Read, Write, Edit
 ---
 
 # Plan a Phase
-## Defaults
-Load `iterative-build` and `my-style` skills. No git commits.
+
+**Skills:** Load `iterative-build`, `my-style`
+**No git commits.** User controls all git operations.
 
 ## Steps
 
@@ -52,11 +53,10 @@ Load `iterative-build` and `my-style` skills. No git commits.
 
 ## Rules
 
-- Do NOT start building. Planning only.
-- Do NOT make git commits.
-- Keep tasks specific — each should target identifiable files.
-- One plan per phase. If the work is too big, split into multiple phases.
-- Interface contracts are required for implementation phases that will have a test phase.
-- Reference the `iterative-build` skill for plan.md format.
+- Planning only. Do not start building.
+- Keep tasks specific — target identifiable files.
+- One plan per phase. If too big, split into multiple phases.
+- Interface contracts required for implementation phases with test phases.
+- Reference `iterative-build` skill for plan.md format.
 
 $ARGUMENTS

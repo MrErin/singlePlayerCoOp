@@ -1,157 +1,97 @@
 ---
-name: post-build-review 
-description: Generate comprehensive review documentation after completing a build. Creates ADHD-friendly guides with checkboxes, time estimates, and progressive disclosure to help users test, understand, and extend the codebase without feeling overwhelmed. 
+name: post-build-review
+description: Generate comprehensive review documentation after completing a build. Creates ADHD-friendly guides with checkboxes, time estimates, and progressive disclosure to help users test, understand, and extend the codebase without feeling overwhelmed.
 allowed-tools: Read, Write
 ---
 
-# Post-Build Review Skill
+# Post-Build Review
 
 ## Purpose
 
-Generate review documentation after completing any multi-file project or iterative build.
+Generate `review_guide.md` after completing any multi-file project or iterative build.
 
-**Output Location:** `_planning/review_guide.md`
+**No git commits.** User controls all git operations.
 
-## ADHD-Friendly Requirements (Critical)
+## ADHD Requirements (Critical)
 
-**Every section must include:**
+Every section must have:
+- [ ] Checkboxes for progress tracking
+- [ ] Time estimates (realistic)
+- [ ] Numbered steps
+- [ ] Expected output per step
 
-- [ ] **Checkboxes** for progress tracking
-- [ ] **Time estimates** (realistic, not rushed)
-- [ ] **Clear structure** with numbered steps
-- [ ] **Expected output** after each step
-
-**Document structure:**
-
+Document structure:
 - Progressive disclosure (simple → complex)
 - Short sections (5-20 min each)
-- Can be completed in multiple sessions
+- Multiple session completable
 - Clear stopping points
 
 ## Required Sections
 
-### 1. Quick Start (5 minutes)
+### 1. Quick Start (5 min)
 
-**Goal:** Get the app running to verify it works
+Prerequisites checklist → numbered setup steps → expected output → troubleshooting redirect.
 
-**Include:**
+### 2. Feature Testing (15-20 min)
 
-- Prerequisites checklist
-- Numbered setup steps
-- Expected output after each step
-- "If all steps work, proceed. If not, see Troubleshooting"
+For each feature: description, test steps (checkboxes), expected results, verification method, common issues.
 
-### 2. Feature Testing Checklist (15-20 minutes)
+### 3. Code Understanding (30-45 min)
 
-**Goal:** Test each feature to understand what the app does
+Structure as levels:
+- Level 1: Data Structure
+- Level 2: Data Flow
+- Level 3: Application Logic
+- Level 4: Database Operations
+- Level 5: Frontend
 
-**For each feature:**
+For each file: read time, one-sentence purpose, key concepts, what to notice, what to skip, optional hands-on test.
 
-- Brief description: "What it does"
-- Test steps (checkboxes)
-- Expected results
-- How to verify (database queries if applicable)
-- Common troubleshooting
+**Order logically, not alphabetically.**
 
-**Format:** One feature per subsection with clear boundaries
+### 4. Testing Guide
 
-### 3. Code Understanding Guide (30-45 minutes)
+Automated: how to run, what validates, coverage, how to add.
+Manual: main feature testing instructions.
 
-**Goal:** Learn the codebase in logical order (not alphabetical)
+### 5. Known Issues
 
-**Structure as levels:**
-
-- **Level 1: Data Structure** - CSV files, schemas, static data
-- **Level 2: How Data Flows** - Init scripts, data loading
-- **Level 3: Application Logic** - Routes, business logic
-- **Level 4: Database Operations** - Queries, functions
-- **Level 5: Frontend** - Templates, UI
-
-**For each file:**
-
-- Read time estimate
-- "What it does" (one sentence)
-- "Key concepts" to understand
-- "Look for" (specific things to notice)
-- "You can skip" (what to ignore for now)
-- "Try it" (optional hands-on test)
-
-**Ordering principle:** Build mental model progressively, don't jump around
-
-### 4. Testing Guide 
-
-**Include (for automated tests):**
-
-- How to run automated tests
-- What each test validates
-- Expected coverage
-- How to add new tests following existing patterns
-
-**Keep brief** - user can read test files for details
-
-Also include instructions for manual testing of main features
-
-### 5. Known Issues / Limitations
-
-**Be honest about:**
-
-- Features not yet implemented (from original spec)
-- Technical limitations
-- Edge cases not handled
-- Performance considerations
-- Browser compatibility
-
-**Format:** Checklists and bullet points, not paragraphs
+Honest list: unimplemented features, technical limitations, edge cases, performance, browser compatibility.
 
 ### 6. Next Steps
 
-**Suggest improvements ordered by:**
+Ordered by effort:
+1. Easiest (1-2 hours)
+2. Medium (3-5 hours)
+3. Larger (8+ hours)
 
-1. Easiest additions (1-2 hours)
-2. Medium additions (3-5 hours)
-3. Larger features (8+ hours)
-
-**For each suggestion:**
-
-- Complexity level (Low/Medium/High)
-- Impact on user experience
-- Files to add/modify
-- Brief implementation approach
+Each: complexity, impact, files, approach.
 
 ## What to Skip
 
-**Don't include:**
+- Trivial comments
+- Line-by-line walkthroughs
+- Standard algorithm explanations
+- Setup covered in phase testing docs
 
-- Trivial comments explaining obvious code
-- Line-by-line code walkthroughs
-- Detailed algorithm explanations for standard patterns
-- Setup instructions Agent already covered in phase testing docs
-
-**Focus on:**
+## Focus on
 
 - Why decisions were made
 - How pieces connect
-- Where to look to understand specific features
-- What to test to verify it works
+- Where to look for specific features
+- What to test for verification
 
-## Integration with iterative-build
+## Integration
 
-**Greenfield projects:**
+**Greenfield:** Generate after Phase 5 complete.
 
-- Generate as `review_guide.md` after Phase 5 complete
-
-**Feature additions:**
-
-- Generate as `feature_[name]_review_guide.md`
-- Focus review on the new feature and its integration points
+**Feature addition:** Generate as `feature_[name]_review_guide.md`.
 
 ## Critical Reminders
 
-- User has ADHD - structure reduces cognitive load
-- Checkboxes provide sense of progress
+- User has ADHD — structure reduces cognitive load
+- Checkboxes provide progress sense
 - Time estimates help planning
 - Testing-first approach (do before reading code)
-- Code reading order is logical, not alphabetical
+- Code reading order is logical
 - Break into resumable sections
-
-**Focus:** Help user understand and test without feeling overwhelmed

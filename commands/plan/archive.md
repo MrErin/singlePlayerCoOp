@@ -5,8 +5,8 @@ allowed-tools: Bash, Read, Write
 
 # Archive Feature
 
-## Defaults
-Load `iterative-build` skill. No git commits.
+**Skill:** Load `iterative-build`
+**No git commits.**
 
 ## Steps
 
@@ -52,11 +52,10 @@ Load `iterative-build` skill. No git commits.
 
 ## Rules
 
-- Do NOT clear the workspace (step 6) before the user confirms the extraction in step 5
-- Do NOT archive `decisions.md`, `deferred.md`, or `codebase.md` — these are continuous and stay at root
-- Do NOT make git commits
-- Keep `index.md` entries dense: one line per requirement, no prose explanations
-- If `deferred.md` has open items, surface them in the output — the user should decide whether they carry forward to the next feature
-- If `project-requirements/` is being created for the first time, scan `decisions.md` and phase summaries for additional permanent behaviors that may not be in `requirements.md`
+- Do not clear workspace before user confirms extraction
+- Do not archive `decisions.md`, `deferred.md`, or `codebase.md` — these stay at root
+- Keep `index.md` entries dense: one line per requirement
+- If `deferred.md` has open items, surface them for user decision
+- For new `project-requirements/`, scan `decisions.md` and phase summaries for additional permanent behaviors
 
 $ARGUMENTS

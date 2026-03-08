@@ -4,8 +4,10 @@ allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
 
 # Build Current Phase
-## Defaults
-Load `iterative-build` and `my-style` skills. Read `_planning/state.md` before starting. No git commits.
+
+**Skills:** Load `iterative-build`, `my-style`
+**Read first:** `_planning/state.md`
+**No git commits.** User controls all git operations.
 
 For phases with UI/template/component work: also load the `frontend-design` skill.
 
@@ -75,10 +77,9 @@ When `test-writer` reports that a test fails because the implementation appears 
 
 ## Rules
 
-- Follow the `my-style` skill for all code quality standards.
-- Do NOT proceed to the next phase. STOP after this one.
-- Do NOT make git commits.
-- If the plan feels too big, tell the user and suggest splitting into multiple phases before building.
-- Accessibility is not optional for web projects.
+- Follow `my-style` for code quality.
+- STOP after this phase. Do not proceed to next.
+- If plan feels too big, tell user and suggest splitting.
+- Accessibility required for web projects.
 
 $ARGUMENTS

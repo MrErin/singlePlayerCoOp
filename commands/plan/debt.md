@@ -5,8 +5,8 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 
 # Assess Technical Debt
 
-## Defaults
-Load `my-style` skill. No git commits.
+**Skill:** Load `my-style`
+**No git commits.**
 
 ## Steps
 
@@ -187,7 +187,6 @@ Total: [n] cards | Est. effort: [time] | Risk ceiling: [highest risk level in cl
 
 ## Rules
 
-- Do NOT rewrite any code in the codebase
-- Do NOT make git commits
-- Do provide examples of corrected code inside the technical_debt document if that example is brief and clear
-- Do provide information for why the change is necessary
+- Do not rewrite code in codebase
+- Provide brief corrected examples in the document when clear
+- Explain why each change is necessary

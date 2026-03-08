@@ -5,9 +5,8 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 
 # Audit Test Suite
 
-## Defaults
-
-Load `my-style` skill. No git commits.
+**Skill:** Load `my-style`
+**No git commits.**
 
 ## Steps
 
@@ -293,11 +292,10 @@ Total: [n] cards | Est. effort: [time]
 
 ## Rules
 
-- Do NOT rewrite any code in the codebase
-- Do NOT make git commits
-- Prefer reading existing `.mutmut-cache` results over re-running — only run `mutmut run` if no cache exists or the user requests a refresh
-- Do provide brief corrected examples inside cards when the fix is obvious (e.g., adding an assertion)
-- Do provide information for WHY the test is insufficient — connect to what bug it would miss
-- Do prioritize business logic tests over utility/helper tests
-- Do cluster cards by source module — all cards for a given module stay together
-- If the test suite is very large, focus on the modules identified as critical in the `_planning` documents and note which areas were not audited
+- Do not rewrite code in codebase
+- Prefer reading existing `.mutmut-cache` over re-running
+- Provide brief corrected examples when fix is obvious
+- Explain WHY the test is insufficient — connect to bugs it would miss
+- Prioritize business logic tests over utility tests
+- Cluster cards by source module
+- For large suites, focus on critical modules from `_planning` documents

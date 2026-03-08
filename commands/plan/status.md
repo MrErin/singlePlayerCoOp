@@ -4,8 +4,9 @@ allowed-tools: Bash, Read
 ---
 
 # Check Project Status
-## Defaults
-Load `iterative-build` skill. No git commits.
+
+**Skill:** Load `iterative-build`
+**No git commits.**
 
 ## Steps
 
@@ -26,8 +27,7 @@ Load `iterative-build` skill. No git commits.
 
 ## Rules
 
-- Read only. Do NOT modify any files.
-- Do NOT start building anything.
-- Keep the output concise — this is a status check, not a report.
+- Read only. Do not modify files.
+- Keep output concise.
 
 $ARGUMENTS

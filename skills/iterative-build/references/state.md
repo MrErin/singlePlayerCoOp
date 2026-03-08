@@ -10,9 +10,16 @@ Last Updated: [timestamp]
 
 ## Session Log
 ### [date]
-- Completed: [what was done]
-- Decisions: [any decisions made]
-- Next: [what comes next]
+- **Completed:** [what was done]
+- **Decisions:** [any decisions made]
+- **Next:** [what comes next]
 
 ## Blockers
 [any current blockers or questions]
+
+## Recent Decisions (Quick Reference)
+| Decision | Date | Rationale |
+|----------|------|-----------|
+| [decision] | [date] | [why] |
+
+*Full details in decisions.md*
