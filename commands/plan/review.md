@@ -26,13 +26,7 @@ allowed-tools: Read, Write
     - User found issues — record them, adjust
     - Everything passed — mark phase complete
 7. **If issues surface during review** add them to a new section of `ua_testing` rather than reporting exclusively in the terminal.
-8. **Generate or update `phase_summary.md`** in the phase directory with: 
-    - **What Was Built:** A plain-language paragraph describing what this phase accomplished — not a file list 
-    - **Key Decisions:** Why things were built this way, including entries from `decisions.md` for this phase and any implicit decisions visible in the code 
-    - **Complex Logic Explained:** The 2-3 most non-obvious logical flows in plain language — the parts where reading the code alone wouldn't make the "why" clear 
-    - **Connection to Previous Phases:** What data or patterns from earlier phases this builds on, and what it sets up for later phases 
-    - Skip obvious code (CRUD operations, config, boilerplate) — only explain what's worth explaining 
-    - Keep it concise — this is a reference for maintaining your mental model, not a code walkthrough
+8. **Generate or update `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references. Focus on: what was built (plain language, not file lists), key decisions and their rationale, the 2-3 most non-obvious logic flows, and connections to previous/future phases. Skip obvious code — only explain what's worth explaining.
 9. **Verify all phase artifacts exist** before proceeding:
 	- [ ] `ua_testing.md` exists in the phase directory
 	- [ ] `user_feedback.md` exists in the phase directory

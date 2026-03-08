@@ -21,15 +21,7 @@ allowed-tools: Bash, Read, Write, Edit
 3. **Read requirements**: `_planning/requirements.md` (current feature scope). If this phase integrates with or modifies existing functionality, also read `_planning/project-requirements/index.md` and load any specific detail file that is directly relevant to this phase's work.    
 4. **Read previous phase artifacts** — check what was built and any testing and user feedback notes. Initiate discussion with user to resolve issues and discuss questions if notes are present from previous phase.
 5. **Check `_planning/deferred.md`** for any items targeting this phase or a relevant work area. Incorporate them into the plan explicitly — note their origin so the user knows they're being surfaced from a previous phase's flag.
-6. **Research before planning tasks:**
-    - Libraries/packages that provide needed functionality
-    - Best practices and common patterns for the approach being used
-    - Relevant API documentation or framework guides
-    - Accessibility requirements for any UI components planned
-    - Known pitfalls or gotchas with the chosen approach
-    - Check for security concerns relevant to what's being built
-    - Document findings in the plan.md under the "Research Notes" section
-    - Flag anything uncertain for user review
+6. **Research before planning:** Libraries, patterns, API docs, accessibility, security, and pitfalls relevant to this phase. Document findings in plan.md under "Research Notes." Flag uncertainties for user review.
 7. **Generate `plan.md`** in the phase directory (e.g., `_planning/phases/02-read-ops/plan.md`) with:
     - Clear goal statement
     - Specific tasks with files, action, verify, and done-when criteria
