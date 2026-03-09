@@ -46,6 +46,19 @@ Evaluate against `my-style` testing standards (load `references/testing.md`). Ad
 - [ ] No tests cover behavior that has been removed or replaced
 - [ ] Tests for renamed functionality have been updated
 
+### Parallel Module Coverage
+When multiple modules share similar architecture (e.g., repos with `create_many()`, services with retry logic, handlers with validation), audit for test parity:
+
+- [ ] **Identify architectural patterns** — Group modules that implement the same pattern (e.g., "all repos with bulk insert", "all services with caching")
+- [ ] **Check cross-module test parity** — For each pattern, verify that ALL modules testing that pattern have tests for:
+	- Edge cases discovered in ANY module (e.g., if one repo's `create_many()` was buggy with duplicates, ALL similar repos need that test)
+	- Failure modes that could affect the shared architecture
+	- Invariants that the architecture is supposed to maintain
+- [ ] **Flag missing parallel tests** — If module A has a test for fragile behavior X, and module B shares that architecture but lacks the test, create a card
+- [ ] **Document the architectural link** — Cards should explain "Module X has test Y for pattern Z; Module W uses same pattern but lacks this test"
+
+**Why this matters:** Architectural bugs often manifest identically across similar modules. A fix in one module without tests in siblings invites regression when the architecture evolves.
+
 ## Rules
 
 - Do not rewrite code in codebase

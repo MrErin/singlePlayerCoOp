@@ -52,25 +52,25 @@ All card types (ARCH, DESIGN, QUALITY, DATA, ACCESS) use the standard template. 
 
 ## CRITICAL - Architectural Violations
 
-[Issues that violate core structural principles and affect the entire codebase]
+[Cards that violate core structural principles and affect the entire codebase]
 
 ___
 
 ## HIGH - Design Principle Violations
 
-[Violations of SOLID principles or separation of concerns but contained to specific modules]
+[Cards that violate SOLID principles or separation of concerns but contained to specific modules]
 
 ___
 
 ## MEDIUM - Code Quality Issues
 
-[Issues worth addressing but don't block functionality or create architectural risk]
+[Cards worth addressing but don't block functionality or create architectural risk]
 
 ___
 
 ## LOW - Minor Improvements
 
-[Nice-to-have, improve consistency but do not affect correctness or maintainability]
+[Cards that are nice-to-have, improve consistency but do not affect correctness or maintainability]
 
 ___
 

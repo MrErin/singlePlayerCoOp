@@ -22,9 +22,9 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 	- Interactive elements have ARIA labels, keyboard navigation, and focus management
 5. **Research**: relevant architectural patterns for the project's language, framework, and type
 6. **Generate**: `_planning/technical_debt.md` — read `commands/plan/references/debt-templates.md` for card and document templates
-7. **Organize**: issues by severity (most severe at top), numbered contiguously. Use this template for each issue:
+7. **Organize**: issues by severity (most severe at top), identified by their card type and number. Use this template for each issue:
 	```markdown
-	### [Number] [Issue Name]
+	### [TYPE]-[NNN]: [Issue Name]
 	- **Standard Violated:**
 	- **What's wrong:** and where
 	- **Examples:**
@@ -35,7 +35,7 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 	- **Files affected**
 	- **Time estimate** for the fix
 	```
-8. **Generate the cluster deck**: Group issues into clusters by files/modules they affect. Within each cluster, order highest-to-lowest severity. Order clusters so higher-severity clusters come first; if equal severity, prioritize clusters whose files are touched by other clusters. Assign a BOSS card to any cluster with 3+ issues.
+8. **Generate the cluster deck**: Group issues into clusters by files/modules they affect. Within each cluster, order highest-to-lowest severity. Order clusters so higher-severity clusters come first; if equal severity, prioritize clusters whose files are touched by other clusters. Assign a BOSS card to any cluster with 3+ issues. **Cards in clusters must use the same `[TYPE]-[NNN]` identifiers from step 7** — this lets readers cross-reference between the severity exposition and the action-oriented clusters.
 9. **Progressive output**: If >10 issues found, generate the full severity sections and cluster summary tables, but only expand full card details for the top 4 clusters. Add a note: "Run `/plan:debt [cluster-name]` to expand remaining clusters."
 
 ## Rules
