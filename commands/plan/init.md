@@ -19,6 +19,7 @@ allowed-tools: Bash, Read, Write
     - `_planning/` exists but no `project-requirements/` → Upgrade Planning (see section below)
 3. **If brownfield — map the codebase:**
     - Read package.json / requirements.txt / Cargo.toml for stack and dependencies
+    - **Index with jcodemunch**: Run `index_folder` on the source directory, then use `get_repo_outline` for module structure and `search_symbols` to identify key patterns
     - Read directory structure (src/ level depth, not individual files)
     - Identify key patterns: routing, state management, data flow
     - **Capture patterns & conventions:**

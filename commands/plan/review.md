@@ -11,10 +11,10 @@ allowed-tools: Read, Write
 
 ## Steps
 
-1. **Determine which phase to review:**    
+1. **Determine which phase to review:**
     - If argument provided: review that phase.
     - If no argument: review the most recently completed phase (status = "review").
-2. **Read the phase's `plan.md` and all code created in that phase.** 
+2. **Read the phase's `plan.md` and all code created in that phase.** Use jcodemunch `get_file_outline` and `get_symbol` to efficiently review code structure and implementations. 
 3. **Check** the work completed in the phase you're reviewing and ensure the code meets the goal set out by the plan and utilizes best practices for the patterns implemented.
     - If a `code-reviewer` subagent is available, delegate the code quality review to it for an independent assessment against `my-style` standards
     - Research if you are uncertain about a pattern or architectural decision

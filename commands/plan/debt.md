@@ -12,16 +12,17 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 
 1. **Read**: `_planning/codebase.md` to understand project structure. Read `_planning/requirements.md` and `_planning/decisions.md` for context.
 	1. If the `_planning` directory does not exist, STOP. Instruct the user to run /plan:init first.
-2. **Triage**: From `codebase.md`, identify the business logic and core modules. Rank by importance: business logic > data layer > API/routes > utilities > config.
-3. **Analyze by module**: For each module (highest priority first), delegate to a `code-reviewer` subagent with that module's files and `my-style` standards. Evaluate against `my-style` standards plus these debt-specific checks:
+2. **Index with jcodemunch**: If the project isn't indexed, run `index_folder` on the source directory. Use `get_repo_outline` to see module structure, `search_text` to find pattern violations (e.g., string concatenation in queries, manual DB open/close).
+3. **Triage**: From `codebase.md`, identify the business logic and core modules. Rank by importance: business logic > data layer > API/routes > utilities > config.
+4. **Analyze by module**: For each module (highest priority first), delegate to a `code-reviewer` subagent with that module's files and `my-style` standards. Use jcodemunch `get_file_outline` to see all symbols in each file being reviewed. Evaluate against `my-style` standards plus these debt-specific checks:
 	- File organization follows feature-folder pattern
 	- DB connections use context managers (no manual open/close)
 	- All queries use parameterized syntax (no string concatenation or f-strings)
 	- Semantic HTML used appropriately (not div-for-everything)
 	- Interactive elements have ARIA labels, keyboard navigation, and focus management
-4. **Research**: relevant architectural patterns for the project's language, framework, and type
-5. **Generate**: `_planning/technical_debt.md` — read `commands/plan/references/debt-templates.md` for card and document templates
-6. **Organize**: issues by severity (most severe at top), numbered contiguously. Use this template for each issue:
+5. **Research**: relevant architectural patterns for the project's language, framework, and type
+6. **Generate**: `_planning/technical_debt.md` — read `commands/plan/references/debt-templates.md` for card and document templates
+7. **Organize**: issues by severity (most severe at top), numbered contiguously. Use this template for each issue:
 	```markdown
 	### [Number] [Issue Name]
 	- **Standard Violated:**
@@ -34,8 +35,8 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 	- **Files affected**
 	- **Time estimate** for the fix
 	```
-7. **Generate the cluster deck**: Group issues into clusters by files/modules they affect. Within each cluster, order highest-to-lowest severity. Order clusters so higher-severity clusters come first; if equal severity, prioritize clusters whose files are touched by other clusters. Assign a BOSS card to any cluster with 3+ issues.
-8. **Progressive output**: If >10 issues found, generate the full severity sections and cluster summary tables, but only expand full card details for the top 4 clusters. Add a note: "Run `/plan:debt [cluster-name]` to expand remaining clusters."
+8. **Generate the cluster deck**: Group issues into clusters by files/modules they affect. Within each cluster, order highest-to-lowest severity. Order clusters so higher-severity clusters come first; if equal severity, prioritize clusters whose files are touched by other clusters. Assign a BOSS card to any cluster with 3+ issues.
+9. **Progressive output**: If >10 issues found, generate the full severity sections and cluster summary tables, but only expand full card details for the top 4 clusters. Add a note: "Run `/plan:debt [cluster-name]` to expand remaining clusters."
 
 ## Rules
 

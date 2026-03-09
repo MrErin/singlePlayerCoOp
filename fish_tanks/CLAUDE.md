@@ -10,7 +10,12 @@ When any /plan: command is invoked, load the iterative-build skill first.
 
 Always use Context7 MCP for code generation, library usage, setup steps, and API documentation without me explicitly asking.
 
-Always use jcodemunch MCP when exploring a codebase.
+Always use jcodemunch MCP for codebase exploration and code analysis:
+- **index_folder** or **index_repo** — when starting work on a project not yet indexed
+- **search_symbols** — find functions, classes, methods by name or signature
+- **get_symbol** / **get_symbols** — retrieve full source code for specific symbols
+- **get_file_outline** — see all symbols in a file with signatures
+- **search_text** — full-text search for string literals, comments, config values
 
 Always use sequential-thinking MCP for complex planning decisions that benefit from chain of thought reasoning.
 

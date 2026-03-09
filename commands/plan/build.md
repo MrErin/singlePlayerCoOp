@@ -30,19 +30,21 @@ Single-task mode:
 
 ## Steps
 
-1. **Read the phase's `plan.md`** for task list and verify criteria. 
-2. **Read `decisions.md`** for any constraints.    
-3. **Read `codebase.md`** for current project structure and stack context.    
-4. **Check for user modifications** — read `phase_summary.md` and `user_feedback.md` from previous phases and scan git for modified files.    
-5. **Execute tasks** from the plan:
-    - **Single-task mode:** If argument is `[phase].[task]` format, execute only that task number from the specified phase. Skip steps 6-9 after completion — output the task result and STOP.
+1. **Read the phase's `plan.md`** for task list and verify criteria.
+2. **Read `decisions.md`** for any constraints.
+3. **Read `codebase.md`** for current project structure and stack context.
+4. **Check for user modifications** — read `phase_summary.md` and `user_feedback.md` from previous phases and scan git for modified files.
+5. **Index and explore codebase with jcodemunch** — use `search_symbols` and `get_symbol` to find existing patterns, similar implementations, and relevant interfaces before writing code.
+6. **Execute tasks** from the plan:
+    - **Single-task mode:** If argument is `[phase].[task]` format, execute only that task number from the specified phase. Skip steps 7-10 after completion — output the task result and STOP.
     - **Full-phase mode:** Execute all tasks sequentially.
     - Follow each task's action description.
     - After each task, verify against the task's verify criteria.
     - **Per-task verification:** Delegate to a `code-reviewer` subagent after each task completes. The subagent receives: task spec, files touched, `my-style` standards — nothing else. If issues are found, fix them before proceeding to the next task. This prevents error compounding where a mistake in task 1 pollutes tasks 2-5.
+    - **Use jcodemunch during implementation** — when implementing a task, search for existing similar code to match patterns and conventions.
     - If a task can't be completed as planned, note why and adapt.
     - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.
-6. **Verify the build:** 
+7. **Verify the build:** 
     - Run the application/tests and confirm no errors
 	    - If the application is not yet runnable (setup or early data layer phase), verify by running available checks instead:
 		    - Dependency installation completes without errors
@@ -60,22 +62,22 @@ Single-task mode:
 	    - Error messages do not leak internal details
     - Log any issues discovered and fixes applied in the plan.md "Issues Discovered During Verification Stage" section
     - **Append to `_planning/lessons.md`:** For any significant issue caught during verification (not minor typos or trivial fixes), add an entry following the format in `iterative-build/references/lessons.md`. Include: date, phase, brief title, what happened, root cause, fix applied, and prevention tip. This builds institutional memory for future phases.
-7. **Generate `ua_testing.md`** in the phase directory with:    
+8. **Generate `ua_testing.md`** in the phase directory with:    
     - Summary of what was built
     - Instructions for running automated testing, if any
     - Manual testing steps to cover all functionality built in this phase
     - Expected behaviors
     - Edge cases to check
     - Phase completion checklist
-8. **Update planning state:**
+9. **Update planning state:**
     - `_planning/state.md` — log what was built, set status to "review"
     - `_planning/roadmap.md` — check off the completed phase
     - `_planning/deferred.md` — add any cross-phase items noticed during this build; remove any items that were addressed
-    - `_planning/lessons.md` — entries already appended during step 6 verification (if any issues were found)
+    - `_planning/lessons.md` — entries already appended during step 7 verification (if any issues were found)
     - `_planning/codebase.md`:
         - **Setup phase:** Generate it (captures the project structure just created)
         - **Other phases:** Update only if new directories, dependencies, or architectural patterns were introduced. Skip if structure unchanged.
-9. **STOP.** Output the testing checklist. Wait for user approval.
+10. **STOP.** Output the testing checklist. Wait for user approval.
 
 ## If Test-Writer Flags Implementation Bugs
 
