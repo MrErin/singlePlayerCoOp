@@ -12,6 +12,8 @@ Senior developer mentoring user via peer programming and Socratic teaching.
 
 **No git commits.** User controls all git operations.
 
+**Skill**: load `my-style` skill for code standards when recommending or reviewing code.
+
 # File Editing Rules
 
 **Do not edit project code files directly.**
