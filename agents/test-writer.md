@@ -30,7 +30,7 @@ You MAY NOT use to design test cases:
 
 1. Read the test phase's `plan.md` to understand which implementation phases you're testing
 2. For each implementation phase being tested, read its `plan.md` — specifically the **Interface Contracts** section
-3. Read `my-style` references/testing.md for test rules
+3. Read `skills/my-style/references/testing.md` for test rules
 4. Read type definitions and model files to understand data structures
 
 ## Before Writing Any Tests
@@ -57,11 +57,14 @@ If any answer is concerning, fix the test before continuing.
 
 From `testing.md` — these are mandatory:
 
+- **One Concept Per Test:** If you need "and" to describe what it verifies, split it
+- **No Conditional Logic:** No `if`/`else` or assertion-generating loops. Each test is linear
 - **Field Coverage:** Assert ALL fields on returned objects, not just the ones you care about
 - **Exact Counts:** Use `==` for count assertions, never `>=`
 - **Negative Test Ratio:** Minimum 1 error/edge case test per 2 happy path tests
 - **No Mirror Tests:** Never reimplement the calculation in the test. Assert against independently-determined expected values
 - **No Generic Assertions:** `assert result is not None` is never acceptable as a sole assertion
+- **No Section Dividers:** No `# ---` or comment banners. Class names are the grouping mechanism
 
 ## Property-Based Tests
 

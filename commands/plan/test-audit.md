@@ -1,6 +1,6 @@
 ---
 description: Audit the test suite for quality, effectiveness, and coverage gaps. Generates investigation cards — small, self-contained tasks for manually verifying and improving tests. Does NOT rewrite code.
-allowed-tools: Bash, Read, Write, Grep, Glob
+allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
 
 # Audit Test Suite
@@ -30,7 +30,7 @@ All tests evaluated against `my-style/testing.md`. Quick reference for what to f
 
 | Category | What to Check For |
 |----------|-------------------|
-| **Test Design** | One concept per test, descriptive names, no conditionals, proportional setup |
+| **Test Design** | One concept per test, descriptive names, no conditionals, proportional setup, no section dividers |
 | **Test Independence** | Order-independent, no shared mutable state, no timing dependencies |
 | **Assertion Quality** | All fields asserted, exact counts (not `>=`), no tautologies or mirror tests |
 | **Coverage** | Edge cases, error paths, negative tests (minimum 1:2 ratio with happy path) |
@@ -43,7 +43,7 @@ When multiple modules share architecture (e.g., all repos have `create_many()`),
 
 ## Rules
 
-- Do not rewrite code in codebase
+- Do not rewrite production code. Trivial test fixes (step 8) are allowed.
 - Prefer reading existing `.mutmut-cache` over re-running
 - Provide brief corrected examples when fix is obvious
 - Explain WHY the test is insufficient — connect to bugs it would miss
