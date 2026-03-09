@@ -26,38 +26,20 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 
 ## Standards to Evaluate Against
 
-Evaluate against `my-style` testing standards (load `references/testing.md`). Additionally check these audit-specific concerns:
+All tests evaluated against `my-style/testing.md`. Quick reference for what to flag:
 
-### Test Design
-- [ ] Each test verifies one logical concept
-- [ ] Test names describe scenario and expected outcome
-- [ ] No conditional logic (if/else) or assertion-generating loops inside tests
-- [ ] Setup/teardown is proportional to what's being tested
-- [ ] No two tests exercise the exact same code path with the same assertions
+| Category | What to Check For |
+|----------|-------------------|
+| **Test Design** | One concept per test, descriptive names, no conditionals, proportional setup |
+| **Test Independence** | Order-independent, no shared mutable state, no timing dependencies |
+| **Assertion Quality** | All fields asserted, exact counts (not `>=`), no tautologies or mirror tests |
+| **Coverage** | Edge cases, error paths, negative tests (minimum 1:2 ratio with happy path) |
+| **Seam Tests** | Module boundaries have integration tests, not just mocked unit tests |
+| **Redundancy** | No duplicate tests exercising same code path with same assertions |
+| **Obsolete Tests** | Tests track renamed/removed code, no orphan tests for deleted functions |
+| **Parallel Coverage** | Similar modules (same pattern) have similar test coverage |
 
-### Test Independence
-- [ ] Tests don't depend on execution order
-- [ ] Tests don't share mutable state
-- [ ] No external resource dependencies without mocking
-- [ ] No sleep/timing-dependent assertions
-
-### Obsolete Tests
-- [ ] No tests reference functions, classes, or modules that no longer exist
-- [ ] No tests cover behavior that has been removed or replaced
-- [ ] Tests for renamed functionality have been updated
-
-### Parallel Module Coverage
-When multiple modules share similar architecture (e.g., repos with `create_many()`, services with retry logic, handlers with validation), audit for test parity:
-
-- [ ] **Identify architectural patterns** — Group modules that implement the same pattern (e.g., "all repos with bulk insert", "all services with caching")
-- [ ] **Check cross-module test parity** — For each pattern, verify that ALL modules testing that pattern have tests for:
-	- Edge cases discovered in ANY module (e.g., if one repo's `create_many()` was buggy with duplicates, ALL similar repos need that test)
-	- Failure modes that could affect the shared architecture
-	- Invariants that the architecture is supposed to maintain
-- [ ] **Flag missing parallel tests** — If module A has a test for fragile behavior X, and module B shares that architecture but lacks the test, create a card
-- [ ] **Document the architectural link** — Cards should explain "Module X has test Y for pattern Z; Module W uses same pattern but lacks this test"
-
-**Why this matters:** Architectural bugs often manifest identically across similar modules. A fix in one module without tests in siblings invites regression when the architecture evolves.
+When multiple modules share architecture (e.g., all repos have `create_many()`), check that edge case tests in one module exist in siblings. A bug fix without parallel tests invites regression.
 
 ## Rules
 

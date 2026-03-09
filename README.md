@@ -70,5 +70,6 @@ It is never supposed to write code or modify files directly, other than `scratch
 - I open the `_planning` directory inside [Obsidian](https://obsidian.md/). It makes it much easier and engaging to work with Markdown files than editing in the IDE. 
 	- This is why the directory has a leading underscore rather than a period: Obsidian won't open `.planning` as a vault.
 - My system owes a lot to https://github.com/gsd-build/get-shit-done. That system was way too automated for me - I need to check in with the code frequently or I'll lose the thread. But if that constraint doesn't bother you, go check it out! 
+- I've been experimenting with jcodemunch to optimize token use for codebase analysis. Check out that project here: https://github.com/jgravelle/jcodemunch-mcp
 - I have raging ADHD and am very silly.
 - I hope this README finds you well.

@@ -23,6 +23,8 @@ Always use sequential-thinking MCP for complex planning decisions that benefit f
 
 You are running inside a Docker container. This determines what is and is not possible.
 
+User uses JetBrains IDEs.
+
 ## Hard Limits
 
 These will never work. Do not attempt them, do not try variations or workarounds:

@@ -12,9 +12,8 @@ All card types (ARCH, DESIGN, QUALITY, DATA, ACCESS) use the standard template. 
 - 🧹 **QUALITY** — code quality, comments, logging (long functions, missing types, stale comments)
 - 🗃️ **DATA** — database/SQL issues (context managers, parameterized queries)
 - ♿ **ACCESS** — web accessibility (semantic HTML, ARIA, keyboard nav) — risk is always Low
-- 👾 **BOSS** — cluster entry point for modules with 3+ issues
 
-### Standard Card
+### Card Template
 
 ```markdown
 ### [TYPE]-[NNN]: [Issue Name]
@@ -24,19 +23,6 @@ All card types (ARCH, DESIGN, QUALITY, DATA, ACCESS) use the standard template. 
 - **Fix**: [specific action — what exactly to do, not just "refactor"]
 - **Done when**: [clear completion criteria]
 - **Time box**: [N minutes]
-```
-
-### 👾 Boss Battle Card
-
-```markdown
-### 👾 BOSS-[NNN]: [Module Name]
-- **Difficulty**: 🔴
-- **Risk**: [Low | Medium | High — overall risk for this cluster]
-- **Module**: [source module or feature area]
-- **Issues**: [count] — references: [card numbers, e.g., ARCH-001, QUALITY-003]
-- **The situation**: [2-3 sentences on why this module needs coordinated work and what the combined effect of these issues is]
-- **Done when**: All referenced cards are complete
-- **Time box**: [N min total — or split across sessions]
 ```
 
 ## technical_debt.md Template
@@ -86,9 +72,9 @@ ___
 
 ## 🃏 The Cluster Deck
 
-> **How to use**: Work through one cluster at a time — fix everything in the area before moving on. Within each cluster, cards run highest-to-lowest severity. Boss cards are the entry point for clusters with 3+ issues. Check off cards as you go.
+> **How to use**: Work through one cluster at a time — fix everything in the area before moving on. Within each cluster, cards run highest-to-lowest severity. Check off cards as you go.
 >
-> **Card types**: 🔥 Arch | ⚙️ Design | 🧹 Quality | 🗃️ Data | ♿ Access | 👾 Boss
+> **Card types**: 🔥 Arch | ⚙️ Design | 🧹 Quality | 🗃️ Data | ♿ Access
 >
 > **Difficulty**: 🟢 Quick (<30 min) | 🟡 Medium (30-60 min) | 🔴 Large (1-3 hr) | ⚫ XL (3+ hr)
 >
@@ -101,7 +87,7 @@ Total: [n] cards | Est. effort: [time] | Risk ceiling: [highest risk level in cl
 
 | # | Done | Card | Type | Difficulty | Risk | Time |
 |---|------|------|------|------------|------|------|
-| 1 | [ ] | [BOSS-001] | 👾 | 🔴 | High | 90 min |
+| 1 | [ ] | [DESIGN-001] | ⚙️ | 🔴 | High | 90 min |
 | 2 | [ ] | [ARCH-001] | 🔥 | 🔴 | High | 45 min |
 | 3 | [ ] | [QUALITY-002] | 🧹 | 🟡 | Low | 20 min |
 

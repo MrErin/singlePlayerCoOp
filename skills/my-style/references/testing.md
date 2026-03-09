@@ -5,134 +5,153 @@
 Separate pure logic from I/O:
 
 ```python
-# ✅ Easy to test (pure function)
+# ✅ Easy to test - no external dependencies
 def calculate_xp(exercise_type: str, quantity: int) -> int:
-    """Calculate XP - no external dependencies."""
     if exercise_type == 'binary':
         return 10 if quantity else 0
     return 5 * quantity
 
-# Then use it in context
+# ❌ Hard to test - mixed concerns
 def process_form():
-    """Route handler - uses testable function."""
-    data = request.form
-    xp = calculate_xp(data['type'], data['quantity'])
-    save_xp(xp)
-    return redirect('/success')
+    data = request.form  # external dependency
+    save_xp(calculate_xp(data['type'], data['quantity']))  # I/O
 ```
 
 ## Testing Approach
 
-Write tests before or alongside implementation for business logic and complex operations.
-
-- **Strict TDD (red-green-refactor):** Valid path, especially useful when the design isn't clear yet — tests help discover the interface.
-- **Test-alongside:** Also acceptable when the design is clear and you're iterating quickly. Write tests as the implementation takes shape.
-- **The requirement:** Test coverage exists and covers edge cases before a feature is considered complete.
+Write tests before or alongside implementation. **TDD** when design is unclear; **test-alongside** when iterating quickly on clear design. Requirement: coverage exists and covers edge cases before feature is complete.
 
 ## Critical Rules
 
-- **Pure unit tests for business logic.** Use frozen dataclasses (or equivalent) as input. No database access in tests.
-- **Zero external IO.** Any test requiring a database connection, network call, or disk access is a design failure, not a test infrastructure problem.
-- **Edge and corner cases** must be covered.
-- **Pre-existing tests** must still pass after new features are developed.
+- **Pure unit tests for business logic** — frozen dataclasses as input, no database
+- **Zero external IO** — database/network/disk in tests = design failure
+- **Edge and corner cases** must be covered
+- **Pre-existing tests** must still pass after new features
 
+## Test Design
+
+**One concept per test.** If you need "and" to describe what it verifies, split it.
+
+```python
+# ❌ Two concepts    →    # ✅ One concept each
+def test_create_user_saves_and_returns():
+    assert create_user("Alice").name == "Alice"
+    assert get_user("Alice") is not None
+
+def test_create_user_returns_name():
+    assert create_user("Alice").name == "Alice"
+
+def test_create_user_persists():
+    create_user("Alice")
+    assert get_user("Alice") is not None
+```
+
+**Descriptive names.** `test_create_user_with_duplicate_name_raises_conflict()` not `test_user()`.
+
+**No conditional logic.** No `if`/`else`, no assertion-generating loops. Each test is linear.
+
+**Proportional setup.** 20 lines of setup for one assertion = test too coupled or code needs refactoring.
+
+## Test Independence
+
+- **Order-independent** — each test self-contained, no relying on prior tests
+- **No shared mutable state** — fresh state per test
+- **No timing dependencies** — no `sleep()`, use mocks for async
+
+```python
+# ❌ Timing-dependent    →    # ✅ Mock time
+time.sleep(0.1)                mock_clock.advance(100)
+assert result.is_ready()       assert result.is_ready()
+```
 
 ## AI-Generated Test Rules
 
-AI agents produce tests with predictable blind spots. These rules are mandatory when AI writes tests, and good practice for human-written tests too.
+AI agents have predictable blind spots. These rules are mandatory for AI-written tests.
 
-### Field Coverage
+**Field Coverage** — Assert ALL fields on returned objects, not just the ones you care about.
 
-For any model/object returned from a function under test, assert ALL fields — not just the ones relevant to the current test scenario. If `get_user()` returns a User with 8 fields, all 8 fields get asserted.
+**Exact Counts** — Use `==` for counts, never `>=` or `> 0`.
 
-### Exact Count Assertions
+**Negative Test Ratio** — Minimum 1 error/edge case per 2 happy path tests.
 
-Never use `>=` or `assertTrue(len(result) > 0)` for count assertions. Always use `==` with the exact expected count. Know exactly what your test data produces.
+**"Would This Fail?" Check** — After writing, ask: if implementation returned wrong data, would this catch it?
+- List returned duplicates?
+- Create ignored half the input fields?
+- Calculation off by 1?
 
-### Negative Test Ratio
+**No Mirror Tests** — Never reimplement production logic in test. Assert `== 25`, not `== 5 * input`.
 
-Minimum 1 error/edge case test per 2 happy path tests. AI defaults to happy path — this rule forces thinking about what goes wrong. Every public function with error conditions needs at least one test that triggers each error path.
-
-### "Would This Fail?" Self-Check
-
-After writing each test, ask: "If the implementation returned wrong data, would this test catch it?" Specifically:
-
-- If a list function returned duplicates, would this test fail?
-- If a create function ignored half the input fields, would this test fail?
-- If a calculation was off by 1, would this test fail? 
- 
-If the answer is "no," the test is insufficient. Fix it before moving on.
-
-### No Mirror Tests
-
-Never reimplement the production calculation inside a test and assert they match. Tests must assert against independently-determined expected values. If `calculate_xp` multiplies by 5, the test asserts `== 25` for input 5, not `== 5 * input`.
-
-### Tautological Assertions
-
-Never assert that setup data matches itself. A test that asserts a field equals the value you used to construct the object tests nothing — you're verifying your own setup, not the function's behavior.
+**No Tautologies** — Asserting setup data tests nothing. The value must be **computed** by the function.
 
 ```python
-# ❌ Tautology — tests the constructor, not the function
+# ❌ Tautology — you set name="Alice"
 user = User(name="Alice")
-result = get_user("Alice")
-assert result.name == "Alice"  # you set this up; of course it's Alice
+assert get_user("Alice").name == "Alice"
 
-# ✅ Tests actual behavior — function retrieved and transformed data
+# ✅ Function computed something
 user = User(name="Alice", role="admin")
-result = get_display_name(user)
-assert result == "Alice (admin)"  # function had to combine fields
+assert get_display_name(user) == "Alice (admin)"
 ```
 
-Ask: "Was this value **computed** by the function under test, or did I put it there?" If you put it there, it's not evidence the function did anything.
+**No Section Dividers** — No `# ---` or flowerboxes. Class names are the grouping mechanism.
 
-### No Section Dividers
-
-Do not use commented dividers to separate sections within a test file (no `# ---`, `# ===`, flowerboxes, or any variation). Class names are the grouping mechanism. Dividers are visual clutter that diverge in format across files and add nothing a class boundary doesn't already express.
-
-### No Generic Assertions
-
-These assertions are never acceptable as the sole assertion in a test:
-
-- `assert result is not None`
-- `assert isinstance(result, dict)`
-- `assert len(result) > 0` They may appear alongside specific assertions, but never alone.
+**No Generic Assertions** — `is not None`, `isinstance(dict)`, `len > 0` never acceptable as sole assertion.
 
 ## Test Independence from Implementation
 
-Tests should be written from **interface contracts**, not from reading the implementation code. During phase planning, interface contracts are generated that describe what each public function promises — inputs, outputs, invariants, and error conditions.
-
-Test phases are separate phases run in a **new session**. This is a structural guarantee that the test-writing agent works from contracts rather than implementation memory. See the `iterative-build` skill for how test phases fit into the phase system.
+Tests written from **interface contracts**, not implementation code. Test phases run in separate sessions to guarantee test-writer works from contracts, not implementation memory.
 
 ## Property-Based Testing
 
-For business logic with clear invariants, use **Hypothesis** (Python) or **fast-check** (TypeScript) alongside example-based tests. Property-based tests define rules that must hold for all valid inputs, then the framework generates hundreds of random inputs to find counterexamples.
+For business logic with invariants, use **Hypothesis** (Python) or **fast-check** (TypeScript) alongside example tests.
 
-Good candidates for property-based tests:
-
-- Pure calculation functions with mathematical properties (e.g., XP is always non-negative)
-- Serialization/deserialization roundtrips
-- Sort/filter operations (output is always a subset of input, ordering is preserved)
-- Any function where the valid input domain is well-defined
+**Good candidates:** pure calculations, serialization roundtrips, sort/filter operations, well-defined input domains.
 
 ```python
-from hypothesis import given, strategies as st
-
 @given(quantity=st.integers(min_value=0, max_value=10000))
 def test_xp_never_negative(quantity):
-    result = calculate_xp('reps', quantity)
-    assert result >= 0
-
-@given(quantity=st.integers(min_value=1, max_value=10000))
-def test_reps_xp_scales_with_quantity(quantity):
-    result = calculate_xp('reps', quantity)
-    assert result == 5 * quantity
+    assert calculate_xp('reps', quantity) >= 0
 ```
 
-Property-based tests complement example-based tests — they don't replace them. Use example-based tests for specific documented behaviors and property-based tests for invariants across the input space.
+## Seam Tests (Integration at Boundaries)
+
+Verify the handoff between modules. Both may have unit tests with mocked boundaries, but the boundary itself can still break.
+
+**When needed:** Module A calls B, both have mocked unit tests, no test exercises A→B end-to-end.
+
+**What makes a seam test:** Full path across modules, no mocking the boundary itself. External deps (DB, API) may still be mocked.
+
+```python
+# Unit test (mocked)            # Seam test (real boundary)
+mock_repo = Mock()              repo = InMemoryUserRepo([User(id=1)])
+service = UserService(mock_repo)  service = UserService(repo)
+service.get_user(1)             result = service.get_user(1)
+mock_repo.find_by_id.assert_    assert result.name == "Alice"
+  called_once_with(1)
+```
+
+**Catches:** contract mismatch, type drift, missing adapters between modules.
+
+## Redundancy
+
+Delete tests exercising the exact same code path with same assertions. Keep if genuinely different scenarios (e.g., `get_user(1)` vs `get_user("1")` — tests string coercion).
+
+## Obsolete Tests
+
+Tests must track code they verify. Delete/update when:
+- Function deleted or renamed
+- Behavior changed
+- Module moved
+
+**Detection:** Failing imports are obvious. Tests that never fail (even when they should) may be orphaned.
+
+## Parallel Module Coverage
+
+Modules sharing architecture (e.g., all repos with `create_many()`) need test parity. If Module A has edge case test X, Module B (same pattern) needs it too. Bug fix without parallel tests invites regression.
 
 ## Phase Integration (with iterative-build)
 
-- **Setup and data layer phases:** Tests optional — schema and simple queries are straightforward to verify manually.
-- **Read/write/logic phases:** Interface contracts generated during planning. Tests written in a dedicated test phase in a new session.
-- **Business logic phases:** Property-based tests required for pure calculation functions alongside example-based tests.
-- **Test phases can batch:** One test phase can cover multiple preceding implementation phases.
+- **Setup/data layer:** Tests optional — verify manually
+- **Read/write/logic:** Interface contracts generated during planning, tests in dedicated phase
+- **Business logic:** Property-based tests required for pure calculations
+- **Test phases can batch** — one phase covers multiple implementation phases

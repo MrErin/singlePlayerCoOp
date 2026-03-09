@@ -35,7 +35,7 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 	- **Files affected**
 	- **Time estimate** for the fix
 	```
-8. **Generate the cluster deck**: Group issues into clusters by files/modules they affect. Within each cluster, order highest-to-lowest severity. Order clusters so higher-severity clusters come first; if equal severity, prioritize clusters whose files are touched by other clusters. Assign a BOSS card to any cluster with 3+ issues. **Cards in clusters must use the same `[TYPE]-[NNN]` identifiers from step 7** — this lets readers cross-reference between the severity exposition and the action-oriented clusters.
+8. **Generate the cluster deck**: Group issues into clusters by files/modules they affect. Within each cluster, order highest-to-lowest severity. Order clusters so higher-severity clusters come first; if equal severity, prioritize clusters whose files are touched by other clusters. **Cards in clusters must use the same `[TYPE]-[NNN]` identifiers from step 7** — this lets readers cross-reference between the severity exposition and the action-oriented clusters.
 9. **Progressive output**: If >10 issues found, generate the full severity sections and cluster summary tables, but only expand full card details for the top 4 clusters. Add a note: "Run `/plan:debt [cluster-name]` to expand remaining clusters."
 
 ## Rules
