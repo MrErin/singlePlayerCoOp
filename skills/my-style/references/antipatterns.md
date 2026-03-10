@@ -133,19 +133,100 @@ Patterns that strongly suggest AI-generated code without human review.
 
 ---
 
+## Hallucinated APIs (CRITICAL)
+
+AI confidently generates calls to functions, methods, or packages that don't exist. 20-40% hallucination rate on API names in studies.
+
+| Pattern | Detection | Severity | Action |
+|---------|-----------|----------|--------|
+| Non-existent function call | `python3 -m py_compile <file>` fails on import | CRITICAL | Verify function exists in dependency docs |
+| Wrong method signature | Function called with args it doesn't accept | CRITICAL | Check actual signature in library |
+| Fake package import | `import` of package not in requirements | HIGH | Verify package exists on PyPI/npm |
+| Plausible but wrong attribute | `response.data.items` when API returns `response.results` | CRITICAL | Test against real API response |
+| Deprecated API usage | Using removed functions from older library versions | HIGH | Check current library docs |
+
+**Why it matters:** Code compiles and looks correct but crashes at runtime. AI predicts plausible API shapes from training data without verifying against actual library signatures.
+
+**Detection:** Run import smoke tests and `py_compile` checks. For runtime attributes, verify against library documentation or a REPL session.
+
+---
+
+## Resource Management (HIGH)
+
+File handles, database connections, and sockets opened without proper cleanup — especially in error paths.
+
+| Pattern | Search | Severity | Action |
+|---------|--------|----------|--------|
+| File open without context manager | `open(` not preceded by `with` | HIGH | Use `with open(...) as f:` |
+| Connection without cleanup | `.connect(` without corresponding `.close()` or context manager | HIGH | Use context manager or connection pool |
+| Missing error path cleanup | Resource acquired in `try`, no `finally` block | HIGH | Add `finally` or use context manager |
+| Manual resource lifecycle | Paired `.open()`/`.close()` calls | MEDIUM | Replace with context manager |
+
+```python
+# ❌ Leaks on exception
+f = open('data.csv')
+data = process(f.read())  # If this throws, f is never closed
+f.close()
+
+# ✅ Context manager handles cleanup
+with open('data.csv') as f:
+    data = process(f.read())
+```
+
+**Why it matters:** AI generates the happy path and skips cleanup in error paths. Resource leaks cause connection exhaustion and file descriptor limits under load.
+
+---
+
+## Hardcoded Secrets (CRITICAL)
+
+API keys, passwords, and tokens embedded directly in source code. AI reproduces tutorial patterns where secrets are inline for convenience.
+
+| Pattern | Search | Severity | Action |
+|---------|--------|----------|--------|
+| Credential assignment | `password =`, `api_key =`, `secret =` with string literal | CRITICAL | Move to env var or secrets manager |
+| Known key prefixes | `sk_test_`, `sk_live_`, `ghp_`, `glpat_`, `AKIA` | CRITICAL | Rotate immediately, move to env |
+| Connection string with credentials | `://user:pass@` in source | CRITICAL | Use env var for connection string |
+| Auth header with token | `Bearer ` + string literal | HIGH | Inject token at runtime |
+| Commented-out credentials | `# password: ...` or `# mongodb+srv://user:pass@` | HIGH | Remove entirely |
+
+**Why it matters:** Credentials in source code end up in version control. Even after removal, they persist in git history. AI reproduces this pattern because training data is full of tutorials with inline secrets.
+
+---
+
+## Copy-Paste Artifacts (MEDIUM)
+
+When AI implements similar features, it copies and partially adapts code rather than abstracting. Leftover names and parameters from the source context leak through.
+
+| Pattern | Detection | Severity | Action |
+|---------|-----------|----------|--------|
+| Mismatched variable names | Variable name doesn't match its content (e.g., `users = fetch_products()`) | MEDIUM | Rename to match actual content |
+| Unused function parameters | Parameter defined but never referenced in body | MEDIUM | Remove parameter or use it |
+| Near-duplicate code blocks | Two functions with >80% identical logic | HIGH | Extract shared logic to common function |
+| Partial rename | Some references updated, others still use old name | HIGH | Complete the rename |
+| Wrong context in comments | Comment describes different behavior than the code | MEDIUM | Update or remove comment |
+
+**Why it matters:** Copy-paste artifacts confuse future readers (including AI in the next session) and indicate the code wasn't reviewed. Unused parameters mask API surface bugs.
+
+**Detection:** Linters catch unused parameters. Near-duplicates require manual review or tools like `pylint --enable=duplicate-code`.
+
+---
+
 ## How to Use This Reference
 
 ### For /plan:debt
-Use `search_text` to find patterns. Start with CRITICAL patterns, then HIGH. Each match becomes a debt card with the pattern's severity and action.
+Use `search_text` to find patterns. Start with CRITICAL patterns, then HIGH. Each match becomes a debt card with the pattern's severity and action. Include Hallucinated APIs, Resource Management, and Hardcoded Secrets sections.
 
 ### For code-reviewer agent
-Check modified files against patterns in the "Environment Workarounds", "Error Handling", and "State & Mutability" sections. These are the most damaging if introduced.
+Check modified files against: Environment Workarounds, Error Handling, State & Mutability, Database/API Patterns, Resource Management, and Hardcoded Secrets. These are the sections most likely to introduce bugs per-task.
+
+### For test-writer agent
+Check your own output against "Testing Anti-Patterns" before delivering. AI-generated tests have the same blind spots documented here — mirror tests, tautological assertions, and happy-path-only coverage.
 
 ### For /plan:test-audit
-Focus on "Testing Anti-Patterns" section. Flag tests that don't actually verify behavior.
+Focus on "Testing Anti-Patterns" and "Copy-Paste Artifacts" sections. Flag tests that don't actually verify behavior or that were duplicated across test modules without adaptation.
 
 ### For new code review
-The "AI-Specific Tells" section helps identify code that needs deeper scrutiny — if it looks AI-generated without review, there may be hidden issues.
+The "AI-Specific Tells" and "Copy-Paste Artifacts" sections help identify code that needs deeper scrutiny — if it looks AI-generated without review, there may be hidden issues.
 
 ---
 

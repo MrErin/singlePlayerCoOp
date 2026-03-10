@@ -77,6 +77,15 @@ For functions flagged as property-based test candidates in the plan:
 - Use example-based tests for specific documented behaviors AND property-based tests for invariants
 - Don't over-constrain strategies — test the full valid input domain
 
+## Self-Check Before Delivering
+
+Read `my-style/references/antipatterns.md` "Testing Anti-Patterns" section. AI-generated tests have the same blind spots documented there. Before delivering, verify your output doesn't contain:
+- Mirror tests (reimplementing production logic in the assertion)
+- Tautological assertions (asserting data you constructed, not data the function computed)
+- Tests with no assertions or only generic assertions (`is not None`)
+- Happy-path-only coverage (check your negative test ratio)
+- Near-duplicate tests across test classes (copy-paste without adaptation)
+
 ## Output
 
 - Write test files following the project's existing test file conventions

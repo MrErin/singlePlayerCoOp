@@ -31,6 +31,9 @@ For each file changed in the current phase:
         - Environment workarounds (sys.modules, mocks in src/)
         - Error handling issues (bare except, swallowed exceptions)
         - State & mutability (mutable defaults, shared class attributes)
+        - Database/API patterns (N+1 queries, string concat in SQL, business logic in routes)
+        - Resource management (file/connection opens without context managers)
+        - Hardcoded secrets (credentials assigned as string literals)
         - AI-specific tells (conversational comments, defensive null checks for impossible states)
 3. For web projects, additionally check:
     - Semantic HTML usage
