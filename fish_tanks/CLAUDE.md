@@ -51,13 +51,14 @@ These will never work. Do not attempt them, do not try variations or workarounds
 The project is mounted at `/project` with its `.venv` and `node_modules` intact.
 
 **Python projects:**
-- Run tools via: `.venv/bin/pytest`, `.venv/bin/ruff`, `.venv/bin/python -m module`
-- The venv is activated automatically, but explicit paths are more reliable
+- Run tools via: `pytest`, `coverage`, `ruff` (pre-installed in container)
+- For venv-only packages: `python3 -m <module>` (e.g., `python3 -m mypy`)
+- The venv's site-packages is added to PYTHONPATH automatically
 
 **Node.js projects:**
 - Run tools via: `npx <tool>`, `node_modules/.bin/<tool>`
 - Local binaries are added to PATH automatically
 
-If a package is missing from the virtual environment:
+If a package is missing:
 1. Tell the user what's missing
 2. They will install it on the host and restart the container

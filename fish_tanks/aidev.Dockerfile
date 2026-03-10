@@ -38,10 +38,4 @@ RUN npm install -g @anthropic-ai/claude-code @modelcontextprotocol/server-sequen
 # Make /home/node writable for any UID (needed when --user maps to host UID)
 RUN chmod 777 /home/node
 
-# Copy and set up entrypoint script for auto-dependency installation
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
 WORKDIR /project
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
