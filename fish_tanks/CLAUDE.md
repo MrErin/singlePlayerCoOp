@@ -39,6 +39,25 @@ These will never work. Do not attempt them, do not try variations or workarounds
 
 ## What Works
 
-- `pip3 install <package> --break-system-packages` — Python packages
 - Standard dev tools already installed: pytest, coverage, mutmut, hypothesis, ruff
 - Git is available for reading (status, diff, log) — commits are handled by the user
+
+## Ephemeral Environment
+
+**Do NOT install packages via pip or npm.** The container uses `--rm` — everything outside mounted volumes disappears on exit. Installing packages is wasted effort.
+
+## Using the Project's Virtual Environment
+
+The project is mounted at `/project` with its `.venv` and `node_modules` intact.
+
+**Python projects:**
+- Run tools via: `.venv/bin/pytest`, `.venv/bin/ruff`, `.venv/bin/python -m module`
+- The venv is activated automatically, but explicit paths are more reliable
+
+**Node.js projects:**
+- Run tools via: `npx <tool>`, `node_modules/.bin/<tool>`
+- Local binaries are added to PATH automatically
+
+If a package is missing from the virtual environment:
+1. Tell the user what's missing
+2. They will install it on the host and restart the container

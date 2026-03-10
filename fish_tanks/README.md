@@ -3,6 +3,26 @@
 Runs Claude Code in a container so it can read/write project files but can't
 damage your system or change file permissions.
 
+## Virtual Environment Detection
+
+The container detects and activates existing virtual environments - it does NOT auto-install packages:
+
+| Environment Found | Action |
+|-------------------|--------|
+| `.venv/bin/activate` | Activates Python virtual environment |
+| `node_modules/.bin` | Adds to PATH for local npm binaries |
+
+**Prerequisite:** Your project should have packages installed before running the container:
+```bash
+# Python projects
+python -m venv .venv && source .venv/bin/activate && pip install -e .
+
+# Node.js projects
+npm install
+```
+
+The agent inside the container uses these installed packages directly via `.venv/bin/<tool>` or `npx <tool>`.
+
 ## Setup
 
 ```bash
@@ -40,7 +60,7 @@ arch-code -p "fix the login bug"   # extra args pass through
 - Write to `~/.claude` (session state, auth tokens, etc.)
 - Access the network (needed for API calls, MCP, web search)
 - Run git commands within the project
-- Install npm/pip packages inside the container (they disappear when it exits)
+- Use the project's `.venv` and `node_modules` (mounted with the project)
 
 ## What Claude CANNOT Do
 
@@ -95,6 +115,7 @@ RUN apt-get update && apt-get install -y \
 ```
 Then rebuild: `docker build -t ai-safe-env /path/to/directory/`
 
-**Packages installed by Claude disappear:**
-By design. The container is `--rm` so everything resets. If Claude needs
-persistent packages, add them to the Dockerfile.
+**Agent can't find packages:**
+Ensure your project has a `.venv` directory (Python) or `node_modules` (Node.js)
+in the project root. Install packages on your host machine before running the
+container. The agent should use `.venv/bin/<tool>` or `npx <tool>` to run commands.
