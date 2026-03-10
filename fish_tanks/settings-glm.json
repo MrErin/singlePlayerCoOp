@@ -13,19 +13,6 @@
       "MultiEdit",
       "Glob",
       "Grep",
-      "Bash(ls *)",
-      "Bash(git status*)",
-      "Bash(git diff*)",
-      "Bash(git log*)",
-      "Bash(pip3 list*)",
-      "Bash(pip3 show *)",
-      "Bash(grep *)",
-      "Bash(head *)",
-      "Bash(tail *)",
-      "Bash(wc *)",
-      "Bash(cat *)",
-      "Bash(which *)",
-      "Bash(tree *)",
       "mcp__context7__*",
       "mcp__jcodemunch__*",
       "mcp__web_reader__*",
@@ -71,6 +58,10 @@
       {
         "matcher": "Bash",
         "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/allow-readonly.py"
+          },
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/block-git.py"
