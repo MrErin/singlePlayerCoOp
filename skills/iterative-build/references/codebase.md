@@ -1,7 +1,9 @@
 # Codebase Map
 
 ## Stack
-- **Runtime:** [e.g., Node.js 20 via nvm]
+- **Runtime:** [e.g., Python 3.10.12 — from .venv/pyvenv.cfg]
+- **Container runtime:** [e.g., Python 3.11.2 — from python3 --version in container, or "N/A" if not containerized]
+- **Venv location:** [e.g., .venv/lib/python3.10/site-packages/]
 - **Framework:** [e.g., React 19 + TypeScript (Vite)]
 - **Styling:** [e.g., Tailwind CSS]
 - **Key dependencies:** [list with versions]

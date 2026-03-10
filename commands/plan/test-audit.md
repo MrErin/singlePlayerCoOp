@@ -38,6 +38,7 @@ All tests evaluated against `my-style/testing.md`. Quick reference for what to f
 | **Redundancy** | No duplicate tests exercising same code path with same assertions |
 | **Obsolete Tests** | Tests track renamed/removed code, no orphan tests for deleted functions |
 | **Parallel Coverage** | Similar modules (same pattern) have similar test coverage |
+| **AI Anti-Patterns** | See `my-style/references/antipatterns.md` Testing section: mirror tests, no assertions, over-mocked, tautological assertions |
 
 When multiple modules share architecture (e.g., all repos have `create_many()`), check that edge case tests in one module exist in siblings. A bug fix without parallel tests invites regression.
 

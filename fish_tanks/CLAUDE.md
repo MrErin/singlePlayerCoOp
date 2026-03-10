@@ -62,3 +62,13 @@ The project is mounted at `/project` with its `.venv` and `node_modules` intact.
 If a package is missing:
 1. Tell the user what's missing
 2. They will install it on the host and restart the container
+
+## When Imports Fail
+
+If a package import fails (`ModuleNotFoundError`, `ImportError`), diagnose before reporting:
+
+1. **Check if the package files exist:** `ls .venv/lib/python*/site-packages/ | grep <package>`
+2. **If files exist but import fails:** This is a Python version mismatch, not a missing package. The venv was created with a different Python version than the container provides. Report the mismatch (container Python version vs. venv Python version from `.venv/pyvenv.cfg`) and ask the user to fix the Docker image.
+3. **If files don't exist:** The package is genuinely missing. Tell the user what's missing. They will install it on the host and restart the container.
+
+**Never work around import failures with mocks in production code.** If imports don't work, the environment is broken. Stop and escalate.

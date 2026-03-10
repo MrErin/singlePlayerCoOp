@@ -20,6 +20,10 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 	- All queries use parameterized syntax (no string concatenation or f-strings)
 	- Semantic HTML used appropriately (not div-for-everything)
 	- Interactive elements have ARIA labels, keyboard navigation, and focus management
+	- **AI-generated anti-patterns** — read `my-style/references/antipatterns.md` and use `search_text` to find:
+		- CRITICAL patterns first: environment workarounds, error handling issues, mutable defaults
+		- HIGH patterns next: state issues, database anti-patterns, testing gaps
+		- Each match becomes an ARCH or QUALITY card with severity from the reference
 5. **Research**: relevant architectural patterns for the project's language, framework, and type
 6. **Generate**: `_planning/technical_debt.md` — read `commands/plan/references/debt-templates.md` for card and document templates
 7. **Organize**: issues by severity (most severe at top), identified by their card type and number. Use this template for each issue:

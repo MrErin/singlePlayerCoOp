@@ -25,6 +25,11 @@ For each file changed in the current phase:
     - Unvalidated inputs at system boundaries
     - Global state or invisible dependencies
     - Primitive obsession where a Value Object would be clearer
+    - **AI-generated anti-patterns** — read `my-style/references/antipatterns.md` and check for:
+        - Environment workarounds (sys.modules, mocks in src/)
+        - Error handling issues (bare except, swallowed exceptions)
+        - State & mutability (mutable defaults, shared class attributes)
+        - AI-specific tells (conversational comments, defensive null checks for impossible states)
 3. For web projects, additionally check:
     - Semantic HTML usage
     - ARIA attributes on interactive elements

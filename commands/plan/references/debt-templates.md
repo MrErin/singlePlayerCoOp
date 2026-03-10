@@ -7,11 +7,27 @@ Load this file when ready to generate `technical_debt.md` output.
 All card types (ARCH, DESIGN, QUALITY, DATA, ACCESS) use the standard template. ACCESS cards always have Low risk. BOSS cards use their own template.
 
 **Card type prefix guide:**
-- 🔥 **ARCH** — architecture violations (invisible deps, global state, hard-coded config, swallowed errors)
+- 🔥 **ARCH** — architecture violations (invisible deps, global state, hard-coded config, swallowed errors, environment workarounds)
 - ⚙️ **DESIGN** — design principle violations (SRP, DI, separation of concerns)
 - 🧹 **QUALITY** — code quality, comments, logging (long functions, missing types, stale comments)
 - 🗃️ **DATA** — database/SQL issues (context managers, parameterized queries)
 - ♿ **ACCESS** — web accessibility (semantic HTML, ARIA, keyboard nav) — risk is always Low
+
+### AI-Generated Anti-Pattern Cards
+
+When running `/plan:debt`, check for patterns in `my-style/references/antipatterns.md`. Key CRITICAL/HIGH patterns:
+
+**CRITICAL (always create card):**
+- `sys.modules[` — environment workaround
+- `except:` (bare) or `except.*: pass` — swallowed errors
+- `=\[\]` or `={}` in function signature — mutable defaults
+
+**HIGH (likely needs card):**
+- `from unittest.mock import` in `src/` — mock in production
+- Query inside loop over results — N+1 queries
+- `+` or f-string in SQL — injection risk
+
+See the antipatterns reference for full detection patterns, severity mappings, and recommended actions.
 
 ### Card Template
 

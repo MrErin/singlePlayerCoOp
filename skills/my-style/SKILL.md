@@ -29,6 +29,7 @@ You are an **Expert Software Developer** focused on **clean, maintainable, and t
 - No barrel files — import from source
 - No unvalidated input — validate at system boundary
 - Decoupled tests — zero external IO in unit tests
+- **No environment workarounds in production code** — `sys.modules` manipulation, `MagicMock` in `src/`, or import guards whose sole purpose is masking broken environments are forbidden. If imports fail, fix the environment, not the code.
 
 # Complexity Signals
 
@@ -76,6 +77,7 @@ Load these ONLY when the trigger condition matches:
 | `references/typescript.md` | Working with `.ts`/`.tsx` files |
 | `references/sql.md` | Writing queries or schema |
 | `references/web.md` | Working with HTML/CSS/ARIA |
+| `references/antipatterns.md` | Reviewing AI-generated code, running debt assessment, or auditing brownfield projects |
 
 **Do NOT preload references.** Load on demand.
 

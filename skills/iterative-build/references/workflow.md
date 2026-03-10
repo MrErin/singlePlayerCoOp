@@ -9,12 +9,13 @@ Automatically and silently:
 1. Read `state.md` → current progress
 2. Read `roadmap.md` → phase context
 3. Read `codebase.md` → structure and stack
-4. Read previous phase artifacts (plan.md, phase_summary.md)
-5. Check for user code modifications since last phase
-6. Read `decisions.md` → constraints
-7. Read `deferred.md` → items targeting this phase
-8. If integrating with existing functionality: read `project-requirements/index.md`
-9. Adapt plan to incorporate changes
+4. **Environment preflight** → verify runtime matches codebase.md Stack section. If containerized, confirm venv Python version matches container Python version. Run import smoke test for phase dependencies. STOP on any failure.
+5. Read previous phase artifacts (plan.md, phase_summary.md)
+6. Check for user code modifications since last phase
+7. Read `decisions.md` → constraints
+8. Read `deferred.md` → items targeting this phase
+9. If integrating with existing functionality: read `project-requirements/index.md`
+10. Adapt plan to incorporate changes
 
 ## After Each Phase
 

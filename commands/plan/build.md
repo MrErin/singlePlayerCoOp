@@ -44,9 +44,21 @@ Single-task mode:
 1. **Read the phase's `plan.md`** for task list and verify criteria.
 2. **Read `decisions.md`** for any constraints.
 3. **Read `codebase.md`** for current project structure and stack context.
-4. **Check for user modifications** — read `phase_summary.md` and `user_feedback.md` from previous phases and scan git for modified files.
-5. **Index and explore codebase with jcodemunch** — use `search_symbols` and `get_symbol` to find existing patterns, similar implementations, and relevant interfaces before writing code.
-6. **Execute tasks** from the plan:
+4. **Environment Preflight Check** — Verify the runtime environment is functional before writing any code:
+    - **Python projects:** Run `.venv/bin/python -c "import sys; print(sys.version)"` and compare against `codebase.md` Stack section. If the Python version doesn't match what the venv was created with (check `.venv/pyvenv.cfg`), STOP — this is an environment mismatch, not a missing package.
+    - **Import smoke test:** For each dependency listed in the phase's Dependencies section, run a bare import:
+      ```
+      .venv/bin/python -c "import <package>"
+      ```
+      If any import fails, investigate the cause BEFORE proceeding. Common causes:
+      - **Python version mismatch** (packages in wrong `lib/pythonX.Y/` directory) — STOP, ask user to fix Docker image or venv
+      - **Package genuinely not installed** — STOP, ask user to install on host
+      - **Native extension incompatibility** (`.so` compiled for different arch/version) — STOP, ask user to rebuild venv
+    - **Node.js projects:** Run `node -e "require('<package>')"` for key dependencies. Same diagnostic approach.
+    - **If any preflight check fails:** Log the exact error and diagnosis in plan.md "Issues Discovered" section with "Fix Requires User Input: YES". Do NOT proceed to task execution. Do NOT create mocks, shims, or workarounds for import failures in production code.
+5. **Check for user modifications** — read `phase_summary.md` and `user_feedback.md` from previous phases and scan git for modified files.
+6. **Index and explore codebase with jcodemunch** — use `search_symbols` and `get_symbol` to find existing patterns, similar implementations, and relevant interfaces before writing code.
+7. **Execute tasks** from the plan:
     - **Resume detection:** Scan task headings for status markers. Start at the first task NOT marked `DONE`. If a task is `BLOCKED`, read its issue in "Issues Discovered" section.
     - **Single-task mode:** If argument is `[phase].[task]` format, execute only that task number from the specified phase. Skip steps 7-10 after completion — output the task result and STOP.
     - **Full-phase mode:** Execute all tasks sequentially.
@@ -67,7 +79,7 @@ Single-task mode:
     - **Use jcodemunch during implementation** — when implementing a task, search for existing similar code to match patterns and conventions.
     - If a task can't be completed as planned, note why and adapt.
     - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.
-7. **Verify the build:** 
+8. **Verify the build:** 
     - Run the application/tests and confirm no errors
 	    - If the application is not yet runnable (setup or early data layer phase), verify by running available checks instead:
 		    - Dependency installation completes without errors
@@ -85,14 +97,14 @@ Single-task mode:
 	    - Error messages do not leak internal details
     - Log any issues discovered and fixes applied in the plan.md "Issues Discovered During Verification Stage" section
     - **Append to `_planning/lessons.md`:** For any significant issue caught during verification (not minor typos or trivial fixes), add an entry following the format in `iterative-build/references/lessons.md`. Include: date, phase, brief title, what happened, root cause, fix applied, and prevention tip. This builds institutional memory for future phases.
-8. **Generate `ua_testing.md`** in the phase directory with:    
+9. **Generate `ua_testing.md`** in the phase directory with:    
     - Summary of what was built
     - Instructions for running automated testing, if any
     - Manual testing steps to cover all functionality built in this phase
     - Expected behaviors
     - Edge cases to check
     - Phase completion checklist
-9. **Update planning state:**
+10. **Update planning state:**
     - `_planning/state.md` — log what was built, set status to "review"
     - `_planning/roadmap.md` — check off the completed phase
     - `_planning/deferred.md` — add any cross-phase items noticed during this build; remove any items that were addressed
@@ -100,7 +112,7 @@ Single-task mode:
     - `_planning/codebase.md`:
         - **Setup phase:** Generate it (captures the project structure just created)
         - **Other phases:** Update only if new directories, dependencies, or architectural patterns were introduced. Skip if structure unchanged.
-10. **STOP.** Output the testing checklist. Wait for user approval.
+11. **STOP.** Output the testing checklist. Wait for user approval.
 
 ## If Test-Writer Flags Implementation Bugs
 
@@ -136,5 +148,8 @@ When `test-writer` reports that a test fails because the implementation appears 
 - Do not add error handling for impossible states
 - Do not change function signatures defined in interface contracts without asking
 - If a task's verify step fails, stop and report — do not silently adapt the next task
+- **Do not add `unittest.mock`, `MagicMock`, or `sys.modules` manipulation to production source code (`src/`) to work around import failures.** If a package can't be imported, the environment is broken — escalate to the user, don't mask it.
+- **Do not restructure production imports** (deferred imports, `TYPE_CHECKING` guards, try/except ImportError with fallbacks) to work around environment issues. These patterns are valid for optional dependencies by design, but not as band-aids for broken environments.
+- **If you find yourself writing code whose sole purpose is to make the build work despite missing packages, STOP.** You are treating a symptom. Log the actual environment issue and ask the user.
 
 $ARGUMENTS
