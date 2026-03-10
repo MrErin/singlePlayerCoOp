@@ -5,8 +5,7 @@ allowed-tools: Bash, Read, Write
 
 # Initialize Project Planning
 
-**Skills:** Load `iterative-build`, `my-style`
-**No git commits.** User controls all git operations.
+**Skill:** Load `iterative-build`
 
 ## Steps
 

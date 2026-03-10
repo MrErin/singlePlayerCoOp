@@ -10,8 +10,6 @@ allowed-tools: Read, Write
 
 Generate `review_guide.md` after completing any multi-file project or iterative build.
 
-**No git commits.** User controls all git operations.
-
 ## ADHD Requirements (Critical)
 
 Every section must have:

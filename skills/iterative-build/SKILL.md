@@ -1,6 +1,6 @@
 ---
 name: iterative-build
-description: Build applications in digestible phases with persistent planning state. Combines spec-driven planning artifacts with human-controlled phase gates. Use when creating new apps, adding features, or working on multi-step development tasks. Supports Python, TypeScript, React, and fullstack projects. Works with slash commands in .claude/commands/plan/.
+description: Build applications in digestible phases with persistent planning state. Use for new apps, features, or multi-step development tasks. Works with /plan: commands.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
 
@@ -98,7 +98,6 @@ If unclear: "I see existing code and `_planning/`. Continue previous work, add f
 # Critical Rules
 
 - Never proceed without permission. STOP after each phase.
-- No git commits.
 - Phase boundaries are strict.
 - Keep phases reviewable.
 - One plan per phase.
@@ -115,7 +114,6 @@ If unclear: "I see existing code and `_planning/`. Continue previous work, add f
 | `references/phase_summary.md` | Writing phase summary |
 | `references/ua_testing.md` | Writing testing doc |
 | `references/codebase.md` | Documenting codebase structure |
-| `references/workflow.md` | Before/After phase procedures |
 
 **Do NOT preload references.**
 

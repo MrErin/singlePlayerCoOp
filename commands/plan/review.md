@@ -5,9 +5,8 @@ allowed-tools: Read, Write
 
 # Review Phase
 
-**Skills:** Load `iterative-build`, `my-style`
+**Skill:** Load `iterative-build`
 **Read first:** `_planning/state.md`
-**No git commits.**
 
 ## Steps
 

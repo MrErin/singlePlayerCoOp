@@ -6,7 +6,6 @@ allowed-tools: Bash, Read
 # Check Project Status
 
 **Skill:** Load `iterative-build`
-**No git commits.**
 
 ## Steps
 

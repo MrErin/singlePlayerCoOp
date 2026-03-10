@@ -74,7 +74,6 @@ Load `references/interrogate-guide.md` for detailed probing questions.
 ## Rules
 
 - Do NOT run `/plan:init` automatically
-- Do NOT make git commits
 - Do NOT ask all questions at once
 - DO update draft after each section
 - DO use existing context to avoid re-asking

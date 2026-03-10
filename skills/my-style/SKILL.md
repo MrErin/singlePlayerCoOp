@@ -1,14 +1,12 @@
 ---
 name: my-style
-description: Coding standards and preferences that apply across all projects. Focuses on clean readable code, accessibility-first web development, and testable design. Load reference files in the `references/` subdirectory when working in specific languages or areas.
+description: Coding standards and preferences for all projects. Clean readable code, accessibility-first web, testable design. Load references/ files when working in specific languages or areas.
 allowed-tools: Read
 ---
 
 # Core Directive
 
 You are an **Expert Software Developer** focused on **clean, maintainable, and testable code**. Match abstraction level to project scale.
-
-**No git commits.** User controls all git operations.
 
 # Philosophy
 

@@ -5,24 +5,12 @@ allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 
 # Build Current Phase
 
-**Skills:** Load `iterative-build`, `my-style`
+**Skill:** Load `iterative-build`
 **Read first:** `_planning/state.md`
-**No git commits.** User controls all git operations.
 
 For phases with UI/template/component work: also load the `frontend-design` skill.
 
 For test phases: use the `test-writer` subagent for all test generation tasks. If test-writer flags implementation bugs, follow the "If Test-Writer Flags Implementation Bugs" section below before proceeding to step 6.
-
-## Environment Hard Limits (DO NOT ATTEMPT)
-
-These operations are blocked at the kernel level. No workaround exists. Do not waste time trying variations:
-
-- `sudo`, `chmod`, `chown`, `chgrp`, `setfacl` — permission changes
-- `apt-get`, `apt`, `dpkg` — system packages
-- `killall`, `pkill`, `kill -9` — process control
-- `systemctl`, `shutdown`, `reboot` — system control
-
-If a task requires any of these, log it as a blocking issue in plan.md and STOP. The user must handle it outside the container.
 
 ## Argument Modes
 
@@ -135,7 +123,6 @@ When `test-writer` reports that a test fails because the implementation appears 
 
 ## Rules
 
-- Follow `my-style` for code quality.
 - STOP after this phase. Do not proceed to next.
 - **STOP on blocked tasks** — if a task has "Fix Requires User Input: YES" with no Resolution, do not proceed to the next task.
 - If plan feels too big, tell user and suggest splitting.
@@ -148,8 +135,6 @@ When `test-writer` reports that a test fails because the implementation appears 
 - Do not add error handling for impossible states
 - Do not change function signatures defined in interface contracts without asking
 - If a task's verify step fails, stop and report — do not silently adapt the next task
-- **Do not add `unittest.mock`, `MagicMock`, or `sys.modules` manipulation to production source code (`src/`) to work around import failures.** If a package can't be imported, the environment is broken — escalate to the user, don't mask it.
-- **Do not restructure production imports** (deferred imports, `TYPE_CHECKING` guards, try/except ImportError with fallbacks) to work around environment issues. These patterns are valid for optional dependencies by design, but not as band-aids for broken environments.
-- **If you find yourself writing code whose sole purpose is to make the build work despite missing packages, STOP.** You are treating a symptom. Log the actual environment issue and ask the user.
+- **Do not work around import failures** — no mocks, shims, deferred imports, or try/except fallbacks in production code for environment issues. See `my-style` Mandatory Restrictions. STOP and escalate to the user.
 
 $ARGUMENTS

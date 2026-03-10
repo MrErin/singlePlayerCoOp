@@ -6,7 +6,6 @@ allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 # Audit Test Suite
 
 **Skill:** Load `my-style`
-**No git commits.**
 
 ## Steps
 

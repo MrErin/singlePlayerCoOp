@@ -6,7 +6,6 @@ allowed-tools: Bash, Read, Write, Grep, Glob
 # Assess Technical Debt
 
 **Skill:** Load `my-style`
-**No git commits.**
 
 ## Steps
 

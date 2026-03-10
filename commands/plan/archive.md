@@ -6,7 +6,6 @@ allowed-tools: Bash, Read, Write
 # Archive Feature
 
 **Skill:** Load `iterative-build`
-**No git commits.**
 
 ## Steps
 

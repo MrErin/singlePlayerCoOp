@@ -5,8 +5,7 @@ allowed-tools: Read, Write, Edit, Glob
 
 # Plan a Phase
 
-**Skills:** Load `iterative-build`, `my-style`
-**No git commits.** User controls all git operations.
+**Skill:** Load `iterative-build`
 
 ## Steps
 
