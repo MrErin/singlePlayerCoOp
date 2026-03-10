@@ -1,28 +1,43 @@
 #!/usr/bin/env python3
-"""PreToolUse hook: block git operations. User controls all git."""
+"""PreToolUse hook: block git write operations. User controls all git."""
 import json
 import sys
 
-try:
-    data = json.load(sys.stdin)
+BLOCKED = [
+    "git commit",
+    "git add",
+    "git push",
+    "git merge",
+    "git rebase",
+    "git checkout -b",
+]
+
+
+def main() -> None:
+    try:
+        data = json.load(sys.stdin)
+    except (json.JSONDecodeError, EOFError):
+        return
+
+    if data.get("tool_name") != "Bash":
+        return
+
     cmd = data.get("tool_input", {}).get("command", "")
 
-    blocked = [
-        "git commit",
-        "git add",
-        "git push",
-        "git merge",
-        "git rebase",
-        "git checkout -b",
-    ]
-
-    for b in blocked:
+    for b in BLOCKED:
         if b in cmd:
-            print(
-                f"Blocked: {b} — user controls all git operations.",
-                file=sys.stderr,
-            )
+            result = {
+                "hookSpecificOutput": {
+                    "hookEventName": "PreToolUse",
+                    "permissionDecision": "deny",
+                    "permissionDecisionReason": (
+                        f"Blocked: '{b}' — user controls all git operations."
+                    ),
+                }
+            }
+            json.dump(result, sys.stdout)
             sys.exit(0)
 
-except Exception:
-    pass
+
+if __name__ == "__main__":
+    main()

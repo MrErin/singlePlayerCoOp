@@ -76,14 +76,9 @@ SAFE_COMMANDS = {
     "hash",
     # Git read-only
     "git",  # blocked commands handled by block-git.py
-    # Python/node version checks
-    "python3",
-    "python",
+    # Node read-only (npm run/npx handled below)
     "node",
-    "npm",
     "npx",
-    "pip",
-    "pip3",
 }
 
 
@@ -125,8 +120,12 @@ def is_safe_command(cmd: str) -> bool:
     if base_cmd == "npm" and "install" in cmd:
         return False
 
-    # pip install modifies site-packages
-    if base_cmd in ("pip", "pip3") and "install" in cmd:
+    # npx install-like commands are not safe
+    if base_cmd == "npx" and "install" in cmd:
+        return False
+
+    # node -e can execute arbitrary code
+    if base_cmd == "node" and ("-e" in parts or "--eval" in parts):
         return False
 
     return True
