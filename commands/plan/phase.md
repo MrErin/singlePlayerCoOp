@@ -1,6 +1,6 @@
 ---
 description: Plan a specific phase. Reads requirements and current state, then generates a detailed plan.md with tasks, verify criteria, and done conditions. Pass phase number as argument (e.g., /plan:phase 2) or omit to plan the next incomplete phase.
-allowed-tools: Read, Write, Edit
+allowed-tools: Read, Write, Edit, Glob
 ---
 
 # Plan a Phase
@@ -20,15 +20,19 @@ allowed-tools: Read, Write, Edit
 2. **Determine which phase to plan:**
     - If argument provided: plan that phase number.
     - If no argument: find the next incomplete phase from roadmap.
-3. **Read requirements**: `_planning/requirements.md` (current feature scope). If this phase integrates with or modifies existing functionality, also read `_planning/project-requirements/index.md` and load any specific detail file that is directly relevant to this phase's work.    
-4. **Read previous phase artifacts** — check what was built and any testing and user feedback notes. Initiate discussion with user to resolve issues and discuss questions if notes are present from previous phase.
-5. **Check `_planning/deferred.md`** for any items targeting this phase or a relevant work area. Incorporate them into the plan explicitly — note their origin so the user knows they're being surfaced from a previous phase's flag.
-6. **Research before planning:** Libraries, patterns, API docs, accessibility, security, and pitfalls relevant to this phase. Document findings in plan.md under "Research Notes." Flag uncertainties for user review.
-7. **Generate `plan.md`** in the phase directory (e.g., `_planning/phases/02-read-ops/plan.md`) with:
+3. **Check for existing phase directory:**
+    - List `_planning/phases/` directories
+    - If a directory matching this phase number exists (e.g., `08-name` or `8-name`), **reuse it** — do NOT create a new one
+    - Directory naming: use zero-padded two digits (e.g., `08-feature-name`)
+4. **Read requirements**: `_planning/requirements.md` (current feature scope). If this phase integrates with or modifies existing functionality, also read `_planning/project-requirements/index.md` and load any specific detail file that is directly relevant to this phase's work.
+5. **Read previous phase artifacts** — check what was built and any testing and user feedback notes. Initiate discussion with user to resolve issues and discuss questions if notes are present from previous phase.
+6. **Check `_planning/deferred.md`** for any items targeting this phase or a relevant work area. Incorporate them into the plan explicitly — note their origin so the user knows they're being surfaced from a previous phase's flag.
+7. **Research before planning:** Libraries, patterns, API docs, accessibility, security, and pitfalls relevant to this phase. Document findings in plan.md under "Research Notes." Flag uncertainties for user review.
+8. **Generate `plan.md`** in the phase directory (e.g., `_planning/phases/02-read-ops/plan.md`) with:
     - Clear goal statement
     - Specific tasks with files, action, verify, and done-when criteria
     - Dependencies on previous phases
-8. **For implementation phases that will have a corresponding test phase:** Generate the **Interface Contracts** section in the plan. For each public function/method planned:
+9. **For implementation phases that will have a corresponding test phase:** Generate the **Interface Contracts** section in the plan. For each public function/method planned:
     - Signature with types
     - Purpose (one sentence)
     - Invariants (rules that always hold)
@@ -36,14 +40,14 @@ allowed-tools: Read, Write, Edit
     - Error conditions and what the errors look like
     - Edge cases to test — each must include the expected return value, not just a description (e.g., "empty list input → returns `0`, not an error" not just "empty list")
     - These contracts are written from requirements and expected behaviors — not from implementation code, which doesn't exist yet. DO read existing code to understand available interfaces and patterns.
-9. **Check phase size:** If the plan has more than ~10 tasks, it's too big for one phase. Split the work into multiple sequential phases and plan only the first one now. Inform the user of the proposed split and update the `roadmap.md` accordingly.
-10. **For test phases:** The plan should reference:
+10. **Check phase size:** If the plan has more than ~10 tasks, it's too big for one phase. Split the work into multiple sequential phases and plan only the first one now. Inform the user of the proposed split and update the `roadmap.md` accordingly.
+11. **For test phases:** The plan should reference:
     - Which implementation phases are being tested
     - The interface contracts from those phases' plans
     - Which functions are candidates for property-based testing (pure functions with clear invariants)
     - The Test Rules from `testing.md`
-11. **Update `state.md`** — set current phase and status to "planning".
-12. **Output:** Show the plan. Ask for approval or adjustments before building.
+12. **Update `state.md`** — set current phase and status to "planning".
+13. **Output:** Show the plan. Ask for approval or adjustments before building.
 
 ## Rules
 

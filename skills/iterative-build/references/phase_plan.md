@@ -23,11 +23,13 @@
 
 ## Tasks
 
-### Task 1: [Name]
+> Task status is marked in the heading: `PENDING` → `IN_PROGRESS` → `DONE` or `BLOCKED`. When resuming a phase, scan for the first non-DONE task.
+
+### Task 1: [Name] `PENDING`
 
 **Files:** [files to create or modify] **Action:** [what to do — specific and unambiguous] **Verify:** [how to confirm it worked] **Done when:** [concrete completion criteria]
 
-### Task 2: [Name]
+### Task 2: [Name] `PENDING`
 
 ...
 
@@ -40,6 +42,8 @@
 - [Description of security practice utilized in this phase, if applicable]
 
 ## Issues Discovered During Verification Stage
+
+> Log blocking issues here with "Fix Requires User Input: YES" and empty Resolution. Do NOT proceed past a blocked task.
 
 ### Issue 1: [Name]
 

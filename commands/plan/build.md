@@ -13,6 +13,17 @@ For phases with UI/template/component work: also load the `frontend-design` skil
 
 For test phases: use the `test-writer` subagent for all test generation tasks. If test-writer flags implementation bugs, follow the "If Test-Writer Flags Implementation Bugs" section below before proceeding to step 6.
 
+## Environment Hard Limits (DO NOT ATTEMPT)
+
+These operations are blocked at the kernel level. No workaround exists. Do not waste time trying variations:
+
+- `sudo`, `chmod`, `chown`, `chgrp`, `setfacl` — permission changes
+- `apt-get`, `apt`, `dpkg` — system packages
+- `killall`, `pkill`, `kill -9` — process control
+- `systemctl`, `shutdown`, `reboot` — system control
+
+If a task requires any of these, log it as a blocking issue in plan.md and STOP. The user must handle it outside the container.
+
 ## Argument Modes
 
 The command accepts arguments in two formats:
@@ -36,11 +47,23 @@ Single-task mode:
 4. **Check for user modifications** — read `phase_summary.md` and `user_feedback.md` from previous phases and scan git for modified files.
 5. **Index and explore codebase with jcodemunch** — use `search_symbols` and `get_symbol` to find existing patterns, similar implementations, and relevant interfaces before writing code.
 6. **Execute tasks** from the plan:
+    - **Resume detection:** Scan task headings for status markers. Start at the first task NOT marked `DONE`. If a task is `BLOCKED`, read its issue in "Issues Discovered" section.
     - **Single-task mode:** If argument is `[phase].[task]` format, execute only that task number from the specified phase. Skip steps 7-10 after completion — output the task result and STOP.
     - **Full-phase mode:** Execute all tasks sequentially.
+    - **Mark task `IN_PROGRESS`** in plan.md heading before starting work.
     - Follow each task's action description.
+    - **3-Strike Rule:** If the same operation fails 3 times (same error, same file, or same approach), STOP. Log to plan.md "Issues Discovered" section:
+      ```
+      ### Issue N: [Task Name] - Blocked
+
+      **Description:** Attempted [operation] 3 times. Error: [error]. Likely cause: [environment limitation / missing dependency / other].
+      **Fix Requires User Input:** YES
+      **Resolution:** [EMPTY - awaiting user guidance]
+      ```
+      Mark task `BLOCKED` in heading. Do NOT proceed to next task. Output blocker summary and wait for user.
     - After each task, verify against the task's verify criteria.
     - **Per-task verification:** Delegate to a `code-reviewer` subagent after each task completes. The subagent receives: task spec, files touched, `my-style` standards — nothing else. If issues are found, fix them before proceeding to the next task. This prevents error compounding where a mistake in task 1 pollutes tasks 2-5.
+    - **Mark task `DONE`** in plan.md heading after code-reviewer verification passes.
     - **Use jcodemunch during implementation** — when implementing a task, search for existing similar code to match patterns and conventions.
     - If a task can't be completed as planned, note why and adapt.
     - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.
@@ -92,17 +115,20 @@ When `test-writer` reports that a test fails because the implementation appears 
 7. **If more than 2–3 functions required implementation fixes**, note this in `ua_testing.md` as a "Test Phase Findings" section so the user is aware of the scope of corrections.
 
 ## If Build Fails Mid-Phase
-1. Document what completed and what failed in `plan.md` "Issues Discovered" section
-2. Do NOT attempt to roll back successful tasks unless they depend on the failed one
-3. Fix the failure, re-verify from the failed task forward
-4. Update state.md with interruption note
+1. Mark the failed task `BLOCKED` in plan.md heading
+2. Document what completed and what failed in `plan.md` "Issues Discovered" section with "Fix Requires User Input: YES"
+3. Do NOT attempt to roll back successful tasks unless they depend on the failed one
+4. Do NOT proceed to next task — output blocker summary and wait for user
+5. Update state.md with interruption note
 
 ## Rules
 
 - Follow `my-style` for code quality.
 - STOP after this phase. Do not proceed to next.
+- **STOP on blocked tasks** — if a task has "Fix Requires User Input: YES" with no Resolution, do not proceed to the next task.
 - If plan feels too big, tell user and suggest splitting.
 - Accessibility required for web projects.
+- Mark task status in plan.md: `PENDING` → `IN_PROGRESS` → `DONE` or `BLOCKED`.
 
 ## Do Not
 
