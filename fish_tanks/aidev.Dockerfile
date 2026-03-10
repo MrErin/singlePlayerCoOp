@@ -39,3 +39,5 @@ RUN npm install -g @anthropic-ai/claude-code @modelcontextprotocol/server-sequen
 RUN chmod 777 /home/node
 
 WORKDIR /project
+
+ENTRYPOINT ["claude"]

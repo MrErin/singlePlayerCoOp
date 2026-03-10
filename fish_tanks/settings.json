@@ -55,7 +55,8 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/allow-readonly.py"
-          },          {
+          },
+          {
             "type": "command",
             "command": "python3 ~/.claude/hooks/block-git.py"
           },
