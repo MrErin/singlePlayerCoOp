@@ -32,7 +32,6 @@ SYSTEM_COMMANDS = [
     "reboot",
     "systemctl",
     "mkfs",
-    "dd if=",
     "mount",
     "umount",
     "fdisk",
@@ -54,6 +53,7 @@ DESTRUCTIVE_COMMANDS = [
     "rm -rf $HOME",
     "shred",
     "> /dev/sd",
+    "dd if=",
 ]
 
 
@@ -86,7 +86,10 @@ def check_command(cmd: str) -> str | None:
                 return blocked
 
         for blocked in SYSTEM_COMMANDS:
-            if blocked in stripped:
+            # Match as a word boundary to avoid false positives
+            # e.g., "nft" should match but "conftest" should not
+            pattern = rf"(?:^|.*\s){re.escape(blocked.strip())}(?:\s|$)"
+            if re.search(pattern, stripped):
                 return blocked.strip()
 
         for blocked in DESTRUCTIVE_COMMANDS:
