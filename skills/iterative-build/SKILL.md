@@ -86,6 +86,25 @@ Rules:
 - Test phases do NOT receive: implementation conversation context (enforced by new session)
 - Test phases can batch multiple implementation phases
 - Business logic test phases require property-based tests
+- Test phase plans MUST include an "Environment Constraints" section that lists container/environment limitations affecting test design. Load the project's CLAUDE.md and check the "Hard Limits" section when generating test phase plans.
+
+## Test Phase Execution Rules
+
+Test phases have stricter verification requirements than implementation phases because tests that don't run are worse than no tests (they create false confidence).
+
+1. **Per-task verification is mandatory.** After writing tests for each task, run `pytest <test_file> -v` and confirm all tests pass. If any fail:
+   - If the failure is a test bug (wrong mock setup, bad assertion): fix the test
+   - If the failure is an implementation bug: log it in the Issues section, do NOT fix the implementation (test phase doesn't modify source)
+   - If the failure is an environment limitation (blocked syscall, missing package): log it in the Issues section and ask the user for direction
+
+2. **Full suite check at phase end.** After all tasks are complete, run the FULL test suite (`pytest --tb=short -q`) and report:
+   - Total pass/fail count
+   - Any regressions from existing tests (new failures in files not touched by this phase)
+   - Regressions are blockers — do not mark the phase complete
+
+3. **Environment setup before first test.** At the start of a test phase, verify the test environment works by running `pytest --collect-only -q` on existing tests. If collection fails, resolve the environment issue before writing any tests.
+
+4. **Helper consistency check.** After creating test helpers (Task 1 of test phases), review all helpers and document which scenarios each is designed for. When writing subsequent test tasks, reference this documentation. If multiple helpers exist for similar purposes (e.g., `mock_chat_model` vs `mock_mission_chain`), explicitly note which one to use and why.
 
 ## Context Detection
 

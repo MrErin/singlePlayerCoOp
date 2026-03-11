@@ -25,6 +25,15 @@ You are running inside a Docker container. This determines what is and is not po
 
 User uses JetBrains IDEs.
 
+## Fish Tank Terminology
+
+When you encounter issues with **your own container environment** (not a project container, not a production environment), refer to it as the **"fish tank"**. This helps distinguish:
+- **Fish tank issues** — problems with the AI agent's container (permissions, missing packages, blocked syscalls)
+- **Project issues** — problems with the codebase being worked on
+- **Environment issues** — problems with other containers or systems
+
+Example: "I can't install that package in the fish tank — it's an ephemeral container."
+
 ## Hard Limits
 
 These will never work. Do not attempt them, do not try variations or workarounds:

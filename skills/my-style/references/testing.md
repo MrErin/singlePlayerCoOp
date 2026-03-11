@@ -101,6 +101,22 @@ assert get_display_name(user) == "Alice (admin)"
 
 Tests written from **interface contracts**, not implementation code. Test phases run in separate sessions to guarantee test-writer works from contracts, not implementation memory.
 
+## Mocking Framework Objects
+
+When mocking objects from frameworks (LangChain, SQLAlchemy, Django, etc.), plain `MagicMock` often breaks because frameworks use operator overloading, metaclasses, or internal dispatch that bypasses mock's `__getattr__`.
+
+**Common failure modes:**
+- `MagicMock` with `|` operator — framework wraps mock in adapter, `invoke()` never called
+- `MagicMock` with `>>` or `<<` — pipeline/stream operators create new objects
+- `MagicMock` as context manager — `__enter__`/`__exit__` not properly chained
+- `MagicMock` with `__iter__` — framework checks for iterator protocol
+
+**Rules:**
+1. **Smoke-test your mock.** Before writing 10+ tests with a mock helper, write ONE test that exercises the exact production code path end-to-end with the mock. Run it. If it fails, the mock setup is wrong.
+2. **Prefer patching at the call site.** Instead of mocking the object that enters an operator chain, patch the object it chains WITH (e.g., patch the prompt template, not the model).
+3. **Use framework test utilities.** Many frameworks provide fake/stub implementations for testing (e.g., LangChain's `FakeListLLM`, Django's `RequestFactory`). Prefer these over MagicMock.
+4. **If mock_helper exists, use it.** If conftest.py already has a helper that patches the chain correctly (e.g., `mock_mission_chain`), use it. Don't create a parallel mock setup that bypasses the helper.
+
 ## Property-Based Testing
 
 For business logic with invariants, use **Hypothesis** (Python) or **fast-check** (TypeScript) alongside example tests.

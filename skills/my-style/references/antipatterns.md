@@ -107,6 +107,37 @@ Patterns that strongly suggest AI-generated code without human review.
 | Giant setup | 30+ line setup for 1 assertion | MEDIUM | Extract to fixture or helper |
 | Happy path only | No error/edge case tests | HIGH | Add negative tests (1:2 ratio minimum) |
 | Tautological assertion | `assert x == x` or `assert True` | CRITICAL | Remove or test something real |
+| Mock protocol mismatch | MagicMock used with operator overloading (`\|`, `>>`, `@`) | HIGH | Verify mock works with actual operator usage; prefer patching call site or using framework test utilities |
+
+---
+
+## Mock Protocol Mismatch (HIGH)
+
+When frameworks use Python's operator overloading (`__or__`, `__ror__`, `__rshift__`, `__matmul__`), MagicMock's auto-generated dunder methods return new MagicMocks instead of following the framework's dispatch protocol.
+
+| Pattern | Detection | Severity | Action |
+|---------|-----------|----------|--------|
+| MagicMock in pipe chain | `MagicMock()` passed to `\|` operator | HIGH | Patch the prompt/template side, not the model |
+| Mock invoke never called | `mock.invoke.called` is False after chain execution | HIGH | Mock is being wrapped, not called directly |
+| Mock helper exists but unused | conftest has `mock_X_chain()` but tests use `mock_chat_model()` | HIGH | Use the chain-aware helper |
+
+**Example:**
+```python
+# BAD: MagicMock doesn't work with LangChain's | operator
+mock_model = MagicMock()
+mock_model.with_structured_output.return_value = MagicMock()
+chain = PROMPT | mock_model.with_structured_output(Schema)  # Wraps mock in RunnableLambda
+chain.invoke(data)  # Returns MagicMock, not the configured response
+
+# GOOD: Patch the prompt template to return a mock chain
+mock_chain = MagicMock()
+mock_chain.invoke.return_value = expected_response
+with patch("module.PROMPT") as mock_prompt:
+    mock_prompt.__or__ = MagicMock(return_value=mock_chain)
+    result = generate(model)  # Works correctly
+```
+
+**Why it matters:** Tests compile, collection succeeds, but every test fails at runtime with confusing errors like "Expected X, got MagicMock". The failure is in the mock setup, not the production code.
 
 ---
 

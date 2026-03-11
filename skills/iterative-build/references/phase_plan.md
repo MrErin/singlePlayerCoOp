@@ -37,6 +37,14 @@
 
 [anything from previous phases this builds on]
 
+## Environment Constraints
+
+> For test phases: list any container or environment limitations that affect test design. Check CLAUDE.md "Hard Limits" and the project's known constraints.
+> Tests must be designed to work within these constraints.
+- [e.g., "chmod blocked at kernel level — tests verifying file permissions must mock Path.chmod or use @pytest.mark.skipif"]
+- [e.g., "No network access — all HTTP calls must be mocked"]
+- [e.g., "No sudo/apt — cannot install additional packages"]
+
 ## Security Checklist
 
 - [Description of security practice utilized in this phase, if applicable]
