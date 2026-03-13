@@ -28,6 +28,63 @@ Write tests before or alongside implementation. **TDD** when design is unclear; 
 - **Edge and corner cases** must be covered
 - **Pre-existing tests** must still pass after new features
 
+## Test Class Naming
+
+**Pattern:** `Test[Feature]` or `Test[Feature][Category]` where Category is a specific subset.
+
+```python
+# ✅ Clear scope
+TestUserAuthentication   # All auth-related user tests
+TestOrderPricing         # All pricing calculations for orders
+TestInventoryQueries     # All inventory read operations
+
+# ❌ Vague or misleading
+TestUserCRUD             # If not testing all CRUD operations
+TestUser                 # Too broad — what aspect?
+TestUserHelper           # Helpers are implementation detail
+```
+
+**CRUD claim rule:** If class name includes `CRUD`, it MUST test all four operations:
+- **C**reate — happy path + validation failures
+- **R**ead — single fetch + list + not-found cases
+- **U**pdate — happy path + immutable field attempts
+- **D**elete — happy path + not-found handling
+
+If testing only a subset, name accordingly: `TestUserRead`, `TestOrderMutations`.
+
+## Test Method Naming
+
+**Behavior-focused plain English.** Describe what the system does, not which method is called.
+
+```python
+# ✅ Behavior-focused — survives refactoring
+test_login_fails_with_expired_password
+test_order_total_includes_regional_tax
+test_duplicate_email_shows_error
+
+# ❌ Method-coupled — brittle, tells nothing about requirements
+test_login
+test_process_order
+test_validate_email
+```
+
+**Pattern:** `test_[action]_[condition]_[expected_result]`
+
+The action is what the user/system does, not the method name.
+
+## Test Suite Structure
+
+**Standard categories by module type:**
+
+| Module Type | Required Test Categories |
+|-------------|-------------------------|
+| Repository/DAO | Create, Read (single + list), Update, Delete, Not Found cases |
+| Service | Happy path, validation errors, business rule violations |
+| API/Endpoint | Auth, success response, error responses, malformed input |
+| Calculator/Pure | Happy path, edge cases, boundary values, property invariants |
+
+**Parallel modules must have parallel tests.** If `UserRepo` has `create_with_duplicate_raises`, then `OrderRepo` needs the equivalent.
+
 ## Test Design
 
 **One concept per test.** If you need "and" to describe what it verifies, split it.

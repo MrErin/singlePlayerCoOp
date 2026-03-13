@@ -32,10 +32,13 @@ All tests evaluated against `my-style/testing.md`. Quick reference for what to f
 
 | Category | What to Check For |
 |----------|-------------------|
+| **Test Class Naming** | `Test[Feature]` or `Test[Feature][Category]`; `CRUD` classes must test all four operations; no vague names like `TestUser` |
+| **Test Method Naming** | Behavior-focused: `test_[action]_[condition]_[result]`; no method-coupled names like `test_login` |
 | **Test Design** | One concept per test, descriptive names, no conditionals, proportional setup, no section dividers |
 | **Test Independence** | Order-independent, no shared mutable state, no timing dependencies |
 | **Assertion Quality** | All fields asserted, exact counts (not `>=`), no tautologies or mirror tests |
 | **Coverage** | Edge cases, error paths, negative tests (minimum 1:2 ratio with happy path) |
+| **Suite Structure** | Repos have CRUD tests; services have happy/validation/business-rule tests; APIs have auth/success/error tests |
 | **Seam Tests** | Module boundaries have integration tests, not just mocked unit tests |
 | **Redundancy** | No duplicate tests exercising same code path with same assertions |
 | **Obsolete Tests** | Tests track renamed/removed code, no orphan tests for deleted functions |
