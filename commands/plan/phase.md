@@ -23,9 +23,10 @@ Before starting, check if the target phase's `plan.md` exists with `<!-- STATUS:
 2. **Determine which phase to plan:**
     - If argument provided: plan that phase number.
     - If no argument: find the next incomplete phase from roadmap.
-3. **Check for existing phase directory:**
+3. **Create or reuse phase directory:**
     - List `_planning/phases/` directories
     - If a directory matching this phase number exists (e.g., `08-name` or `8-name`), **reuse it** — do NOT create a new one
+    - If no matching directory exists, **create it now** with zero-padded two digits (e.g., `08-feature-name`). Derive the name from the phase description in the roadmap.
     - Directory naming: use zero-padded two digits (e.g., `08-feature-name`)
 4. **Read requirements**: `_planning/requirements.md` (current feature scope). If this phase integrates with or modifies existing functionality, also read `_planning/project-requirements/index.md` and load any specific detail file that is directly relevant to this phase's work.
 5. **Read previous phase artifacts** — check what was built and any testing and user feedback notes. Initiate discussion with user to resolve issues and discuss questions if notes are present from previous phase.

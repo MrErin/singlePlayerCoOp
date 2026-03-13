@@ -17,9 +17,11 @@ allowed-tools: Bash, Read, Write
    - Copy all phase directories from `_planning/phases/` → `_planning/archive/[name]/phases/`
    - Copy `_planning/roadmap.md` → `_planning/archive/[name]/roadmap.md`
    - Copy `_planning/requirements.md` → `_planning/archive/[name]/requirements.md`
+   - Copy any `phase_shift_requirements_*.md` files → `_planning/archive/[name]/`
 
 4. **Extract permanent requirements**:
    - Read `_planning/requirements.md`
+   - Read any `phase_shift_requirements_*.md` files — merge their requirements into the permanent record
    - Read `_planning/project-requirements/index.md` if it exists (understand what's already captured)
    - Read `_planning/decisions.md` for any architectural decisions that imply permanent behaviors
    - Identify what is permanent: capabilities the system now has, data model facts, business rules, non-functional constraints that will always apply
@@ -37,6 +39,7 @@ allowed-tools: Bash, Read, Write
    - **STOP and wait for user confirmation before continuing.**
 
 6. **Clear the workspace** (only after user confirms step 5):
+   - Delete any `phase_shift_requirements_*.md` files (already archived in step 3)
    - Overwrite `_planning/requirements.md` with an empty placeholder:
      ```markdown
      # Requirements

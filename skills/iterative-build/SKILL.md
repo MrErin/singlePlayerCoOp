@@ -14,7 +14,7 @@ Build in digestible phases. Maintain persistent planning state. Never build ever
 
 | Command | Purpose |
 |---------|---------|
-| `/plan:interrogate` | Requirements interview |
+| `/plan:interrogate` | Requirements interview (also handles phase shifts) |
 | `/plan:init` | Initialize `_planning/` directory |
 | `/plan:phase` | Plan next/specified phase |
 | `/plan:build` | Execute current phase |
@@ -46,7 +46,8 @@ _planning/
 │   ├── core.md             # Non-feature requirements
 │   └── [feature].md        # Per-feature permanent requirements
 ├── archive/                # Frozen snapshots
-└── phases/
+├── phase_shift_*.md        # Requirements for inserted phases (archived after use)
+└── phases/                 # Phase directories created on-demand by /plan:phase
     └── [NN-name]/
         ├── plan.md
         ├── phase_summary.md
@@ -87,6 +88,17 @@ Rules:
 - Test phases can batch multiple implementation phases
 - Business logic test phases require property-based tests
 - Test phase plans MUST include an "Environment Constraints" section that lists container/environment limitations affecting test design. Load the project's CLAUDE.md and check the "Hard Limits" section when generating test phase plans.
+
+## Phase Shifts
+
+When requirements change mid-build or unexpected work is discovered:
+
+1. **Run `/plan:interrogate`** — automatically detects phase shift mode when user mentions requirements change, refactoring needs, or blocked work
+2. **Creates `phase_shift_requirements_phase[N].md`** — documents the trigger, scope, and approach
+3. **Updates roadmap** — inserts new phase(s) and renumbers all subsequent phases
+4. **Continue with `/plan:phase [N]`** — plans the new phase using the shift requirements
+
+Typical phase shift adds 1-2 phases (implementation + optional test phase). Phase shift requirements files are archived during `/plan:archive`.
 
 ## Test Phase Execution Rules
 

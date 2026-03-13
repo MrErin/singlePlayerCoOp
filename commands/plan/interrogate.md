@@ -1,6 +1,6 @@
 ---
-description: Conduct a structured requirements interview to produce a completed requirements.md. Adapts to three contexts - new project (full interview from scratch), new feature (scoped to the feature and its integration points), or clarify existing (targeted gap analysis). Ask one topic at a time, push back on vague answers, discuss tradeoffs critically. Synthesize responses into a running draft that updates after each section. Use before /plan:init on any new project or feature.
-allowed-tools: Read, Write
+description: Conduct a structured requirements interview to produce a completed requirements.md. Adapts to four contexts - new project (full interview), new feature (scoped interview), clarify existing (targeted gaps), or phase shift (insert phases mid-build). Ask one topic at a time, push back on vague answers, discuss tradeoffs critically. Synthesize responses into a running draft that updates after each section. Use before /plan:init on any new project or feature.
+allowed-tools: Read, Write, Glob
 ---
 
 # Requirements Interrogation
@@ -20,10 +20,13 @@ Read project directory first:
 | **A: New Project** | No `_planning/` or empty requirements | Full interview |
 | **B: New Feature** | `_planning/` exists, codebase exists | Scoped interview |
 | **C: Clarify** | requirements.md has content, user wants gaps filled | Targeted interview |
+| **D: Phase Shift** | User mentions requirements change, refactoring needed, or unexpected work mid-build | Phase insertion interview |
 
 **Mode B:** Read `roadmap.md`, `decisions.md`, `codebase.md`, phase summaries, `project-requirements/index.md` first. Don't ask what you can learn from context.
 
 **Mode C:** Read `requirements.md` and `decisions.md`. Identify gaps, vague criteria, contradictions. Interview only those areas.
+
+**Mode D:** Read `roadmap.md`, `state.md`, current phase plan, and any relevant phase summaries. Understand what's been built and what's blocked or needs rework.
 
 ## Running Draft
 
@@ -58,6 +61,38 @@ Load `references/interrogate-guide.md` for detailed probing questions.
 [ ] 7. Out of scope
 [ ] 8. Coverage confirmation
 ```
+
+## Interview Sequence (Mode D: Phase Shift)
+
+**Trigger:** User indicates requirements have changed, something needs refactoring, or unexpected work is needed mid-build.
+
+```
+[ ] 1. Understand the shift
+    - What triggered this? (requirements change, discovered technical debt, integration issue)
+    - What's blocked or broken without this work?
+    - Is this urgent or can it wait until after current phases?
+[ ] 2. Scope the new work
+    - What specifically needs to be built/changed?
+    - Does this affect already-built phases? (may need retroactive fixes)
+    - Does this change the data model? (cascading effects)
+[ ] 3. Determine phase count
+    - Implementation phase needed? (usually yes)
+    - Test phase needed? (yes if implementation phase)
+    - Total phases to insert: 1-2 typically
+[ ] 4. Insertion point
+    - After which phase should this be inserted?
+    - Confirm: all subsequent phases will be renumbered
+[ ] 5. Create phase shift document
+    - Write `_planning/phase_shift_requirements_phase[N].md` where N is the NEW phase number after insertion
+    - Include: trigger, scope, affected phases, implementation approach
+[ ] 6. Update roadmap
+    - Insert new phase(s) at the correct position
+    - Renumber all subsequent phases (no decimals)
+    - Update phase names to reflect new numbering
+    - Add note explaining the shift
+```
+
+**After Mode D:** The user can proceed with `/plan:phase [N]` to plan the new phase using the shift requirements document.
 
 ## Interview Behavior
 

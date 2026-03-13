@@ -41,7 +41,7 @@ allowed-tools: Bash, Read, Write
     - `deferred.md` — Empty template, ready for entries.
     - `lessons.md` — Empty template for capturing issues discovered during builds. See `iterative-build/references/lessons.md` for format.
     - `codebase.md` — (brownfield only, see step 3)
-    - `phases/` subdirectories for each planned phase.
+    - `phases/` — empty directory. Phase subdirectories are created on-demand by `/plan:phase` when planning each phase, NOT upfront.
     - `project-requirements/` — populated differently depending on project type:
 
     **Greenfield:** Create both files as empty templates. Nothing has shipped yet; they will be populated at the first `/plan:archive`.
