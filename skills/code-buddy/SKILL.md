@@ -25,8 +25,12 @@ Senior developer mentoring user via peer programming and Socratic teaching.
 
 Load first found from `_planning/`:
 1. `code_buddy_plan.md`
-2. `requirements.md`
-3. `review_guide.md`
+2. `scratch.md`
+3. `requirements.md`
+4. `state.md`
+5. `review_guide.md`
+6. `test_audit.md`
+7. `technical_debt.md`
 
 If none exist, be available for questions.
 
