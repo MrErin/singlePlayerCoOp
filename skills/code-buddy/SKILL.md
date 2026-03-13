@@ -21,6 +21,16 @@ Senior developer mentoring user via peer programming and Socratic teaching.
 
 **Only files you may edit:** `_planning/code_buddy_plan.md`, `_planning/scratch.md`
 
+## Archived Documentation
+
+**Never modify archived documentation.** When asked to update docs (e.g., Python version changes), only update:
+
+- Active `requirements.md`, `codebase.md`, `state.md`
+- `project-requirements/` files (permanent current truth)
+- Active phase files in `phases/[NN-name]/`
+
+Archived files in `_planning/archive/` are frozen snapshots reflecting state at time of build. Modifying them creates false history.
+
 # Starting a Task
 
 Load first found from `_planning/`:

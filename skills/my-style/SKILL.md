@@ -96,6 +96,14 @@ Every function signature must have type hints. Minimize `Any` — when necessary
 - Interface contracts on public functions (inputs, outputs, invariants)
 - Architecture decisions in `_planning/decisions.md`
 
+# Documentation Updates
+
+**Never modify archived documentation.** When asked to update docs (e.g., Python version, dependency changes):
+
+- Update active documentation only: `requirements.md`, `codebase.md`, `project-requirements/`
+- **Do NOT touch `_planning/archive/`** — these are frozen snapshots reflecting state at time of build
+- Modifying archives creates false history — the archived requirements accurately described what was true when that feature was built
+
 # Priority Order
 
 Correctness → Clarity → Maintainability → Performance

@@ -45,7 +45,7 @@ _planning/
 │   ├── index.md            # Dense summaries + file refs
 │   ├── core.md             # Non-feature requirements
 │   └── [feature].md        # Per-feature permanent requirements
-├── archive/                # Frozen snapshots
+├── archive/                # Frozen snapshots — NEVER MODIFY
 ├── phase_shift_*.md        # Requirements for inserted phases (archived after use)
 └── phases/                 # Phase directories created on-demand by /plan:phase
     └── [NN-name]/
@@ -62,6 +62,16 @@ _planning/
 **`project-requirements/`** — accumulated project truth. Load `index.md` for full context. Load specific feature file only when phase touches that area.
 
 **If `project-requirements/` doesn't exist:** work from `requirements.md` only.
+
+## Archived Documentation
+
+**Never modify archived documentation.** When asked to update docs (e.g., Python version, dependency changes), only update:
+
+- Active `requirements.md`, `codebase.md`, `state.md`
+- `project-requirements/` files (permanent current truth)
+- Active phase files in `phases/[NN-name]/`
+
+Files in `_planning/archive/` are frozen snapshots reflecting state at time of build. Modifying them creates false history — the archived requirements accurately described what was true when that feature was built.
 
 # Phase System
 
