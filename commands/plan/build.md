@@ -100,7 +100,15 @@ Single-task mode:
     - `_planning/codebase.md`:
         - **Setup phase:** Generate it (captures the project structure just created)
         - **Other phases:** Update only if new directories, dependencies, or architectural patterns were introduced. Skip if structure unchanged.
-11. **STOP.** Output the testing checklist. Wait for user approval.
+11. **Output quick summary first:** Before the testing checklist, output a brief "At a Glance" summary:
+    - **One-sentence:** What this phase accomplished
+    - **Files changed:** List with one-line descriptions
+    - **Key functions:** List with one-line descriptions
+    - **Behavior changes:** User-visible changes
+
+    This gives you immediate understanding without reading code.
+
+12. **STOP.** Output the quick summary and testing checklist. Wait for user approval.
 
 ## If Test-Writer Flags Implementation Bugs
 

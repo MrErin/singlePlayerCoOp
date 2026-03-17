@@ -19,8 +19,16 @@ allowed-tools: Read, Write
     - Research if you are uncertain about a pattern or architectural decision
     - Alert the user if problems are found
 4. **Read the phase's `user_feedback.md` if it exists.**
-5. **Generate or update `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references. Focus on: what was built (plain language, not file lists), key decisions and their rationale, the 2-3 most non-obvious logic flows, and connections to previous/future phases. Skip obvious code — only explain what's worth explaining. **Write this early** — it captures analysis that would be lost if the session ends before completing later steps.
-6. **If `ua_testing.md` doesn't exist yet:** Generate it from the `ua_testing` template located in `/iterative-build` references.
+5. **Generate or update `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references.
+    - **Generate "At a Glance" section FIRST** — this is the most important section for quick understanding:
+        - **One-sentence summary:** What this phase accomplishes overall
+        - **Files Changed:** List each file with one-line description of changes (use `git diff` or file exploration to identify changes)
+        - **Key Functions:** List each function added/modified with one-line behavior description (use jcodemunch `get_file_outline` and `get_symbol`)
+        - **Behavior Changes:** User-visible changes or API/contract changes
+    - **Write this early** — generate "At a Glance" first, then detailed sections
+    - Use jcodemunch `search_text` to find how functions are called to understand connections
+    - **Skip obvious code** — only explain what's worth explaining
+6. **If `ua_testing.md` doesn't exist yet:** Generate it from the `ua_testing` template. Use **progressive disclosure** — put "Quick Smoke" tests first (5-10 min), then "Priority 1" features (15-20 min), then "Priority 2" if time permits. Don't overwhelm the user with one giant checklist.
 7. **If ua_testing.md exists:** Ask the user what needs updating. Common scenarios:
     - Tests failed — document what went wrong, suggest fixes
     - User found issues — record them, adjust
