@@ -24,6 +24,18 @@ Before starting, check if `_planning/technical_debt.md` exists with `<!-- STATUS
 	- All queries use parameterized syntax (no string concatenation or f-strings)
 	- Semantic HTML used appropriately (not div-for-everything)
 	- Interactive elements have ARIA labels, keyboard navigation, and focus management
+	- **Dead code detection** — use jcodemunch to identify:
+		- Functions/methods defined but never called (search for function name across codebase)
+		- Classes never instantiated or imported elsewhere
+		- Public functions with no callers outside their own file
+		- Exported symbols that nothing imports
+		- Each candidate requires manual verification (grep for false positives like dynamic calls, test fixtures, API endpoints) — do not flag without confirming
+		- Create CLEANUP cards for confirmed dead code with HIGH severity
+	- **Redundant code detection** — look for:
+		- Near-identical functions across files (same logic, different names)
+		- Copy-paste artifacts (variable names that don't match their content)
+		- Multiple implementations of the same utility
+		- Create CLEANUP cards with MEDIUM severity
 	- **AI-generated anti-patterns** — read `my-style/references/antipatterns.md` and use `search_text` to find:
 		- CRITICAL patterns first: environment workarounds, error handling issues, mutable defaults
 		- HIGH patterns next: state issues, database anti-patterns, testing gaps

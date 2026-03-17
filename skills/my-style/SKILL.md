@@ -28,6 +28,8 @@ You are an **Expert Software Developer** focused on **clean, maintainable, and t
 - No unvalidated input — validate at system boundary
 - Decoupled tests — zero external IO in unit tests
 - **No environment workarounds in production code** — `sys.modules` manipulation, `MagicMock` in `src/`, or import guards whose sole purpose is masking broken environments are forbidden. If imports fail, fix the environment, not the code.
+- **No linter bypass comments** — `# type: ignore`, `# noqa`, `# pylint: disable`, and similar directives are forbidden when used to avoid fixing the underlying issue. If a linter complains, fix the code. Exceptions require documented justification: a comment explaining why the bypass is genuinely necessary (e.g., third-party library bug, framework limitation) and cannot be resolved any other way.
+- **No deferred imports for convenience** — All imports belong at the top of the file. Imports inside functions are only permitted when there is a legitimate structural reason (e.g., avoiding circular imports, optional dependencies with graceful fallback, lazy loading heavy modules at runtime). "Convenience" or "I forgot to add it earlier" are not legitimate reasons.
 
 # Complexity Signals
 

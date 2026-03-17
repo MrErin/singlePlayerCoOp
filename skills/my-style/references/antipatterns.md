@@ -153,7 +153,7 @@ with patch("module.PROMPT") as mock_prompt:
 
 ---
 
-## Import Anti-Patterns (MEDIUM)
+## Import Anti-Patterns (MEDIUM/HIGH)
 
 | Pattern | Search | Severity | Action |
 |---------|--------|----------|--------|
@@ -161,6 +161,51 @@ with patch("module.PROMPT") as mock_prompt:
 | Star imports | `from x import *` | HIGH | Import specific names |
 | Circular imports | Import errors at module load | HIGH | Restructure or use deferred import |
 | Shadow imports | Local name shadows imported name | MEDIUM | Rename one of them |
+| Convenience deferred imports | `import` inside function without structural necessity | HIGH | Move to module level |
+| Undocumented deferred imports | `import` inside function without comment explaining why | MEDIUM | Add justification comment or move to top |
+
+**When deferred imports ARE acceptable:**
+- Avoiding circular imports (document: `# Deferred to avoid circular import with module X`)
+- Optional dependencies with graceful degradation (document: `# Optional dependency for feature X`)
+- Lazy loading heavy modules at runtime (document: `# Lazy load to reduce startup time`)
+
+**When deferred imports are NOT acceptable:**
+- "I forgot to add it at the top"
+- "It was more convenient here"
+- Avoiding a linter warning about unused imports (remove the import instead)
+
+---
+
+## Linter Bypass Anti-Patterns (HIGH)
+
+Using comments to silence linter warnings instead of fixing the underlying issue.
+
+| Pattern | Search | Severity | Action |
+|---------|--------|----------|--------|
+| Type ignore without justification | `# type: ignore` without explanatory comment | HIGH | Fix the type issue or document why bypass is necessary |
+| Noqa without justification | `# noqa` without explanatory comment | HIGH | Fix the issue or document why bypass is necessary |
+| Pylint disable without justification | `# pylint: disable` without explanatory comment | HIGH | Fix the issue or document why bypass is necessary |
+| Blanket type ignore | `# type: ignore` (no specific error code) | HIGH | Use specific code (`# type: ignore[attr-defined]`) and justify |
+| File-level ignore | `# type: ignore` at top of file | CRITICAL | This is hiding systemic issues — fix them |
+
+**Why it matters:** Linter bypasses accumulate debt silently. Each `# type: ignore` hides a potential bug, incorrect type annotation, or API misuse. The AI uses these as shortcuts to "make the error go away" rather than understanding and fixing the root cause.
+
+**When bypasses ARE acceptable (with documentation):**
+```python
+# ✅ Documented justification for legitimate bypass
+result = external_lib.untyped_func()  # type: ignore[no-untyped-call]  # Third-party lib lacks stubs, filed issue #123
+```
+
+**When bypasses are NOT acceptable:**
+```python
+# ❌ No justification, just silencing the linter
+def process(data):  # type: ignore[no-untyped-def]
+    return data
+
+# ❌ Should be fixed instead of bypassed
+user.name = data.get('name')  # type: ignore[assignment]  # "data might have wrong type"
+# FIX: Validate and cast properly
+```
 
 ---
 
@@ -242,10 +287,41 @@ When AI implements similar features, it copies and partially adapts code rather 
 
 ---
 
+## Dead Code (MEDIUM/HIGH)
+
+Code that exists but is never executed — functions never called, classes never instantiated, modules never imported. Accumulates over multiple build passes as features evolve.
+
+| Pattern | Detection | Severity | Action |
+|---------|-----------|----------|--------|
+| Uncalled functions | Function defined but name never appears in call site | HIGH | Verify unused, then remove |
+| Orphan classes | Class defined but never instantiated or imported elsewhere | HIGH | Verify unused, then remove |
+| Unreachable branches | Code after `return`/`raise`, impossible conditions | MEDIUM | Remove dead branches |
+| Exported but unused | Public function/class with no external callers | MEDIUM | Make private or remove |
+| Zombie imports | Import statement for module never used | LOW | Remove (linter catches) |
+| Commented-out code | Large blocks of code in comments | MEDIUM | Delete — git is the history |
+| Dead feature flags | Feature flag checks for removed features | HIGH | Remove flag and dead branch |
+
+**Why it matters:** Dead code increases cognitive load, slows down IDEs and linters, and confuses AI agents who try to understand relationships that no longer exist. Multiple build passes leave behind "just in case" code that never gets used.
+
+**Detection challenges:**
+- Dynamic calls (`getattr(obj, method_name)`) hide usage — grep for the string literal
+- Test fixtures may reference "unused" code — check test files
+- API endpoints may look unused but are called externally — check route decorators
+- Plugin/extension points may be intentionally unused yet — document these
+
+**Verification process:**
+1. Find candidate via jcodemunch `search_symbols` + `search_text`
+2. Grep for all references to the symbol name
+3. Check for dynamic invocation patterns
+4. Verify not used in tests, configs, or external APIs
+5. Only then create CLEANUP card
+
+---
+
 ## How to Use This Reference
 
 ### For /plan:debt
-Use `search_text` to find patterns. Start with CRITICAL patterns, then HIGH. Each match becomes a debt card with the pattern's severity and action. Include Hallucinated APIs, Resource Management, and Hardcoded Secrets sections.
+Use `search_text` to find patterns. Start with CRITICAL patterns, then HIGH. Each match becomes a debt card with the pattern's severity and action. Include Hallucinated APIs, Resource Management, Hardcoded Secrets, and Dead Code sections. For dead code, use jcodemunch `get_file_outline` to list symbols, then `search_text` to verify each has callers.
 
 ### For code-reviewer agent
 Check modified files against: Environment Workarounds, Error Handling, State & Mutability, Database/API Patterns, Resource Management, and Hardcoded Secrets. These are the sections most likely to introduce bugs per-task.
