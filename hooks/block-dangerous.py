@@ -65,11 +65,11 @@ def check_command(cmd: str) -> str | None:
 
     Returns the matched blocked command string, or None if safe.
     """
-    # Normalize whitespace
-    normalized = " ".join(cmd.split())
+    # Normalize whitespace (preserve newlines for split detection)
+    normalized = re.sub(r"[^\S\n]+", " ", cmd).strip()
 
     # Split on shell operators to inspect each sub-command
-    parts = re.split(r"[;&|]+|\$\(|\)", normalized)
+    parts = re.split(r"[;&|\n]+|\$\(|\)", normalized)
 
     for part in parts:
         stripped = part.strip()
@@ -95,6 +95,17 @@ def check_command(cmd: str) -> str | None:
         for blocked in DESTRUCTIVE_COMMANDS:
             if blocked in stripped:
                 return blocked
+
+        # Catch chmod/chown attempts via python -c
+        if re.search(
+            r"python3?\s+-c\s+.*\b(os\.chmod|os\.chown|os\.fchmod|os\.fchown)\b",
+            stripped,
+        ):
+            return "python -c with chmod/chown"
+
+        # Catch process substitution
+        if re.search(r"<\s*\(", stripped):
+            return "process substitution <(...)"
 
     return None
 

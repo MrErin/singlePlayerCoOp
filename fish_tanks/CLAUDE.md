@@ -81,3 +81,21 @@ If a package import fails (`ModuleNotFoundError`, `ImportError`), diagnose befor
 3. **If files don't exist:** The package is genuinely missing. Tell the user what's missing. They will install it on the host and restart the container.
 
 **Never work around import failures with mocks in production code.** If imports don't work, the environment is broken. Stop and escalate.
+
+## Known Fish Tank Errors
+
+These errors are caused by the fish tank security boundary, not by incorrect usage. **Do not retry, work around, or attempt alternative approaches.** Report to the user and stop.
+
+| Error Pattern | Cause | Action |
+|---------------|-------|--------|
+| `PermissionError: [Errno 1] Operation not permitted` during file copy | `shutil.copy2` calls `chmod` internally, blocked by seccomp | Stop. Report to user. Reference the fish tank chmod restriction. |
+| `OSError: [Errno 1]` from any chmod/chown/fchmod operation | Seccomp profile blocks all permission-change syscalls | Stop. Report to user. Do not attempt Python or shell workarounds. |
+| `Operation not permitted` from `os.chmod`, `os.chown`, or `os.fchmod` | Same seccomp restriction reached via Python stdlib | Stop. Report to user. |
+
+**Pattern to watch for:** If a tool fails with `PermissionError` or `Operation not permitted` and the traceback includes `shutil`, `os.chmod`, `os.fchmod`, or `copystat` — this is always a fish tank limitation. No amount of retrying or flag changes will fix it.
+
+## Mutmut in the Fish Tank
+
+mutmut is pre-installed and supported. The entrypoint automatically patches `shutil.copy2` to avoid chmod syscalls, so `mutmut run` works out of the box.
+
+If mutmut fails with a `PermissionError` during file copy, the entrypoint patch may not have deployed (e.g., the venv's `site-packages` already had a `sitecustomize.py`). Report this to the user — do not attempt to create or modify `sitecustomize.py` yourself.

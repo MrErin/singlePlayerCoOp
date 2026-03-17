@@ -50,24 +50,88 @@ arch-code -p "fix the login bug"   # extra args pass through
 - Escalate privileges
 - Survive a container restart (no persistent damage possible)
 
-## Seccomp Profile Trade-off
+## Security Architecture: Why Three Layers
 
-The included `seccomp-no-chmod.json` uses `defaultAction: ALLOW` and blocks
-specific syscalls. This is slightly MORE permissive than Docker's default
-seccomp profile (which blocks ~44 syscalls). However, `--cap-drop=ALL` already
-covers most of what the default profile blocks.
+The fish tank uses three distinct layers to control agent behavior. Each serves
+a different purpose and **none of them is redundant**.
 
-If you want belt-AND-suspenders, download Docker's default profile and add the
-chmod blocks to it:
+### Layer 1: Seccomp Profile (Kernel Enforcement)
 
-```bash
-# Download Docker's default seccomp profile
-curl -o ~/.claude/docker/seccomp-default.json \
-  https://raw.githubusercontent.com/moby/moby/master/profiles/seccomp/default.json
+`seccomp-no-chmod.json` blocks chmod/chown family syscalls at the Linux kernel.
 
-# Then manually add the chmod/chown entries to the "syscalls" array
-# and use that file instead
+**This is the hard security boundary.** It cannot be bypassed by any code
+running inside the container — not by Python, not by C, not by shell tricks.
+If a process calls `chmod()`, `fchmod()`, `fchmodat()`, `chown()`, etc., the
+kernel returns `EPERM` before the call executes.
+
+**Why it must never be removed:**
+
+1. **It's the only layer that catches indirect chmod.** An agent can write a
+   Python script that calls `os.chmod()`, execute a compiled binary, or use
+   `ctypes` to invoke the syscall directly. The hooks and deny rules only
+   inspect the Bash command string — they can't see what runs *inside* a
+   process. The seccomp profile can.
+
+2. **It blocks entire categories of bypass.** Without seccomp, an agent could:
+   - `python3 -c "import os; os.chmod('file', 0o777)"`
+   - Write and compile a C program that calls the chmod syscall
+   - Use `ctypes` to invoke syscalls directly
+   - Invoke `chmod` from within a script written by the `Write` tool
+   - Use process substitution: `bash <(echo "chmod 777 file")`
+   - Encode commands: `echo Y2htb2QgNzc3IGZpbGU= | base64 -d | bash`
+   The hooks would miss all of these. Seccomp catches every one.
+
+3. **It protects tools you haven't thought of yet.** Any future tool, library,
+   or script that internally calls chmod will be caught automatically. You
+   don't need to anticipate every code path — the kernel does it for you.
+
+4. **It enables safe shutil patching.** The entrypoint deploys a
+   `sitecustomize.py` that replaces `shutil.copy2` with `cp`-based
+   alternatives so tools like mutmut work. If you removed seccomp instead,
+   you'd lose the guarantee that *only* the patched code path is used.
+   With seccomp in place, even if the patch fails to load, the worst case
+   is a clean error — not a silent permission change.
+
+### Layer 2: Claude Code Deny Rules (Tool-Level Gating)
+
+`settings.json` `permissions.deny` blocks commands like `Bash(chmod *)` at the
+Claude Code permission system level. This prevents the agent from even
+*attempting* blocked commands, saving tokens and context window.
+
+**Purpose:** Early rejection. Stops the agent before it wastes a tool call.
+
+### Layer 3: PreToolUse Hooks (Command Parsing)
+
+`block-dangerous.py` parses compound commands (pipes, chains, subshells,
+newline-separated commands) and blocks dangerous patterns.
+
+**Purpose:** Catches blocked commands hidden in compound expressions that the
+simple prefix-matching deny rules would miss, like `echo foo && chmod 777 bar`.
+Also catches indirect attempts like `python3 -c "os.chmod(...)"`.
+
+### How the Layers Interact
+
 ```
+Agent wants to run a command
+    │
+    ▼
+[Layer 2: Deny Rules]  ── direct "chmod ..." prefix? → BLOCKED (no tool call)
+    │
+    ▼
+[Layer 3: Hooks]  ── chmod in pipeline/subshell/python -c? → BLOCKED (hook denies)
+    │
+    ▼
+[Command executes]
+    │
+    ▼
+[Layer 1: Seccomp]  ── process calls chmod syscall? → BLOCKED (kernel EPERM)
+```
+
+Layers 2 and 3 are **token-saving optimizations**. Layer 1 is **security**.
+If you had to pick only one layer, keep seccomp. But all three together give
+you: fast rejection (saves tokens) + deep inspection (catches tricks) +
+kernel enforcement (catches everything else).
+
 
 ## Troubleshooting
 
@@ -100,3 +164,17 @@ Ensure your project has a `.venv` directory (Python) or `node_modules` (Node.js)
 in the project root. Install packages on your host machine before running the
 container. Python tools (pytest, coverage, ruff) are pre-installed in the container.
 Use `pytest` directly, or `python3 -m <module>` for venv-only packages.
+
+**mutmut fails with `PermissionError` during file copy:**
+The entrypoint auto-deploys a `sitecustomize.py` patch that replaces
+`shutil.copy2` with `cp`-based alternatives. If mutmut still fails:
+- Check if the project's venv already has a `sitecustomize.py` (the entrypoint
+  won't overwrite it). Merge the shutil patch into the existing file.
+- Verify the patch loaded: `python3 -c "import shutil; print(shutil.copy.__name__)"`
+  — should print `_copy_file`, not `copy`.
+
+**Agent churning on PermissionError / "Operation not permitted":**
+If an agent keeps retrying after hitting `PermissionError` or `EPERM`, the
+`CLAUDE.md` has a "Known Fish Tank Errors" table that should stop this. If an
+agent ignores it, the instructions may need stronger language or the error
+pattern may not be listed. Add the specific error to the table.

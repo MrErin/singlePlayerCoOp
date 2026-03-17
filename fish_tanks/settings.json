@@ -63,6 +63,19 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/block-dangerous.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-workarounds.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-workarounds.py"
           }
         ]
       }
