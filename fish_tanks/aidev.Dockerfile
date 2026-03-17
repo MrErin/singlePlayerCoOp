@@ -44,4 +44,9 @@ WORKDIR /project
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Agent-friendly tool wrappers (token-efficient output, correct CLI usage)
+COPY mutmut-wrapper.sh /usr/local/bin/mutmut-wrapper
+COPY coverage-wrapper.sh /usr/local/bin/coverage-wrapper
+RUN chmod +x /usr/local/bin/mutmut-wrapper /usr/local/bin/coverage-wrapper
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh", "claude"]

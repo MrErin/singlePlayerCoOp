@@ -94,8 +94,91 @@ These errors are caused by the fish tank security boundary, not by incorrect usa
 
 **Pattern to watch for:** If a tool fails with `PermissionError` or `Operation not permitted` and the traceback includes `shutil`, `os.chmod`, `os.fchmod`, or `copystat` — this is always a fish tank limitation. No amount of retrying or flag changes will fix it.
 
+## Testing Tools — Order of Operations
+
+When assessing or improving test quality, always follow this order:
+
+1. **Coverage first** — `coverage-wrapper run`, then `coverage-wrapper gaps`. Cheap (one test run), clear actionable output.
+2. **Mutation testing second** — `mutmut-wrapper run`. Expensive (one test run per mutant). Only run after branch coverage is ≥80%.
+3. **Never skip to mutation testing.** If coverage is poor, mutation results are noise.
+
+## Coverage in the Fish Tank
+
+**Always use `coverage-wrapper`, never raw `pytest --cov` or `coverage` commands.** The wrapper handles src detection, output management, and token-efficient formatting.
+
+```bash
+# Run tests with branch coverage
+coverage-wrapper run
+
+# Run with extra pytest args
+coverage-wrapper run tests/test_config.py -x
+
+# Show coverage summary
+coverage-wrapper report
+
+# Show coverage for one file
+coverage-wrapper report src/myapp/config.py
+
+# Show only files with gaps, sorted worst-first
+coverage-wrapper gaps
+
+# Show uncovered lines for one file
+coverage-wrapper gaps src/myapp/config.py
+
+# Generate HTML report
+coverage-wrapper html
+```
+
+### How output works
+
+The wrapper writes detailed output to `/project/mutmut_output/` and only prints summaries to stdout.
+
+- `run` — prints the coverage table (extracted from pytest output), saves full log to `mutmut_output/coverage_run.log`
+- `report` — if under 60 lines, prints directly. Otherwise writes to file and shows TOTAL + worst 10 files.
+- `gaps` — shows only files with missing coverage, sorted worst-first. Writes to `mutmut_output/coverage_gaps.txt` if large.
+
+**Typical workflow:**
+1. `coverage-wrapper run` — get the summary table
+2. `coverage-wrapper gaps` — see what needs tests
+3. Use `Read` tool on specific gap files to decide what tests to write
+
 ## Mutmut in the Fish Tank
 
-mutmut is pre-installed and supported. The entrypoint automatically patches `shutil.copy2` to avoid chmod syscalls, so `mutmut run` works out of the box.
+**Always use `mutmut-wrapper`, never raw `mutmut` commands.** The wrapper handles spinner suppression, correct v3 CLI usage, and token-efficient output. Do NOT run `mutmut run`, `mutmut results`, `mutmut show`, etc. directly.
 
-If mutmut fails with a `PermissionError` during file copy, the entrypoint patch may not have deployed (e.g., the venv's `site-packages` already had a `sitecustomize.py`). Report this to the user — do not attempt to create or modify `sitecustomize.py` yourself.
+```bash
+# Run all mutation tests
+mutmut-wrapper run
+
+# Run mutations for a specific module/function
+mutmut-wrapper run "mymodule.myfunction*"
+
+# Show summary of last run
+mutmut-wrapper results
+
+# Show all survived mutant diffs (writes to file if large)
+mutmut-wrapper show-all
+
+# Show survived mutants for one file
+mutmut-wrapper show src/myapp/config.py
+
+# Generate HTML report
+mutmut-wrapper html
+```
+
+### How output works
+
+The wrapper writes detailed output to `/project/mutmut_output/` and only prints summaries to stdout. This keeps context tokens low.
+
+- `run` — prints only the last 20 lines (summary), saves full log to `mutmut_output/run.log`
+- `results` — prints the compact results summary
+- `show` / `show-all` — if output is under 60 lines, prints directly. If larger, writes to `mutmut_output/survived_*.txt` and prints a preview. **Use the Read tool** with offset/limit to inspect the full file.
+
+**Typical workflow:**
+1. `mutmut-wrapper run` — get the summary
+2. `mutmut-wrapper show-all` — see where diffs were written
+3. Use `Read` tool on `mutmut_output/survived_all.txt` to inspect specific sections
+
+**Do NOT modify `pyproject.toml` mutmut config** unless the user asks. The project's existing config is intentional.
+
+If `mutmut-wrapper` fails with a `PermissionError` during file copy, the entrypoint shutil patch may not have deployed (e.g., the venv already had a `sitecustomize.py`). Report this to the user — do not attempt to create or modify `sitecustomize.py` yourself.

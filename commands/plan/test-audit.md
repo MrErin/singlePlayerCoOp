@@ -19,8 +19,13 @@ Before starting, check if `_planning/test_audit.md` exists with `<!-- STATUS: DR
 3. **Map the test landscape**: Identify all test files, test framework(s), and which source modules have corresponding tests. Use jcodemunch `search_text` to find test file patterns.
 4. **Triage**: From `codebase.md`, identify business logic and core modules. Prioritize analysis: business logic > data layer > API/routes > utilities. For large suites, focus on critical modules first.
 5. **Scaffold the document**: Read `commands/plan/references/test-audit-templates.md` for templates. Write `_planning/test_audit.md` with `<!-- STATUS: DRAFT -->`, the document header, and the module priority list. This file is now the working output — all subsequent findings are appended here.
-6. **Get coverage results**: Check for `.coverage` file — if found, run `coverage report` (don't re-run tests). If not found, check `htmlcov/index.html`. If neither exists and a coverage tool is installed, run `pytest --cov=src --cov-report=html` in the background. If no coverage tool is installed, note in setup section and skip. **Append results to the document.**
-7. **Get mutation testing results**: Check for `.mutmut-cache` — if found, run `mutmut results`. If not found, run `mutmut run` in the background. **Append results to the document.**
+6. **Get coverage results (ALWAYS FIRST)**: Run `coverage-wrapper run` to get branch coverage data. Then run `coverage-wrapper gaps` to identify uncovered files. **Append results to the document.** Coverage analysis is the foundation — it identifies missing tests cheaply (one test run) before spending tokens on mutation analysis.
+7. **Assess coverage before mutation testing**: Review the coverage gaps from step 6.
+    - **If branch coverage is below 80%:** Skip mutation testing entirely. Focus all investigation cards on Coverage Gap cards. Mutation testing is wasted effort when there are obvious untested paths. Note in the document: "Mutation testing deferred — coverage gaps must be addressed first."
+    - **If branch coverage is 80-90%:** Run mutation testing only on modules that have ≥85% coverage. Use `mutmut-wrapper run "module_name*"` for targeted runs. Append results to the document.
+    - **If branch coverage is above 90%:** Run full mutation testing with `mutmut-wrapper run`. Then `mutmut-wrapper show-all` to get survived mutants. Use the Read tool on `mutmut_output/survived_all.txt` for detailed diffs. **Append results to the document.**
+
+    This order of operations prevents wasting tokens and compute on mutation testing for code that doesn't even have basic test coverage yet.
 8. **Analyze by module** (highest priority first): For each module, analyze its test files against the standards below. Use jcodemunch `get_file_outline` to see all test functions in each file. Create investigation cards for every issue. Classify each card: Quick (10-15 min), Medium (20-30 min), Deep Dive (30-45 min). **Write the completed cluster to the document before moving to the next module.** Within each cluster, order hardest-to-easiest. Assign a BOSS card to any cluster with 3+ issues.
 9. **Trivial fixes**: Weak assertions (>= where == should be), untested fields in a return object, or other obvious improvements — fix them during the audit. If collected trivial fixes break tests, hand back to user as one card.
 10. **Finalize**: Generate the scorecard and standards check summary at the top of the document (now that all clusters are written). Replace `<!-- STATUS: DRAFT -->` with `<!-- STATUS: COMPLETE -->`.
@@ -50,7 +55,9 @@ When multiple modules share architecture (e.g., all repos have `create_many()`),
 ## Rules
 
 - Do not rewrite production code. Trivial test fixes (step 8) are allowed.
-- Prefer reading existing `.mutmut-cache` over re-running
+- Always run coverage before mutation testing — never skip the order of operations
+- Use `coverage-wrapper` and `mutmut-wrapper` — never raw `coverage`/`mutmut` commands
+- Prefer reading existing results files in `mutmut_output/` over re-running
 - Provide brief corrected examples when fix is obvious
 - Explain WHY the test is insufficient — connect to bugs it would miss
 - Cluster cards by source module

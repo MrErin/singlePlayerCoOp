@@ -178,3 +178,15 @@ If an agent keeps retrying after hitting `PermissionError` or `EPERM`, the
 `CLAUDE.md` has a "Known Fish Tank Errors" table that should stop this. If an
 agent ignores it, the instructions may need stronger language or the error
 pattern may not be listed. Add the specific error to the table.
+
+**mutmut output is full of spinner characters / context window bloat:**
+mutmut's progress spinners write thousands of characters to stderr. Agents
+should always run `mutmut run 2>/dev/null` to suppress them. The CLAUDE.md
+includes this guidance, but if an agent ignores it, the spinners are harmless
+— just wasteful on tokens.
+
+**Agent tries mutmut v2 flags (`--paths-to-mutate`, `--runner`, etc.):**
+The fish tank ships mutmut 3.x, which removed all v2 CLI flags.
+Configuration is in `pyproject.toml` only. The CLAUDE.md documents the valid
+v3 commands. If agents persist in using v2 flags, they likely have outdated
+training data — the CLAUDE.md instructions should override this.

@@ -67,12 +67,13 @@ Single-task mode:
     - **Use jcodemunch during implementation** — when implementing a task, search for existing similar code to match patterns and conventions.
     - If a task can't be completed as planned, note why and adapt.
     - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.
-8. **Verify the build:** 
-    - Run the application/tests and confirm no errors
+8. **Verify the build:**
+    - Run tests with coverage: `coverage-wrapper run` — confirm no errors and review coverage summary
 	    - If the application is not yet runnable (setup or early data layer phase), verify by running available checks instead:
 		    - Dependency installation completes without errors
 		    - Schema migrations run successfully
 		    - Import statements resolve without errors
+    - Check for coverage gaps in new/modified code: `coverage-wrapper gaps` — any code built in this phase should have test coverage. Flag uncovered new code in `ua_testing.md`.
     - Review all new/modified code against `my-style` standards 
     - Check: functions approaching 30+ lines - evaluate whether they're doing multiple things, single responsibility, early returns 
     - Check: descriptive naming, comments explain WHY, error handling 

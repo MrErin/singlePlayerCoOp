@@ -16,7 +16,8 @@
       "Bash(python3 -m pytest*)",
       "Bash(coverage*)",
       "Bash(python3 -m coverage*)",
-      "Bash(mutmut*)"
+      "Bash(mutmut-wrapper*)",
+      "Bash(coverage-wrapper*)"
     ],
     "deny": [
       "Bash(sudo *)",
