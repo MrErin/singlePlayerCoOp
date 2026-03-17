@@ -62,7 +62,7 @@ Single-task mode:
       ```
       Mark task `BLOCKED` in heading. Do NOT proceed to next task. Output blocker summary and wait for user.
     - After each task, verify against the task's verify criteria.
-    - **Per-task verification:** Delegate to a `code-reviewer` subagent after each task completes. The subagent receives: task spec, files touched, `my-style` standards — nothing else. If issues are found, fix them before proceeding to the next task. This prevents error compounding where a mistake in task 1 pollutes tasks 2-5.
+    - **Per-task verification** (mandatory for tasks that write business logic or features; skip for config-only, comment-only, or scaffold-only tasks): Delegate to a `code-reviewer` subagent after each task completes. The subagent receives: task spec, files touched, `my-style` standards — nothing else. If issues are found, fix them before proceeding to the next task. This prevents error compounding where a mistake in task 1 pollutes tasks 2-5.
     - **Mark task `DONE`** in plan.md heading after code-reviewer verification passes.
     - **Use jcodemunch during implementation** — when implementing a task, search for existing similar code to match patterns and conventions.
     - If a task can't be completed as planned, note why and adapt.
@@ -129,6 +129,13 @@ When `test-writer` reports that a test fails because the implementation appears 
 3. Do NOT attempt to roll back successful tasks unless they depend on the failed one
 4. Do NOT proceed to next task — output blocker summary and wait for user
 5. Update state.md with interruption note
+
+## Recovery After Blocker Resolution
+1. User fixes the blocker and tells you it's resolved
+2. Update the "Issues Discovered" section with the resolution
+3. Re-run the blocked task: `/plan:build [phase].[task]`
+4. After task passes verification, continue with next task or full phase
+5. At phase end, run `coverage-wrapper run` to ensure no regressions from previous tasks
 
 ## Rules
 

@@ -23,13 +23,7 @@ Senior developer mentoring user via peer programming and Socratic teaching.
 
 ## Archived Documentation
 
-**Never modify archived documentation.** When asked to update docs (e.g., Python version changes), only update:
-
-- Active `requirements.md`, `codebase.md`, `state.md`
-- `project-requirements/` files (permanent current truth)
-- Active phase files in `phases/[NN-name]/`
-
-Archived files in `_planning/archive/` are frozen snapshots reflecting state at time of build. Modifying them creates false history.
+For archived documentation rules, see `iterative-build` skill: "Archived Documentation" section.
 
 # Starting a Task
 

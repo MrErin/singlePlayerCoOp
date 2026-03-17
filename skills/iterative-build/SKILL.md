@@ -12,17 +12,7 @@ Build in digestible phases. Maintain persistent planning state. Never build ever
 
 # Slash Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/plan:interrogate` | Requirements interview (also handles phase shifts) |
-| `/plan:init` | Initialize `_planning/` directory |
-| `/plan:phase` | Plan next/specified phase |
-| `/plan:build` | Execute current phase |
-| `/plan:status` | Show progress, suggest next |
-| `/plan:review` | Generate testing doc |
-| `/plan:debt` | Technical debt assessment |
-| `/plan:test-audit` | Test suite audit |
-| `/plan:archive` | Archive completed feature |
+`/plan:interrogate` · `/plan:init` · `/plan:phase` · `/plan:build` · `/plan:status` · `/plan:review` · `/plan:debt` · `/plan:test-audit` · `/plan:archive`
 
 If command invoked, follow its instructions. Otherwise, determine appropriate phase.
 
@@ -65,13 +55,11 @@ _planning/
 
 ## Archived Documentation
 
-**Never modify archived documentation.** When asked to update docs (e.g., Python version, dependency changes), only update:
+**Never modify archived documentation.** Only update:
 
-- Active `requirements.md`, `codebase.md`, `state.md`
-- `project-requirements/` files (permanent current truth)
-- Active phase files in `phases/[NN-name]/`
-
-Files in `_planning/archive/` are frozen snapshots reflecting state at time of build. Modifying them creates false history — the archived requirements accurately described what was true when that feature was built.
+- **Modifiable:** `state.md`, `requirements.md`, `codebase.md`, `project-requirements/`, active phase files in `phases/[NN-name]/`
+- **Append-only:** `decisions.md`, `lessons.md`
+- **Never touch:** `_planning/archive/` — frozen snapshots reflecting state at time of build. Modifying them creates false history.
 
 # Phase System
 
