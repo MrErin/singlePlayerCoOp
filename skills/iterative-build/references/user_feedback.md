@@ -1,9 +1,0 @@
-# User Feedback
-
-## Issues 
-
-- [ ] 
-   
-## Discussions
-
-- [ ]

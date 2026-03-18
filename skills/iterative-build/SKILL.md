@@ -41,8 +41,7 @@ _planning/
     └── [NN-name]/
         ├── plan.md
         ├── phase_summary.md
-        ├── ua_testing.md
-        └── user_feedback.md
+        └── ua_testing.md       # Testing steps + User Testing Notes (replaces user_feedback.md)
 ```
 
 ## Requirements Tiers
@@ -73,6 +72,24 @@ _planning/
 6. Polish
 
 Each phase: 10-20 min review, <15 min test. If >10 tasks, split into multiple phases.
+
+## Phase Lifecycle
+
+Each phase moves through these states — never skip steps:
+
+```
+pending → in-progress → review → ua-testing → complete
+```
+
+| State | Set by | Meaning |
+|-------|--------|---------|
+| `pending` | `/plan:phase` | Planned, not started |
+| `in-progress` | `/plan:build` (start) | Build underway |
+| `review` | `/plan:build` (end) | Build done, awaiting /plan:review |
+| `ua-testing` | `/plan:review` (code pass) | Docs generated, awaiting user testing |
+| `complete` | `/plan:review` (UA pass) | User confirmed, phase closed |
+
+**A phase is not complete until the user has done UA testing and confirmed results via `/plan:review`.**
 
 ## Test Phases
 

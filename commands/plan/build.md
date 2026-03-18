@@ -1,5 +1,5 @@
 ---
-description: Execute the current planned phase. Reads the plan.md for the active phase and builds it task by task. Generates ua_testing.md when complete. Use after /plan:phase has been approved. Supports /plan:build [phase] for full phase or /plan:build [phase].[task] (e.g., /plan:build 3.2) for single-task execution.
+description: Execute the current planned phase. Reads the plan.md for the active phase and builds it task by task. Use after /plan:phase has been approved. Supports /plan:build [phase] for full phase or /plan:build [phase].[task] (e.g., /plan:build 3.2) for single-task execution.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
 
@@ -22,8 +22,7 @@ Single-task mode:
 - Reads the specified phase's plan.md
 - Executes only the specified task number
 - Skips final phase-level verification (step 6) — task-level verification still applies
-- Does not generate ua_testing.md (that happens after the full phase completes)
-- Updates state.md with the task completed, not the full phase
+- Does not update state.md phase status (that happens after the full phase completes)
 - Keeps context cleaner — each task starts with fresh focus
 - Lets user catch problems early instead of reviewing a whole phase at once
 
@@ -44,7 +43,7 @@ Single-task mode:
       - **Native extension incompatibility** (`.so` compiled for different arch/version) — STOP, ask user to rebuild venv
     - **Node.js projects:** Run `node -e "require('<package>')"` for key dependencies. Same diagnostic approach.
     - **If any preflight check fails:** Log the exact error and diagnosis in plan.md "Issues Discovered" section with "Fix Requires User Input: YES". Do NOT proceed to task execution. Do NOT create mocks, shims, or workarounds for import failures in production code.
-5. **Check for user modifications** — read `phase_summary.md` and `user_feedback.md` from previous phases and scan git for modified files.
+5. **Check for user modifications** — read `phase_summary.md` and `ua_testing.md` (User Testing Notes section) from previous phases and scan git for modified files.
 6. **Index and explore codebase with jcodemunch** — use `search_symbols` and `get_symbol` to find existing patterns, similar implementations, and relevant interfaces before writing code.
 7. **Execute tasks** from the plan:
     - **Resume detection:** Scan task headings for status markers. Start at the first task NOT marked `DONE`. If a task is `BLOCKED`, read its issue in "Issues Discovered" section.
@@ -66,50 +65,41 @@ Single-task mode:
     - **Mark task `DONE`** in plan.md heading after code-reviewer verification passes.
     - **Use jcodemunch during implementation** — when implementing a task, search for existing similar code to match patterns and conventions.
     - If a task can't be completed as planned, note why and adapt.
-    - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.
+    - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in a note for `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.
 8. **Verify the build:**
     - Run tests with coverage: `coverage-wrapper run` — confirm no errors and review coverage summary
 	    - If the application is not yet runnable (setup or early data layer phase), verify by running available checks instead:
 		    - Dependency installation completes without errors
 		    - Schema migrations run successfully
 		    - Import statements resolve without errors
-    - Check for coverage gaps in new/modified code: `coverage-wrapper gaps` — any code built in this phase should have test coverage. Flag uncovered new code in `ua_testing.md`.
-    - Review all new/modified code against `my-style` standards 
-    - Check: functions approaching 30+ lines - evaluate whether they're doing multiple things, single responsibility, early returns 
-    - Check: descriptive naming, comments explain WHY, error handling 
-    - For web projects: verify semantic HTML, ARIA attributes, keyboard navigation 
-    - If issues found, fix them before proceeding 
-    - Add information to the Security Checklist heading of the `plan.md`, scoped to what was built in this phase. Verify that security concerns are flagged and addressed. Examples: 
+    - Check for coverage gaps in new/modified code: `coverage-wrapper gaps` — flag uncovered new code in plan.md "Issues Discovered" section for /plan:review to carry forward
+    - Review all new/modified code against `my-style` standards
+    - Check: functions approaching 30+ lines - evaluate whether they're doing multiple things, single responsibility, early returns
+    - Check: descriptive naming, comments explain WHY, error handling
+    - For web projects: verify semantic HTML, ARIA attributes, keyboard navigation
+    - If issues found, fix them before proceeding
+    - Add information to the Security Checklist heading of the `plan.md`, scoped to what was built in this phase. Verify that security concerns are flagged and addressed. Examples:
 	    - Inputs are validated
 	    - SQL queries are parameterized
 	    - Secrets are handled appropriately and never checked in to source control
 	    - Error messages do not leak internal details
     - Log any issues discovered and fixes applied in the plan.md "Issues Discovered During Verification Stage" section
     - **Append to `_planning/lessons.md`:** For any significant issue caught during verification (not minor typos or trivial fixes), add an entry following the format in `iterative-build/references/lessons.md`. Include: date, phase, brief title, what happened, root cause, fix applied, and prevention tip. This builds institutional memory for future phases.
-9. **Generate `ua_testing.md`** in the phase directory with:    
-    - Summary of what was built
-    - Instructions for running automated testing, if any
-    - Manual testing steps to cover all functionality built in this phase
-    - Expected behaviors
-    - Edge cases to check
-    - Phase completion checklist
-10. **Update planning state:**
-    - `_planning/state.md` — log what was built, set status to "review"
-    - `_planning/roadmap.md` — check off the completed phase
+9. **Update planning state:**
+    - `_planning/state.md` — log what was built, set status to **"review"** (not complete — phase must pass /plan:review and UA testing first)
+    - `_planning/roadmap.md` — mark phase as "in review" but do NOT check it off as complete
     - `_planning/deferred.md` — add any cross-phase items noticed during this build; remove any items that were addressed
     - `_planning/lessons.md` — entries already appended during step 7 verification (if any issues were found)
     - `_planning/codebase.md`:
         - **Setup phase:** Generate it (captures the project structure just created)
         - **Other phases:** Update only if new directories, dependencies, or architectural patterns were introduced. Skip if structure unchanged.
-11. **Output quick summary first:** Before the testing checklist, output a brief "At a Glance" summary:
+10. **Output quick summary:**
     - **One-sentence:** What this phase accomplished
     - **Files changed:** List with one-line descriptions
     - **Key functions:** List with one-line descriptions
     - **Behavior changes:** User-visible changes
 
-    This gives you immediate understanding without reading code.
-
-12. **STOP.** Output the quick summary and testing checklist. Wait for user approval.
+11. **STOP.** Output the quick summary. Tell the user: "Build complete. Clear your context or switch models, then run `/plan:review` for independent verification and to generate testing documents."
 
 ## If Test-Writer Flags Implementation Bugs
 
@@ -121,7 +111,7 @@ When `test-writer` reports that a test fails because the implementation appears 
 4. **Re-run the full test suite** to confirm the fix passes and no previously passing tests broke.
 5. **If fixing the implementation reveals the contract was wrong** (the planned behavior was itself incorrect), do not change the contract unilaterally — stop and ask the user to decide whether to update the contract or adjust the implementation.
 6. **Document all implementation fixes** in the phase's `plan.md` under "Issues Discovered During Verification Stage" with: what the test caught, what was wrong in the implementation, and what was changed.
-7. **If more than 2–3 functions required implementation fixes**, note this in `ua_testing.md` as a "Test Phase Findings" section so the user is aware of the scope of corrections.
+7. **If more than 2–3 functions required implementation fixes**, note this in plan.md so /plan:review can surface it in `ua_testing.md`.
 
 ## If Build Fails Mid-Phase
 1. Mark the failed task `BLOCKED` in plan.md heading
@@ -144,6 +134,7 @@ When `test-writer` reports that a test fails because the implementation appears 
 - If plan feels too big, tell user and suggest splitting.
 - Accessibility required for web projects.
 - Mark task status in plan.md: `PENDING` → `IN_PROGRESS` → `DONE` or `BLOCKED`.
+- **Do not generate `phase_summary.md` or `ua_testing.md`** — those are generated by `/plan:review` in a fresh context.
 
 ## Do Not
 
