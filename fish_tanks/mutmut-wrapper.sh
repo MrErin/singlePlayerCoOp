@@ -55,6 +55,16 @@ cmd_run() {
     local pattern="${1:-}"
     local run_log="$OUTPUT_DIR/run.log"
 
+    # Targeted runs require .coverage data for test-to-code mapping.
+    # Without it, mutmut can't associate mutants with tests and stops early.
+    if [ -n "$pattern" ] && [ ! -f /project/.coverage ]; then
+        echo "WARNING: No .coverage file found. Targeted mutmut runs need coverage"
+        echo "data to map mutants to tests. Run 'coverage-wrapper run' first."
+        echo ""
+        echo "Running anyway (may fail with 'could not find any test case')..."
+        echo ""
+    fi
+
     if [ -n "$pattern" ]; then
         echo "Running mutmut: $pattern"
         mutmut run "$pattern" 2>/dev/null | tail -20 > "$run_log"
@@ -63,6 +73,20 @@ cmd_run() {
         echo "Running mutmut: all configured paths"
         mutmut run 2>/dev/null | tail -20 > "$run_log"
         local rc=${PIPESTATUS[0]}
+    fi
+
+    # Check for the "no test case" early stop
+    if grep -q "could not find any test case" "$run_log" 2>/dev/null; then
+        echo "mutmut could not map mutants to test cases."
+        echo ""
+        if [ -n "$pattern" ]; then
+            echo "This commonly happens with targeted runs. Options:"
+            echo "  1. Run 'coverage-wrapper run' first to generate .coverage data"
+            echo "  2. Run 'mutmut-wrapper run' without a pattern (full run)"
+            echo "  3. Check that the pattern matches paths in pyproject.toml paths_to_mutate"
+        fi
+        cat "$run_log"
+        return 1
     fi
 
     # Exit code 1 = mutations survived (normal). Only fail on 2+ (real errors).
