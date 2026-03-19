@@ -22,7 +22,8 @@
       "Bash(python3 -m pytest*)",
       "Bash(coverage*)",
       "Bash(python3 -m coverage*)",
-      "Bash(mutmut*)"
+      "Bash(mutmut-wrapper*)",
+      "Bash(coverage-wrapper*)"
     ],
     "deny": [
       "Bash(sudo *)",
@@ -49,7 +50,22 @@
       "Read(**/secrets/*)",
       "Read(**/*credential*)",
       "Read(**/*.pem)",
-      "Read(**/*.key)"
+      "Read(**/*.key)",
+      "Read(**/*.p12)",
+      "Read(**/*.pfx)",
+      "Read(**/.netrc)",
+      "Read(**/id_rsa)",
+      "Read(**/id_ed25519)",
+      "Read(**/id_ecdsa)",
+      "Read(**/id_dsa)",
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Write(.env)",
+      "Write(.env.*)",
+      "Write(./.env)",
+      "Write(./.env.*)"
     ],
     "defaultMode": "acceptEdits"
   },
@@ -58,6 +74,10 @@
       {
         "matcher": "Bash",
         "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-secrets.py"
+          },
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/allow-readonly.py"
@@ -69,6 +89,23 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/block-dangerous.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-workarounds.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-secrets.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-workarounds.py"
           }
         ]
       }

@@ -46,6 +46,26 @@ These will never work. Do not attempt them, do not try variations or workarounds
 
 **When a command is denied or fails due to permissions: stop. Do not try alternative approaches to the same blocked operation. Explain what you need and ask the user to handle it outside the container.**
 
+## Secrets and Environment Variables
+
+**Never read, write, grep, cat, diff, base64-encode, or otherwise access `.env` files or any other secret/credential file.** This applies to all access paths — not just the Read tool, but every Bash command and every write operation.
+
+Secret files include:
+
+- `.env`, `.env.local`, `.env.production`, `.envrc`, and any `.env.*` variant
+- `*.pem`, `*.key`, `*.p12`, `*.pfx`
+- `id_rsa`, `id_ed25519`, `id_ecdsa`, `id_dsa` (SSH private keys)
+- `.netrc`, `.aws/credentials`
+- Anything inside a `secrets/` directory
+- Files named `credentials.json`, `credentials.yaml`, etc.
+
+**If you need to know what environment variables an app expects:**
+Read `.env.example` or search source code for `os.getenv(...)`, `process.env.X`, or equivalent config lookups. Do not read `.env` to answer this question.
+
+**If a task requires knowing an actual secret value** (e.g., verifying a connection string, checking an API key is correct): stop. Ask the user to check, verify, or provide what's needed. Never attempt to read the file yourself.
+
+Access attempts via `cat`, `grep`, `awk`, `python3 -c`, `find -exec`, or any other method are blocked at the hook level and will be denied automatically. When you see a deny, do not try an alternative approach — ask the user instead.
+
 ## What Works
 
 - Standard dev tools already installed: pytest, coverage, mutmut, hypothesis, ruff

@@ -13,6 +13,7 @@ When I ask you to modify configuration, skills, or settings files, **always edit
 - **Skills:** Edit `/project/skills/` — NOT `/home/node/.claude/skills/`
 - **Hooks:** Edit `/project/hooks/` — NOT `/home/node/.claude/hooks/`
 - **Settings templates:** Edit `/project/fish_tanks/settings*.json` — NOT `/home/node/.claude/settings.json`
+  - Note: there are two settings files. They need to be kept in sync with each other. Edits to `/project/fish_tanks/settings.json` need to be also made to `/project/fish_tanks/settings-glm.json` 
 - **Fish Tanks (Docker Container)** Edit `/project/fish_tanks/aidev.Dockerfile`
 
 This repository contains the source-of-truth configuration files. I deploy them separately using the deploy script.
