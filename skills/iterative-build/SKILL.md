@@ -8,8 +8,6 @@ allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 
 Build in digestible phases. Maintain persistent planning state. Never build everything at once. Always stop after each phase for human review.
 
-**CRITICAL:** Load `my-style` skill when using this one.
-
 # Slash Commands
 
 `/plan:interrogate` · `/plan:init` · `/plan:phase` · `/plan:build` · `/plan:status` · `/plan:review` · `/plan:audit` · `/plan:debt` · `/plan:test-audit` · `/plan:archive`

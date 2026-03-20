@@ -8,7 +8,7 @@
 
 Always load and follow these skills:
 
-- **iterative-build**: Use for all multi-step development. Follow its phase gates and .planning/ directory structure. Invoked via /plan: commands.
+- **iterative-build**: Use for all multi-step development. Follow its phase gates and `_planning/` directory structure. Invoked via /plan: commands.
 - **my-style**: Follow for ALL code written in any language. Covers formatting, naming, accessibility, and ADHD-friendly patterns.
 - **post-build-review**: Use after completing all phases to generate review docs.
 
@@ -33,35 +33,17 @@ Example: "I can't install that package in the fish tank — it's an ephemeral co
 
 ## Hard Limits
 
-These will never work. Do not attempt them, do not try variations or workarounds:
+Permission changes (`chmod`, `chown`), package installation (`apt`, `pip`, `npm`), process management (`kill`, `systemctl`), and privilege escalation (`sudo`) are blocked at the kernel/policy level. The deny list in `settings.json` and `block-dangerous.py` hook enforce this mechanically.
 
-- `sudo` — blocked by policy
-- `chmod`, `chown`, `chgrp`, `setfacl` — blocked at the kernel level
-- `apt-get`, `apt`, `dpkg` — require sudo
-- `killall`, `pkill`, `kill -9` — blocked by policy
-- `systemctl`, `shutdown`, `reboot` — blocked by policy
-
-**When a command is denied or fails due to permissions: stop. Do not try alternative approaches to the same blocked operation. Explain what you need and ask the user to handle it outside the container.**
+**When a command is denied or fails due to permissions: stop. Do not try alternative approaches. Ask the user to handle it outside the container.**
 
 ## Secrets and Environment Variables
 
-**Never read, write, grep, cat, diff, base64-encode, or otherwise access `.env` files or any other secret/credential file.** This applies to all access paths — not just the Read tool, but every Bash command and every write operation.
+Secret and credential files (`.env*`, `*.pem`, `*.key`, SSH keys, `secrets/`, `credentials.*`) are blocked by the settings deny list and `block-secrets.py` hook across all tools.
 
-Secret files include:
+**If you need to know what environment variables an app expects:** Read `.env.example` or search source code for `os.getenv(...)`, `process.env.X`, or equivalent config lookups.
 
-- `.env`, `.env.local`, `.env.production`, `.envrc`, and any `.env.*` variant
-- `*.pem`, `*.key`, `*.p12`, `*.pfx`
-- `id_rsa`, `id_ed25519`, `id_ecdsa`, `id_dsa` (SSH private keys)
-- `.netrc`, `.aws/credentials`
-- Anything inside a `secrets/` directory
-- Files named `credentials.json`, `credentials.yaml`, etc.
-
-**If you need to know what environment variables an app expects:**
-Read `.env.example` or search source code for `os.getenv(...)`, `process.env.X`, or equivalent config lookups. Do not read `.env` to answer this question.
-
-**If a task requires knowing an actual secret value** (e.g., verifying a connection string, checking an API key is correct): stop. Ask the user to check, verify, or provide what's needed. Never attempt to read the file yourself.
-
-Access attempts via `cat`, `grep`, `awk`, `python3 -c`, `find -exec`, or any other method are blocked at the hook level and will be denied automatically. When you see a deny, do not try an alternative approach — ask the user instead.
+**If a task requires an actual secret value:** Stop and ask the user. Never attempt to read secret files yourself.
 
 ## What Works
 
@@ -93,23 +75,13 @@ If a package is missing:
 
 If a package import fails (`ModuleNotFoundError`, `ImportError`), diagnose before reporting:
 
-1. **Check if the package files exist:** `ls .venv/lib/python*/site-packages/ | grep <package>`
-2. **If files exist but import fails:** This is a Python version mismatch, not a missing package. The venv was created with a different Python version than the container provides. Report the mismatch (container Python version vs. venv Python version from `.venv/pyvenv.cfg`) and ask the user to fix the Docker image.
-3. **If files don't exist:** The package is genuinely missing. Tell the user what's missing. They will install it on the host and restart the container.
-
-**Never work around import failures with mocks in production code.** If imports don't work, the environment is broken. Stop and escalate.
+1. **Check if files exist:** `ls .venv/lib/python*/site-packages/ | grep <package>`
+2. **Files exist but import fails:** Python version mismatch — report the mismatch (container vs `.venv/pyvenv.cfg`) and ask user to fix.
+3. **Files don't exist:** Package genuinely missing — tell user to install on host and restart container.
 
 ## Known Fish Tank Errors
 
-These errors are caused by the fish tank security boundary, not by incorrect usage. **Do not retry, work around, or attempt alternative approaches.** Report to the user and stop.
-
-| Error Pattern | Cause | Action |
-|---------------|-------|--------|
-| `PermissionError: [Errno 1] Operation not permitted` during file copy | `shutil.copy2` calls `chmod` internally, blocked by seccomp | Stop. Report to user. Reference the fish tank chmod restriction. |
-| `OSError: [Errno 1]` from any chmod/chown/fchmod operation | Seccomp profile blocks all permission-change syscalls | Stop. Report to user. Do not attempt Python or shell workarounds. |
-| `Operation not permitted` from `os.chmod`, `os.chown`, or `os.fchmod` | Same seccomp restriction reached via Python stdlib | Stop. Report to user. |
-
-**Pattern to watch for:** If a tool fails with `PermissionError` or `Operation not permitted` and the traceback includes `shutil`, `os.chmod`, `os.fchmod`, or `copystat` — this is always a fish tank limitation. No amount of retrying or flag changes will fix it.
+`PermissionError` or `Operation not permitted` from `shutil`, `os.chmod`, `os.fchmod`, or `copystat` is always a fish tank seccomp limitation. Do not retry or work around — stop and report to user.
 
 ## Testing Tools
 

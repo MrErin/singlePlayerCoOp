@@ -18,6 +18,21 @@ When I ask you to modify configuration, skills, or settings files, **always edit
 
 This repository contains the source-of-truth configuration files. I deploy them separately using the deploy script.
 
+## External Skills
+
+The `/plan:build` command references `frontend-design`, which is an Anthropic-maintained external skill, not part of this repository. Do not look for it locally or flag it as missing.
+
+## Instruction System Review
+
+When asked to "review instructions", "audit the system", or "check for redundancy":
+
+1. Read all files: both CLAUDE.md files, all skills (`/project/skills/`), agents (`/project/agents/`), commands (`/project/commands/`), hooks (`/project/hooks/`), and settings (`/project/fish_tanks/settings*.json`)
+2. Check for: redundancies across files, contradictions, dangling references, gaps, token waste
+3. Report organized as: **Redundancies** (with line citations and frequency count), **Contradictions**, **Gaps**, **Token Efficiency** (estimated line savings)
+4. Propose specific edits — do not apply without approval
+
+Key principle: hooks and settings deny lists are the mechanical enforcement layer. CLAUDE.md and skills should provide *behavioral guidance* (what to do instead) without re-listing what's already enforced. Skills loaded independently may repeat critical rules that also appear in CLAUDE.md — flag these but note whether the repetition serves a purpose (independent load context) or is pure waste.
+
 ## Workflow Research and Reoptimization
 
 `/project/research_agenda.md` is a standing research agenda for this workflow system. Use it when asked to research, review, or improve the workflow.
