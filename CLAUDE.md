@@ -7,14 +7,14 @@ Do not suggest changes to the locations of files in this repository. These are t
 
 When I ask you to modify configuration, skills, or settings files, **always edit files in this repository**, never the deployed/active versions:
 
-- **Global CLAUDE.md template:** Edit `/project/fish_tanks/CLAUDE.md` — NOT `/home/node/.claude/CLAUDE.md`
-- **Agents:** Edit `/project/agents/` — NOT `/home/node/.claude/agents/`
-- **Commands:** Edit `/project/commands/` — NOT `/home/node/.claude/commands/`
-- **Skills:** Edit `/project/skills/` — NOT `/home/node/.claude/skills/`
-- **Hooks:** Edit `/project/hooks/` — NOT `/home/node/.claude/hooks/`
-- **Settings templates:** Edit `/project/fish_tanks/settings*.json` — NOT `/home/node/.claude/settings.json`
-  - Note: there are two settings files. They need to be kept in sync with each other. Edits to `/project/fish_tanks/settings.json` need to be also made to `/project/fish_tanks/settings-glm.json` 
-- **Fish Tanks (Docker Container)** Edit `/project/fish_tanks/aidev.Dockerfile`
+- **Global CLAUDE.md template:** Edit `/project/ai-workflow/fish-tanks/CLAUDE.md` — NOT `/home/node/.claude/CLAUDE.md`
+- **Agents:** Edit `/project/ai-workflow/agents/` — NOT `/home/node/.claude/agents/`
+- **Commands:** Edit `/project/ai-workflow/commands/` — NOT `/home/node/.claude/commands/`
+- **Skills:** Edit `/project/ai-workflow/skills/` — NOT `/home/node/.claude/skills/`
+- **Hooks:** Edit `/project/ai-workflow/hooks/` — NOT `/home/node/.claude/hooks/`
+- **Settings templates:** Edit `/project/ai-workflow/fish-tanks/settings*.json` — NOT `/home/node/.claude/settings.json`
+  - Note: there are two settings files. They need to be kept in sync with each other. Edits to `/project/ai-workflow/fish-tanks/settings.json` need to be also made to `/project/ai-workflow/fish-tanks/settings-glm.json` 
+- **Fish Tanks (Docker Container)** Edit `/project/ai-workflow/fish-tanks/aidev.Dockerfile`
 
 This repository contains the source-of-truth configuration files. I deploy them separately using the deploy script.
 
@@ -26,7 +26,7 @@ The `/plan:build` command references `frontend-design`, which is an Anthropic-ma
 
 When asked to "review instructions", "audit the system", or "check for redundancy":
 
-1. Read all files: both CLAUDE.md files, all skills (`/project/skills/`), agents (`/project/agents/`), commands (`/project/commands/`), hooks (`/project/hooks/`), and settings (`/project/fish_tanks/settings*.json`)
+1. Read all files: both CLAUDE.md files, all skills (`/project/ai-workflow/skills/`), agents (`/project/ai-workflow/agents/`), commands (`/project/ai-workflow/commands/`), hooks (`/project/ai-workflow/hooks/`), and settings (`/project/ai-workflow/fish-tanks/settings*.json`)
 2. Check for: redundancies across files, contradictions, dangling references, gaps, token waste
 3. Report organized as: **Redundancies** (with line citations and frequency count), **Contradictions**, **Gaps**, **Token Efficiency** (estimated line savings)
 4. Propose specific edits — do not apply without approval
@@ -35,7 +35,7 @@ Key principle: hooks and settings deny lists are the mechanical enforcement laye
 
 ## Workflow Research and Reoptimization
 
-`/project/research_agenda.md` is a standing research agenda for this workflow system. Use it when asked to research, review, or improve the workflow.
+`/project/ai-workflow/research_agenda.md` is a standing research agenda for this workflow system. Use it when asked to research, review, or improve the workflow.
 
 ### When to use it
 
