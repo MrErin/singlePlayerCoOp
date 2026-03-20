@@ -1,6 +1,12 @@
 # Skills
 
-Always load and follow these skills when doing development work:
+**Before writing or modifying any code — including quick fixes, debugging, and one-liners — always load `my-style`.** This applies even when the task seems too small to matter.
+
+**If `_planning/` exists in the project, read `state.md` before making any code changes.** Understand what phase is active and what's in scope before touching anything.
+
+**If you defer a UA testing item rather than fixing it, add it to `_planning/deferred.md` before the conversation ends.** Do not wait for `/plan:review` — log it immediately.
+
+Always load and follow these skills:
 
 - **iterative-build**: Use for all multi-step development. Follow its phase gates and .planning/ directory structure. Invoked via /plan: commands.
 - **my-style**: Follow for ALL code written in any language. Covers formatting, naming, accessibility, and ADHD-friendly patterns.

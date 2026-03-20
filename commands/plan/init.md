@@ -52,8 +52,24 @@ allowed-tools: Bash, Read, Write
     - `project-requirements/core.md` — extract system-wide, non-feature-specific content from `requirements.md` and `codebase.md`: data model structure (entities and relationships), auth model, non-functional constraints (performance targets, accessibility level, platform), and any architectural patterns that apply regardless of which feature is being built. Do NOT extract feature-specific behavior — that stays in `requirements.md` and will move to a feature file at archive time.
     - `project-requirements/index.md` — write one-liner summaries of everything captured in `core.md`, organized by area with a reference to `core.md`. Format: `## [Area] (→ core.md)` followed by one-liner bullets. Maximum signal per token — no prose.
     - Present both files to the user: "Review `project-requirements/` — edit directly if anything is missing or wrong." Wait for confirmation before continuing.
-5. **Create initial plan.md** for the first phase only.    
-6. **Output:** Once all documents are created, notify user that initialization is complete. Do not write any code.    
+5. **Create `CLAUDE.md` in the project root** (or append to it if one exists) with a planning guard block:
+
+    ```markdown
+    ## Planning Workflow
+
+    This project uses the iterative-build workflow.
+
+    Before making any code changes — including quick fixes:
+    - Load `my-style`
+    - Read `_planning/state.md` — understand the active phase and what is in scope
+
+    If you defer a UA testing item rather than fixing it, add it to `_planning/deferred.md` before the conversation ends.
+    ```
+
+    If a `CLAUDE.md` already exists, append the block under a `## Planning Workflow` heading. Do not overwrite any existing content.
+
+6. **Create initial plan.md** for the first phase only.
+7. **Output:** Once all documents are created, notify user that initialization is complete. Do not write any code.
 
 ## Upgrade Planning Mode
 

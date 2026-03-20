@@ -86,6 +86,14 @@
 
 [long-form notes, observations, or concerns]
 
+### Deferred this session
+
+*Agents: fill this out as you work — do not wait for /plan:review. Each item deferred (not fixed now) must be listed here AND added to `_planning/deferred.md` before the conversation ends.*
+
+| Item | Reason deferred | Added to deferred.md? |
+|------|-----------------|-----------------------|
+| | | |
+
 ### Result
 
 <!-- ⚠️ USER ONLY — Agents must never check these boxes. Only the user marks acceptance. -->
