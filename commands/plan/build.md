@@ -44,7 +44,7 @@ Single-task mode:
     - **Node.js projects:** Run `node -e "require('<package>')"` for key dependencies. Same diagnostic approach.
     - **If any preflight check fails:** Log the exact error and diagnosis in plan.md "Issues Discovered" section with "Fix Requires User Input: YES". Do NOT proceed to task execution. Do NOT create mocks, shims, or workarounds for import failures in production code.
 5. **Check for user modifications** — read `phase_summary.md` and `ua_testing.md` (User Testing Notes section) from previous phases and scan git for modified files.
-6. **Index and explore codebase with jcodemunch** — use `search_symbols` and `get_symbol` to find existing patterns, similar implementations, and relevant interfaces before writing code.
+6. **Explore codebase** — use Grep and Glob to find existing patterns, similar implementations, and relevant interfaces before writing code.
 7. **Execute tasks** from the plan:
     - **Resume detection:** Scan task headings for status markers. Start at the first task NOT marked `DONE`. If a task is `BLOCKED`, read its issue in "Issues Discovered" section.
     - **Single-task mode:** If argument is `[phase].[task]` format, execute only that task number from the specified phase. Skip steps 7-10 after completion — output the task result and STOP.
@@ -63,7 +63,7 @@ Single-task mode:
     - After each task, verify against the task's verify criteria.
     - **Per-task style fix** (mandatory for tasks that write business logic or features; skip for config-only, comment-only, or scaffold-only tasks): Delegate to a `code-fixer` subagent after each task completes. Provide: task name, files touched, and the file types involved (so it loads the correct my-style reference). The fixer runs the project linter first for deterministic violations, then does an LLM style pass for what the linter cannot reach, and applies all fixes in-place. It operates with a two-round maximum — if violations remain after two rounds it reports them. Log all items from the code-fixer's **Needs User Review** section in plan.md "Issues Discovered" — these will surface in `ua_testing.md` when `/plan:review` generates it.
     - **Mark task `DONE`** in plan.md heading after the code-fixer pass completes.
-    - **Use jcodemunch during implementation** — when implementing a task, search for existing similar code to match patterns and conventions.
+    - **Explore during implementation** — use Grep to find existing similar code and match patterns and conventions.
     - If a task can't be completed as planned, note why and adapt.
     - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in a note for `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.
 8. **Verify the build:**

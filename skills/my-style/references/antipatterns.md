@@ -310,7 +310,7 @@ Code that exists but is never executed — functions never called, classes never
 - Plugin/extension points may be intentionally unused yet — document these
 
 **Verification process:**
-1. Find candidate via jcodemunch `search_symbols` + `search_text`
+1. Find candidate via Grep for symbol definitions and references
 2. Grep for all references to the symbol name
 3. Check for dynamic invocation patterns
 4. Verify not used in tests, configs, or external APIs
@@ -321,7 +321,7 @@ Code that exists but is never executed — functions never called, classes never
 ## How to Use This Reference
 
 ### For /plan:debt
-Use `search_text` to find patterns. Start with CRITICAL patterns, then HIGH. Each match becomes a debt card with the pattern's severity and action. Include Hallucinated APIs, Resource Management, Hardcoded Secrets, and Dead Code sections. For dead code, use jcodemunch `get_file_outline` to list symbols, then `search_text` to verify each has callers.
+Use `search_text` to find patterns. Start with CRITICAL patterns, then HIGH. Each match becomes a debt card with the pattern's severity and action. Include Hallucinated APIs, Resource Management, Hardcoded Secrets, and Dead Code sections. For dead code, use Grep for function/class definitions to list symbols, then Grep to verify each has callers.
 
 ### For code-reviewer agent
 Check modified files against: Environment Workarounds, Error Handling, State & Mutability, Database/API Patterns, Resource Management, and Hardcoded Secrets. These are the sections most likely to introduce bugs per-task.

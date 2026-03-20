@@ -15,16 +15,16 @@ Before starting, check if `_planning/technical_debt.md` exists with `<!-- STATUS
 
 1. **Read**: `_planning/codebase.md` to understand project structure. Read `_planning/requirements.md` and `_planning/decisions.md` for context.
 	1. If the `_planning` directory does not exist, STOP. Instruct the user to run /plan:init first.
-2. **Index with jcodemunch**: If the project isn't indexed, run `index_folder` on the source directory. Use `get_repo_outline` to see module structure, `search_text` to find pattern violations (e.g., string concatenation in queries, manual DB open/close).
+2. **Map module structure**: Use Glob to enumerate source files and directories. Use Grep to find pattern violations (e.g., string concatenation in queries, manual DB open/close).
 3. **Triage**: From `codebase.md`, identify the business logic and core modules. Rank by importance: business logic > data layer > API/routes > utilities > config.
 4. **Scaffold the document**: Read `commands/plan/references/debt-templates.md` for card and document templates. Write `_planning/technical_debt.md` with `<!-- STATUS: DRAFT -->`, the document header, and the module priority list. This file is now the working output.
-5. **Analyze by module** (highest priority first): Delegate to a `code-reviewer` subagent with that module's files and `my-style` standards. Use jcodemunch `get_file_outline` to see all symbols in each file being reviewed. Evaluate against `my-style` standards plus these debt-specific checks:
+5. **Analyze by module** (highest priority first): Delegate to a `code-reviewer` subagent with that module's files and `my-style` standards. Use Grep for function/class definitions to see all symbols in each file being reviewed. Evaluate against `my-style` standards plus these debt-specific checks:
 	- File organization follows feature-folder pattern
 	- DB connections use context managers (no manual open/close)
 	- All queries use parameterized syntax (no string concatenation or f-strings)
 	- Semantic HTML used appropriately (not div-for-everything)
 	- Interactive elements have ARIA labels, keyboard navigation, and focus management
-	- **Dead code detection** — use jcodemunch to identify:
+	- **Dead code detection** — use Grep to identify:
 		- Functions/methods defined but never called (search for function name across codebase)
 		- Classes never instantiated or imported elsewhere
 		- Public functions with no callers outside their own file
@@ -36,7 +36,7 @@ Before starting, check if `_planning/technical_debt.md` exists with `<!-- STATUS
 		- Copy-paste artifacts (variable names that don't match their content)
 		- Multiple implementations of the same utility
 		- Create CLEANUP cards with MEDIUM severity
-	- **AI-generated anti-patterns** — read `my-style/references/antipatterns.md` and use `search_text` to find:
+	- **AI-generated anti-patterns** — read `my-style/references/antipatterns.md` and use Grep to find:
 		- CRITICAL patterns first: environment workarounds, error handling issues, mutable defaults
 		- HIGH patterns next: state issues, database anti-patterns, testing gaps
 		- Each match becomes an ARCH or QUALITY card with severity from the reference

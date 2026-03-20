@@ -205,6 +205,11 @@ This is a standing research agenda for the workflow system in this repository (s
 ## Decided Against
 *(Add entries when an idea is explicitly evaluated and rejected — prevents re-investigating the same ground)*
 
+### jcodemunch MCP for Codebase Exploration
+**Evaluated**: 2026-03-20. AST-indexed symbol retrieval MCP server, used via `index_repo`, `search_symbols`, `get_symbol`, `get_file_outline`, `search_text` as a supplement to native Grep/Glob/Read.
+**Rejected because**: Token savings are 5–20% in independent testing (vs. the author's claimed 95%), and only on code-reading tokens — which are a small fraction of session cost. The tools actually used duplicate Grep, Glob, and Read. ROI only materializes on monorepos with 500k+ lines and deep call-graph workflows. The largest project in this workflow is ~37k lines; native tools find anything in under 2 seconds. Index goes stale without auto-reindex, creating false negatives. Adds a second overlapping toolset that creates tool-choice overhead. The distinctive tools (`find_importers`, `get_blast_radius`) were not in use.
+**Revisit if**: Working regularly on a monorepo with 500k+ lines where repeated cross-file symbol lookups dominate session costs, or if blast-radius analysis becomes a routine part of the workflow.
+
 ### Codewriter Agent
 **Evaluated**: 2026-03-20. A dedicated agent that writes code fresh with style as primary concern, invoked per-task instead of having the main agent write.
 **Rejected because**: Most phase tasks are interdependent in ways that don't appear in signatures — a service written in task 4 needs to match patterns from task 2, a function calls a utility written two tasks earlier. Gating to "truly isolatable tasks" would exclude the majority of tasks in a typical phase. Disconnection risk was judged higher than quality benefit.

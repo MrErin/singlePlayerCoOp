@@ -22,7 +22,7 @@ allowed-tools: Bash, Read, Write
         - Read `.venv/pyvenv.cfg` (or equivalent) for the Python/Node version the venv targets
         - Run `python3 --version` in the container for the container's runtime version
         - If they differ, log a warning in `codebase.md` Stack section and flag it in `deferred.md`
-    - **Index with jcodemunch**: Run `index_folder` on the source directory, then use `get_repo_outline` for module structure and `search_symbols` to identify key patterns
+    - Use Glob to enumerate source directories and Grep to identify key patterns
     - Read directory structure (src/ level depth, not individual files)
     - Identify key patterns: routing, state management, data flow
     - **Capture patterns & conventions:**

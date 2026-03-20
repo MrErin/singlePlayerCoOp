@@ -22,7 +22,6 @@ RUN ln -s $(which fdfind) /usr/local/bin/fd
 
 # Install Python tools
 RUN pip3 install \
-    jcodemunch-mcp \
     pytest \
     pytest-cov \
     coverage \

@@ -23,7 +23,7 @@ Before starting, check if `_planning/code_audit.md` exists:
 1. **Read**: `_planning/codebase.md`, `_planning/requirements.md`, `_planning/decisions.md`
    - If `_planning/` does not exist: STOP. Tell user to run `/plan:init` first.
 
-2. **Index with jcodemunch**: If project is not already indexed, run `index_folder` on the source directory. Use `get_repo_outline` to see the full module structure.
+2. **Map module structure**: Use Glob to enumerate source files and directories to see the full module structure.
 
 3. **Triage modules**: From `codebase.md`, identify all source modules and rank by importance:
    business logic > data layer > API/routes > utilities > config
@@ -40,7 +40,7 @@ Before starting, check if `_planning/code_audit.md` exists:
 
 Update the draft marker to `<!-- DEBT PASS: IN_PROGRESS -->`.
 
-**Quick antipattern scan first** — before per-module analysis, use jcodemunch `search_text` to find critical patterns across the whole codebase. Create ARCH or QUALITY cards immediately for any match:
+**Quick antipattern scan first** — before per-module analysis, use Grep to find critical patterns across the whole codebase. Create ARCH or QUALITY cards immediately for any match:
 
 | Pattern | Card type | Severity |
 |---------|-----------|----------|
@@ -56,7 +56,7 @@ See `my-style/references/antipatterns.md` for the full detection pattern list an
 **Per-module analysis** (highest priority first):
 
 For each module, delegate to a `code-reviewer` subagent. The subagent receives:
-- The module's files (use jcodemunch `get_file_outline` and `get_symbol` to gather them)
+- The module's files (use Grep and Read to gather them)
 - `my-style` standards
 - The debt-specific checks listed below
 
@@ -66,7 +66,7 @@ Debt-specific checks per module:
 - All queries use parameterized syntax (no string concatenation or f-strings)
 - Semantic HTML used appropriately (not div-for-everything)
 - Interactive elements have ARIA labels, keyboard navigation, and focus management
-- **Dead code**: use jcodemunch `find_importers` to find functions/classes defined but never called outside their own file. Verify before flagging — check for dynamic calls, test fixtures, and API endpoints that may not appear as static callers. Confirmed dead code → 🧹 QUALITY card.
+- **Dead code**: use Grep to find functions/classes defined but never called outside their own file. Verify before flagging — check for dynamic calls, test fixtures, and API endpoints that may not appear as static callers. Confirmed dead code → 🧹 QUALITY card.
 - **Redundant code**: near-identical functions across files, copy-paste artifacts, multiple implementations of the same utility → 🧹 QUALITY card.
 
 **Write each module's debt cards to the document before moving to the next module.**
@@ -88,14 +88,14 @@ Update the draft marker to `<!-- TEST PASS: IN_PROGRESS -->`.
    - **80–90%**: Run `mutmut-wrapper run` (no pattern filter — targeted runs fail without complete coverage data). Append results.
    - **Above 90%**: Run `mutmut-wrapper run`, then `mutmut-wrapper show-all`. Read `mutmut_output/survived_all.txt` for diffs. Append results.
 
-**Quick antipattern scan for test files** — use jcodemunch `search_text` before per-module analysis:
+**Quick antipattern scan for test files** — use Grep before per-module analysis:
 - `sys.modules[` in test files → 🔍 SMELL card
 - `MagicMock` in `src/` → 🔍 SMELL card (mock in production)
 - `assert True` or assertion-free tests → 🔍 SMELL card
 
 **Per-module test analysis** (same priority order as Pass 1):
 
-For each module's test file(s), use jcodemunch `get_file_outline` to see all test functions. Evaluate against these standards:
+For each module's test file(s), use Grep for test function definitions to see all test functions. Evaluate against these standards:
 
 | Category | What to check |
 |----------|---------------|

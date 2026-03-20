@@ -34,8 +34,8 @@ This is an independent verification pass. You are in a fresh context — do not 
 2. **Read the phase's `plan.md`** — get the full task list and verify criteria.
 
 3. **Verify task completion:** For each task in the plan, confirm it was actually completed as described.
-    - Use jcodemunch `get_file_outline` and `get_symbol` to inspect code structure and implementations.
-    - Use jcodemunch `search_text` to find how functions are called and connected.
+    - Use Grep and Read to inspect code structure and implementations.
+    - Use Grep to find how functions are called and connected.
     - For each task: check that the code matches what the plan called for. Missing, partial, or incorrect implementations must be flagged.
     - If a task is incomplete or incorrect, document it in a "Review Findings" section — flag it to the user before proceeding.
 

@@ -19,7 +19,7 @@ Before starting, check if the target phase's `plan.md` exists with `<!-- STATUS:
     - `_planning/decisions.md` — any constraints to honor?
     - `_planning/codebase.md` — understand existing structure
     - `_planning/lessons.md` — avoid repeating known pitfalls
-    - Use jcodemunch to search symbols and find relevant existing code patterns
+    - Use Grep and Glob to find relevant existing code patterns
 2. **Determine which phase to plan:**
     - If argument provided: plan that phase number.
     - If no argument: find the next incomplete phase from roadmap.
