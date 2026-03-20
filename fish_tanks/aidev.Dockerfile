@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Symlink for fd-find    
+# Symlink for fd-find
 RUN ln -s $(which fdfind) /usr/local/bin/fd
 
 # Install Python tools

@@ -17,6 +17,37 @@ This is a standing research agenda for the workflow system in this repository (s
 
 ---
 
+### 0. MCP Server Ecosystem for Development Workflow
+
+**Why it matters**: MCP servers extend Claude Code's capabilities with specialized tools for code analysis, documentation retrieval, testing, and more. The ecosystem is rapidly expanding — new servers appear weekly. Periodic re-evaluation ensures we're using the best tools available and not missing capabilities that would meaningfully improve the workflow.
+
+**Current baseline** *(as of 2026-03-20)*:
+- **In use**: Context7 (documentation lookup), web_reader (URL to markdown), 4_5v_mcp (image analysis)
+- **Reference servers available**: Memory (knowledge graph), Sequential Thinking, Filesystem, Git, Fetch, Time
+- **Ecosystem size**: 500+ servers in official registry, 200+ community servers
+- **Key categories**: Database connectors, code analysis, browser automation, documentation, memory/RAG, API integrations
+
+**Questions to ask when re-researching**:
+- Are there new servers specifically designed for agentic coding workflows (not just API wrappers)?
+- Has the Memory server matured enough to replace or supplement lessons.md-style accumulation?
+- Are there AST-based code analysis servers that work without external indexing infrastructure?
+- Have browser automation servers (Playwright, Puppeteer) become reliable enough for CI-gated test verification?
+- Are there servers that provide structured diff/patch operations for code transformation?
+- Has anyone built a server that implements the "linter-as-executable-specification" pattern?
+
+**What would trigger a change**:
+- A memory server that works file-based without external infrastructure (Neo4j, Qdrant, etc.)
+- An AST-based code navigation server that doesn't require pre-indexing
+- A browser testing server stable enough for phase verification
+- A documentation server with better coverage than Context7
+
+**Review cadence**: Quarterly
+**Maps to**: All skills and agents; potentially replaces manual context management
+
+**Last checked**: 2026-03-20
+
+---
+
 ### 1. Agent Memory and Cross-Session Style Consistency
 
 **Why it matters**: Within a build session, the code-fixer handles style drift. Across sessions, we rely on planning artifacts (lessons.md, decisions.md, codebase.md). Structured memory systems could make cross-session quality more consistent — agents that learn from previous phases rather than starting fresh each time.
@@ -175,10 +206,21 @@ This is a standing research agenda for the workflow system in this repository (s
 **Why not yet**: Requires external infrastructure or the Letta platform. Not adoptable as a file-based change.
 **Watch for**: A file-based implementation pattern that works with Claude Code's existing worktree model.
 
+### Memory MCP Reference Server
+**What it is**: Official MCP reference server providing knowledge graph-based persistent memory. Stores entities (people, concepts, files) and relations between them, retrieved via semantic search.
+**Why not yet**: Designed to replace context files, not supplement them. Stores in SQLite or in-memory — no git-backed persistence. Would require maintaining two parallel systems (lessons.md + Memory graph) with no clear benefit over current lessons.md pattern.
+**Watch for**: Git-backed persistence support (commits per memory update, mergeable via standard git) that would integrate with the existing worktree/planning-artifact model.
+
 ---
 
 ## Incorporated Findings
 *(Newest first — add new entries at top when findings are acted on)*
+
+### 2026-03-20 — Centralized Semgrep Rules Repository
+**Research**: Semgrep MCP installation and custom rule syntax.
+**Decision**: Created `/project/semgrep-rules/` with `ai-antipatterns.yml` containing 16 custom rules derived from `my-style/references/antipatterns.md`. Rules cover: mutable defaults, bare except, swallowed exceptions, hardcoded secrets, SQL injection, resource leaks, mock imports in production, tautological assertions, star imports.
+**Rationale**: Centralizing rules in this repository (rather than per-project) ensures consistency across all projects and makes rule maintenance trackable via git.
+**Update 2026-03-20**: Abandoned MCP integration after ~10 failed attempts. MCP servers run on the HOST, not inside the fish tank — installing in the Dockerfile was architecturally wrong. Rules retained in `/project/semgrep-rules/` for potential future use in CI/pre-commit workflows.
 
 ### 2026-03-20 — Tiered my-style Reference Loading in code-fixer
 **Research**: Codified Context paper (arXiv 2602.20478), Agent READMEs study (arXiv 2511.12884).
