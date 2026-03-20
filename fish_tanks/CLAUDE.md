@@ -16,8 +16,6 @@ When any /plan: command is invoked, load the iterative-build skill first.
 
 Always use Context7 MCP for code generation, library usage, setup steps, and API documentation without me explicitly asking.
 
-Always use sequential-thinking MCP for complex planning decisions that benefit from chain of thought reasoning.
-
 # Environment
 
 You are running inside a Docker container. This determines what is and is not possible.
