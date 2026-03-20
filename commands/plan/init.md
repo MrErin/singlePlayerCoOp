@@ -35,7 +35,7 @@ allowed-tools: Bash, Read, Write
     - Generate `_planning/codebase.md` from what you find — see `iterative-build/references/codebase.md` for full template
     - If greenfield, skip this step — codebase.md is generated after Phase 0 build
 4. **Create `_planning/` directory** with:
-    - `roadmap.md` — Phase breakdown with checkboxes. Customize phase names to match the project's actual scope.
+    - `roadmap.md` — Phase breakdown with checkboxes. Customize phase names to match the project's actual scope. After the phase list, add a **Phase intent notes** section with a 2-3 sentence entry per phase capturing: what is built in this phase, what is explicitly excluded, and what the "done" state looks like. This section is written once at init and updated only when phases are inserted via phase shift — it is not a changelog.
     - `state.md` — Set current phase, record requirements location, start session log.
     - `decisions.md` — Empty template, ready for entries.
     - `deferred.md` — Empty template, ready for entries.

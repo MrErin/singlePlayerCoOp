@@ -90,6 +90,7 @@ Load `references/interrogate-guide.md` for detailed probing questions.
     - Renumber all subsequent phases (no decimals)
     - Update phase names to reflect new numbering
     - Add note explaining the shift
+    - In the **Phase intent notes** section: renumber all shifted entries to match their new phase numbers, then add a new entry for each inserted phase (2-3 sentences: what is built, what is excluded, what done looks like)
 ```
 
 **After Mode D:** The user can proceed with `/plan:phase [N]` to plan the new phase using the shift requirements document.
