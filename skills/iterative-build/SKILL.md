@@ -147,6 +147,7 @@ If unclear: "I see existing code and `_planning/`. Continue previous work, add f
 - Phase boundaries are strict.
 - Keep phases reviewable.
 - One plan per phase.
+- **Only the user accepts UAT.** Never check the Result checkboxes in `ua_testing.md`. Never mark a phase `complete` based on your own assessment — a phase closes only after the user explicitly confirms. Before closing, all open items from `ua_testing.md` (Issues Found, Follow-up Items, Known Limitations) must be triaged to `_planning/deferred.md` or `_planning/decisions.md`.
 - **Incremental writes:** When generating documents (plans, audits, reviews), write to disk after each major section — not at the end. If the session ends mid-task, partial work survives. Mark documents `<!-- STATUS: DRAFT -->` at the top while in progress, replace with `<!-- STATUS: COMPLETE -->` when done. On resume, check for DRAFT files and continue from the last written section.
 
 # Reference Files (Lazy Load)

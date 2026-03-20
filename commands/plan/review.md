@@ -84,7 +84,7 @@ This is an independent verification pass. You are in a fresh context — do not 
     - Error Messages / Logs: paste any error output
     - Questions: numbered list
     - General Feedback: long-form notes
-    - Result: checked as "All good" or "Issues found"
+    - **Do NOT touch the Result checkboxes** — those are for the user only. The user marks their own acceptance. Agents must never check these boxes.
 
 5. **If issues were found:**
     - Add them to a "Follow-up Items" section of `ua_testing.md` with priority (blocker / nice-to-fix / next phase).
@@ -93,6 +93,10 @@ This is an independent verification pass. You are in a fresh context — do not 
     - If non-blockers: proceed to close.
 
 6. **When user confirms approval (no blockers):**
+    - **Triage all open items before closing.** Scan `ua_testing.md` for any unresolved items in "Issues Found," "Follow-up Items," and "Known Limitations." Every open item must be accounted for:
+        - Add to `_planning/deferred.md` — items to address in a future phase, or
+        - Record in `_planning/decisions.md` — items accepted as known trade-offs or out of scope
+        - Do NOT close the phase if any open item is unaccounted for. Ask the user how to handle it.
     - Update `state.md` — set phase status to `complete`, log session.
     - Update `roadmap.md` — check off the completed phase.
     - Suggest: "Phase complete. Run `/plan:phase` to plan the next phase."

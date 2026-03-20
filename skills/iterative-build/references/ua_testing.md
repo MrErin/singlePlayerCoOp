@@ -88,5 +88,6 @@
 
 ### Result
 
+<!-- ⚠️ USER ONLY — Agents must never check these boxes. Only the user marks acceptance. -->
 - [ ] All good — ready to proceed
 - [ ] Issues found — see above
