@@ -58,7 +58,6 @@ Before starting, check if `_planning/technical_debt.md` exists with `<!-- STATUS
 6. **Research**: relevant architectural patterns for the project's language, framework, and type. Append findings to the document.
 7. **Generate the cluster deck**: Group issues into clusters by files/modules they affect. Within each cluster, order highest-to-lowest severity. Order clusters so higher-severity clusters come first; if equal severity, prioritize clusters whose files are touched by other clusters. **Cards in clusters must use the same `[TYPE]-[NNN]` identifiers from step 5** — this lets readers cross-reference between the severity exposition and the action-oriented clusters.
 8. **Finalize**: Generate the severity summary at the top of the document. Replace `<!-- STATUS: DRAFT -->` with `<!-- STATUS: COMPLETE -->`.
-9. **Progressive output**: If >10 issues found, only expand full card details for the top 4 clusters. Add a note: "Run `/plan:debt [cluster-name]` to expand remaining clusters."
 
 ## Rules
 

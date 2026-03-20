@@ -30,7 +30,6 @@ Before starting, check if `_planning/test_audit.md` exists with `<!-- STATUS: DR
 8. **Analyze by module** (highest priority first): For each module, analyze its test files against the standards below. Use jcodemunch `get_file_outline` to see all test functions in each file. Create investigation cards for every issue. Classify each card: Quick (10-15 min), Medium (20-30 min), Deep Dive (30-45 min). **Write the completed cluster to the document before moving to the next module.** Within each cluster, order hardest-to-easiest. Assign a BOSS card to any cluster with 3+ issues.
 9. **Trivial fixes**: Weak assertions (>= where == should be), untested fields in a return object, or other obvious improvements — fix them during the audit. If collected trivial fixes break tests, hand back to user as one card.
 10. **Finalize**: Generate the scorecard and standards check summary at the top of the document (now that all clusters are written). Replace `<!-- STATUS: DRAFT -->` with `<!-- STATUS: COMPLETE -->`.
-11. **Progressive output**: If >10 cards generated, only expand full card details for the top 2 clusters. Add a note: "Run `/plan:test-audit [cluster-name]` to expand remaining clusters."
 
 ## Standards to Evaluate Against
 
