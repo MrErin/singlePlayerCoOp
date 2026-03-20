@@ -174,6 +174,29 @@ When mocking objects from frameworks (LangChain, SQLAlchemy, Django, etc.), plai
 3. **Use framework test utilities.** Many frameworks provide fake/stub implementations for testing (e.g., LangChain's `FakeListLLM`, Django's `RequestFactory`). Prefer these over MagicMock.
 4. **If mock_helper exists, use it.** If conftest.py already has a helper that patches the chain correctly (e.g., `mock_mission_chain`), use it. Don't create a parallel mock setup that bypasses the helper.
 
+## Blocking Entry Points Must Be Mocked
+
+When a CLI command, API endpoint, or orchestrator calls a blocking function (TUI `app.run()`, HTTP server `serve_forever()`, event loop `run_until_complete()`), tests that exercise that code path **must mock the blocking call**. Otherwise the test hangs indefinitely waiting for interactive input or a shutdown signal.
+
+**Common pattern:** CLI command evolves to launch an interactive session (e.g., TUI). Existing tests mocked business logic but not the new blocking call. Tests pass in CI until the code path changes, then silently hang.
+
+**Rule:** When a code path gains a blocking entry point, add a mock for it in every test that reaches it. Treat unmocked blocking calls like unmocked network I/O — a test isolation failure.
+
+```python
+# ❌ Hangs — investigate reaches _launch_tui → app.run() blocks forever
+with patch("myapp.cli.create_campaign", return_value=mock_campaign):
+    runner.invoke(app, ["investigate", str(repo)])
+
+# ✅ Mock the blocking entry point
+with (
+    patch("myapp.cli.create_campaign", return_value=mock_campaign),
+    patch("myapp.cli._launch_tui"),  # blocks without this
+):
+    runner.invoke(app, ["investigate", str(repo)])
+```
+
+**Detection:** Test suite hangs at a fixed percentage. The stalled test is always immediately after the last passing test in pytest -v output.
+
 ## Property-Based Testing
 
 For business logic with invariants, use **Hypothesis** (Python) or **fast-check** (TypeScript) alongside example tests.
