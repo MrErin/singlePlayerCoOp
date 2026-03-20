@@ -1,6 +1,6 @@
 ---
 description: Execute the current planned phase. Reads the plan.md for the active phase and builds it task by task. Use after /plan:phase has been approved. Supports /plan:build [phase] for full phase or /plan:build [phase].[task] (e.g., /plan:build 3.2) for single-task execution.
-allowed-tools: Bash, Read, Write, Edit, Grep, Glob
+allowed-tools: Bash, Read, Write, Edit, Grep, Glob, Agent
 ---
 
 # Build Current Phase
@@ -61,8 +61,8 @@ Single-task mode:
       ```
       Mark task `BLOCKED` in heading. Do NOT proceed to next task. Output blocker summary and wait for user.
     - After each task, verify against the task's verify criteria.
-    - **Per-task verification** (mandatory for tasks that write business logic or features; skip for config-only, comment-only, or scaffold-only tasks): Delegate to a `code-reviewer` subagent after each task completes. The subagent receives: task spec, files touched, `my-style` standards — nothing else. If issues are found, fix them before proceeding to the next task. This prevents error compounding where a mistake in task 1 pollutes tasks 2-5.
-    - **Mark task `DONE`** in plan.md heading after code-reviewer verification passes.
+    - **Per-task style fix** (mandatory for tasks that write business logic or features; skip for config-only, comment-only, or scaffold-only tasks): Delegate to a `code-fixer` subagent after each task completes. Provide: task name, files touched, and the file types involved (so it loads the correct my-style reference). The fixer runs the project linter first for deterministic violations, then does an LLM style pass for what the linter cannot reach, and applies all fixes in-place. It operates with a two-round maximum — if violations remain after two rounds it reports them. Log all items from the code-fixer's **Needs User Review** section in plan.md "Issues Discovered" — these will surface in `ua_testing.md` when `/plan:review` generates it.
+    - **Mark task `DONE`** in plan.md heading after the code-fixer pass completes.
     - **Use jcodemunch during implementation** — when implementing a task, search for existing similar code to match patterns and conventions.
     - If a task can't be completed as planned, note why and adapt.
     - **Comment maintenance:** When modifying existing code, review all comments within the modified function/block. Update or remove comments that no longer reflect the current logic. A stale comment is worse than no comment. Also scan the corresponding test file for any tests targeting renamed, removed, or gutted behavior in the modified function — flag these in a note for `ua_testing.md` under "Possibly Obsolete Tests." Do not delete them.

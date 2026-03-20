@@ -56,7 +56,7 @@ This is an independent verification pass. You are in a fresh context — do not 
 6. **Generate `ua_testing.md`** in the phase directory using the `ua_testing` template from `iterative-build` references.
     - Use progressive disclosure: Quick Smoke tests first (2–5 min), then Priority 1 features (15–20 min), then Priority 2 if time permits.
     - Include any "Possibly Obsolete Tests" flagged during the build.
-    - Include any coverage gaps flagged in plan.md "Issues Discovered" section.
+    - Include any coverage gaps and code-fixer flags from plan.md "Issues Discovered" section — remaining violations, scope warnings, and linter bypass flags all need user visibility.
     - The User Testing Notes section at the bottom is left blank — the user fills it in after testing.
     - Write incrementally — mark `<!-- STATUS: DRAFT -->` at top while generating, replace with `<!-- STATUS: COMPLETE -->` when done.
 
