@@ -43,13 +43,21 @@ This is an independent verification pass. You are in a fresh context — do not 
     - If a `code-reviewer` subagent is available, delegate this for an independent assessment.
     - Research any uncertain patterns or architectural decisions.
 
-5. **Security verification:** Explicitly verify each applicable Security Checklist item:
+5. **UI quality check (frontend phases only):** If the phase modified any `.tsx`, `.jsx`, `.html`, `.css`, or `.vue` files:
+    - Load `my-style/references/ui-antipatterns.md`.
+    - Run the grep patterns from each section against all frontend files modified in this phase.
+    - Organize findings by severity: CRITICAL → HIGH → MEDIUM → LOW.
+    - CRITICAL violations must be added to Review Findings and block phase closure the same as broken implementations.
+    - HIGH and MEDIUM violations are summarized in the review output (file + line) and included in `ua_testing.md` for user awareness.
+    - If no frontend files were modified, skip this step.
+
+6. **Security verification:** Explicitly verify each applicable Security Checklist item:
     - If the phase added new dependencies, confirm dependency review was performed (viewed source, checked for suspicious patterns)
     - If the phase has user input, confirm validation/sanitization is in place
     - If the phase has sensitive routes, confirm auth checks exist
     - Flag any unchecked items or gaps found during verification
 
-6. **Generate `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references.
+7. **Generate `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references.
     - Generate "At a Glance" section first (most important):
         - One-sentence summary of what this phase accomplishes
         - Files Changed: each file with one-line description
@@ -58,16 +66,16 @@ This is an independent verification pass. You are in a fresh context — do not 
     - Then complete the remaining sections (What Was Built, Key Decisions, Major Logic Flows, Connection to Previous Phases).
     - Write incrementally — mark `<!-- STATUS: DRAFT -->` at top while generating, replace with `<!-- STATUS: COMPLETE -->` when done.
 
-7. **Generate `ua_testing.md`** in the phase directory using the `ua_testing` template from `iterative-build` references.
+8. **Generate `ua_testing.md`** in the phase directory using the `ua_testing` template from `iterative-build` references.
     - Use progressive disclosure: Quick Smoke tests first (2–5 min), then Priority 1 features (15–20 min), then Priority 2 if time permits.
     - Include any "Possibly Obsolete Tests" flagged during the build.
-    - Include any coverage gaps and code-fixer flags from plan.md "Issues Discovered" section — remaining violations, scope warnings, and linter bypass flags all need user visibility.
+    - Include any coverage gaps, code-fixer flags from plan.md "Issues Discovered", and HIGH/MEDIUM UI violations from step 5 — remaining violations, scope warnings, and linter bypass flags all need user visibility.
     - The User Testing Notes section at the bottom is left blank — the user fills it in after testing.
     - Write incrementally — mark `<!-- STATUS: DRAFT -->` at top while generating, replace with `<!-- STATUS: COMPLETE -->` when done.
 
-8. **Update `state.md`** — set phase status to `ua-testing`.
+9. **Update `state.md`** — set phase status to `ua-testing`.
 
-9. **STOP.** Output:
+10. **STOP.** Output:
     - **Review Findings** (if any issues were found — be explicit, don't bury them)
     - Confirmation that `phase_summary.md` and `ua_testing.md` are ready in the phase directory
     - Instruction: "Complete UA testing using the checklist in `ua_testing.md`. Fill in the User Testing Notes section with what you find. Then run `/plan:review` to record results and close the phase."
