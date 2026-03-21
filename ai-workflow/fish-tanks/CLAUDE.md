@@ -16,6 +16,8 @@ When any /plan: command is invoked, load the iterative-build skill first.
 
 Always use Context7 MCP for code generation, library usage, setup steps, and API documentation without me explicitly asking.
 
+When templates or skill files include emojis, always use them — they serve as visual cues.
+
 # Environment
 
 You are running inside a Docker container. This determines what is and is not possible.
