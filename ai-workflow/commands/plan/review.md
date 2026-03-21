@@ -51,13 +51,21 @@ This is an independent verification pass. You are in a fresh context — do not 
     - HIGH and MEDIUM violations are summarized in the review output (file + line) and included in `ua_testing.md` for user awareness.
     - If no frontend files were modified, skip this step.
 
-6. **Security verification:** Explicitly verify each applicable Security Checklist item:
+6. **Naming consistency check:** Run against all `.ts`, `.tsx`, `.py`, and `.js` files modified in this phase (skip if the phase touches none of these):
+    - Load `my-style/references/naming.md`.
+    - Run the detection patterns from the "Cross-Layer Naming Consistency" section.
+    - For each match, determine: does this mapper bridge an **external** boundary (third-party API, legacy system, external service) or an **internal** one (your own backend ↔ frontend, your own service ↔ service)?
+    - **Internal mappers (HIGH):** Identify the canonical name (usually the backend/source-of-truth name). Add a specific entry to the "Required Manual Renames" section of `ua_testing.md` — include what to rename, from/to names, and the `git mv` command if a file rename is needed.
+    - **Unclear boundary (MEDIUM):** Include in review output as an item for the user to inspect. Note in `ua_testing.md`.
+    - External boundary mappers are expected and do not need flagging.
+
+7. **Security verification:** Explicitly verify each applicable Security Checklist item:
     - If the phase added new dependencies, confirm dependency review was performed (viewed source, checked for suspicious patterns)
     - If the phase has user input, confirm validation/sanitization is in place
     - If the phase has sensitive routes, confirm auth checks exist
     - Flag any unchecked items or gaps found during verification
 
-7. **Generate `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references.
+8. **Generate `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references.
     - Generate "At a Glance" section first (most important):
         - One-sentence summary of what this phase accomplishes
         - Files Changed: each file with one-line description
@@ -66,16 +74,17 @@ This is an independent verification pass. You are in a fresh context — do not 
     - Then complete the remaining sections (What Was Built, Key Decisions, Major Logic Flows, Connection to Previous Phases).
     - Write incrementally — mark `<!-- STATUS: DRAFT -->` at top while generating, replace with `<!-- STATUS: COMPLETE -->` when done.
 
-8. **Generate `ua_testing.md`** in the phase directory using the `ua_testing` template from `iterative-build` references.
+9. **Generate `ua_testing.md`** in the phase directory using the `ua_testing` template from `iterative-build` references.
     - Use progressive disclosure: Quick Smoke tests first (2–5 min), then Priority 1 features (15–20 min), then Priority 2 if time permits.
     - Include any "Possibly Obsolete Tests" flagged during the build.
     - Include any coverage gaps, code-fixer flags from plan.md "Issues Discovered", and HIGH/MEDIUM UI violations from step 5 — remaining violations, scope warnings, and linter bypass flags all need user visibility.
+    - Populate the "Required Manual Renames" section with all HIGH findings from step 6. If no renames are needed, delete that section from the generated file.
     - The User Testing Notes section at the bottom is left blank — the user fills it in after testing.
     - Write incrementally — mark `<!-- STATUS: DRAFT -->` at top while generating, replace with `<!-- STATUS: COMPLETE -->` when done.
 
-9. **Update `state.md`** — set phase status to `ua-testing`.
+10. **Update `state.md`** — set phase status to `ua-testing`.
 
-10. **STOP.** Output:
+11. **STOP.** Output:
     - **Review Findings** (if any issues were found — be explicit, don't bury them)
     - Confirmation that `phase_summary.md` and `ua_testing.md` are ready in the phase directory
     - Instruction: "Complete UA testing using the checklist in `ua_testing.md`. Fill in the User Testing Notes section with what you find. Then run `/plan:review` to record results and close the phase."

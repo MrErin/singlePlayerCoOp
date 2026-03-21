@@ -64,6 +64,18 @@
 
 ---
 
+## Required Manual Renames
+
+*Naming consistency check found the following divergences between layers. Complete all renames before marking the phase complete — they must be done with `git mv` to preserve git history. Never delete and recreate a file to rename it.*
+
+*Agents: delete this section if no renames were identified.*
+
+| What | Rename from | Rename to | Command |
+|------|-------------|-----------|---------|
+|      |             |           |         |
+
+---
+
 ## User Testing Notes
 
 *Fill in this section after completing the testing steps above. Then run `/plan:review` to record your results and close the phase.*
