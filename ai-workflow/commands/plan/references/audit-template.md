@@ -233,7 +233,7 @@ Load this file when ready to generate `code_audit.md` output.
 
 ---
 
-## code_audit.md Document Template
+## audit-review.md Document Template
 
 ```markdown
 # Code Audit — [Project Name]
@@ -245,6 +245,7 @@ Load this file when ready to generate `code_audit.md` output.
 **Date**: [today's date]
 **Assessed Against**: my-style standards, test quality standards
 **Codebase**: [languages, frameworks]
+**Auto-fix list**: `_planning/audit-auto.md` ([n] items delegated for agent execution)
 
 ---
 
@@ -305,6 +306,7 @@ Load this file when ready to generate `code_audit.md` output.
 
 Source: `[module path]` | Tests: `[test file path or "none"]`
 Total: [n] cards ([n] debt / [n] test) | Est. effort: [time] | Risk ceiling: [High / Medium / Low / —]
+Auto-fix items delegated: [n or "none"] → see `audit-auto.md`
 
 | # | Done | Card | Type | Difficulty | Time |
 |---|------|------|------|------------|------|

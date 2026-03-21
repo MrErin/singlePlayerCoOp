@@ -1,7 +1,9 @@
 ---
-description: Generate or update the technical_debt document for a brownfield project. Use to assess existing code base against preferences and best practices outlined in my-style skill
+description: DEPRECATED — use /plan:audit instead. Generates a standalone technical debt document. Retained for reference only.
 allowed-tools: Bash, Read, Write, Grep, Glob
 ---
+
+> **Deprecated**: This command has been replaced by `/plan:audit`, which runs debt analysis and test analysis together and produces both an agent-executable auto-fix list and a gamified human review deck. Do not run this command for new audits.
 
 # Assess Technical Debt
 

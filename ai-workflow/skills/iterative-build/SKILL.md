@@ -10,7 +10,7 @@ Build in digestible phases. Maintain persistent planning state. Never build ever
 
 # Slash Commands
 
-`/plan:interrogate` · `/plan:init` · `/plan:phase` · `/plan:build` · `/plan:status` · `/plan:review` · `/plan:audit` · `/plan:debt` · `/plan:test-audit` · `/plan:archive`
+`/plan:interrogate` · `/plan:init` · `/plan:phase` · `/plan:build` · `/plan:status` · `/plan:review` · `/plan:audit` · `/plan:archive`
 
 If command invoked, follow its instructions. Otherwise, determine appropriate phase.
 

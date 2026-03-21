@@ -320,17 +320,14 @@ Code that exists but is never executed — functions never called, classes never
 
 ## How to Use This Reference
 
-### For /plan:debt
-Use `search_text` to find patterns. Start with CRITICAL patterns, then HIGH. Each match becomes a debt card with the pattern's severity and action. Include Hallucinated APIs, Resource Management, Hardcoded Secrets, and Dead Code sections. For dead code, use Grep for function/class definitions to list symbols, then Grep to verify each has callers.
+### For /plan:audit
+Use `search_text` to find patterns during the debt pass. Start with CRITICAL patterns, then HIGH. Each match becomes a card — route to AUTO tier if it's a mechanical fix (unused imports, dead code, simple naming), REVIEW tier if it requires judgment (architecture, security, design). For dead code, use Grep for function/class definitions to list symbols, then Grep to verify each has callers. During the test pass, focus on "Testing Anti-Patterns" and "Copy-Paste Artifacts" sections.
 
 ### For code-reviewer agent
 Check modified files against: Environment Workarounds, Error Handling, State & Mutability, Database/API Patterns, Resource Management, and Hardcoded Secrets. These are the sections most likely to introduce bugs per-task.
 
 ### For test-writer agent
 Check your own output against "Testing Anti-Patterns" before delivering. AI-generated tests have the same blind spots documented here — mirror tests, tautological assertions, and happy-path-only coverage.
-
-### For /plan:test-audit
-Focus on "Testing Anti-Patterns" and "Copy-Paste Artifacts" sections. Flag tests that don't actually verify behavior or that were duplicated across test modules without adaptation.
 
 ### For new code review
 The "AI-Specific Tells" and "Copy-Paste Artifacts" sections help identify code that needs deeper scrutiny — if it looks AI-generated without review, there may be hidden issues.

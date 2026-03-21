@@ -1,5 +1,5 @@
 ---
-description: Full codebase sweep combining technical debt and test suite quality into one actionable cluster deck. Each cluster contains all debt AND test cards for that module — fix both together. Replaces running /plan:debt and /plan:test-audit separately.
+description: Full codebase sweep producing two outputs — an agent-executable auto-fix list (audit-auto.md) for delegation to a cheap model, and a gamified human review deck (audit-review.md) for decisions that require judgment. Replaces /plan:debt and /plan:test-audit.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, Agent
 ---
 
@@ -9,10 +9,10 @@ allowed-tools: Bash, Read, Write, Edit, Grep, Glob, Agent
 
 ## Resume Detection
 
-Before starting, check if `_planning/code_audit.md` exists:
+Before starting, check if `_planning/audit-review.md` exists:
 
 - `<!-- STATUS: COMPLETE -->` → tell the user the audit is current. Suggest re-running only if significant code has changed since the audit date.
-- `<!-- STATUS: DRAFT -->` + `<!-- TEST PASS: COMPLETE -->` → skip to Pass 3 (Merge).
+- `<!-- STATUS: DRAFT -->` + `<!-- TEST PASS: COMPLETE -->` → skip to Pass 3 (Dual Output).
 - `<!-- STATUS: DRAFT -->` + `<!-- DEBT PASS: COMPLETE -->` → skip to Pass 2 (Test Analysis).
 - `<!-- STATUS: DRAFT -->` + no pass markers → resume debt analysis from the last written module cluster.
 
@@ -23,16 +23,50 @@ Before starting, check if `_planning/code_audit.md` exists:
 1. **Read**: `_planning/codebase.md`, `_planning/requirements.md`, `_planning/decisions.md`
    - If `_planning/` does not exist: STOP. Tell user to run `/plan:init` first.
 
-2. **Map module structure**: Use Glob to enumerate source files and directories to see the full module structure.
+2. **Check for tests**: Use Glob to find test files. If no test files exist, skip Pass 2 (Test Analysis) entirely — note this in both document headers.
 
-3. **Triage modules**: From `codebase.md`, identify all source modules and rank by importance:
+3. **Map module structure**: Use Glob to enumerate source files and directories to see the full module structure.
+
+4. **Triage modules**: From `codebase.md`, identify all source modules and rank by importance:
    business logic > data layer > API/routes > utilities > config
 
-4. **Scaffold the document**: Read `commands/plan/references/audit-template.md` for card formats and the document template. Write `_planning/code_audit.md` with:
-   - `<!-- STATUS: DRAFT -->`
-   - `<!-- DEBT PASS: PENDING -->`
-   - `<!-- TEST PASS: PENDING -->`
-   - Document header and ranked module list
+5. **Scaffold both documents**:
+   - Read `commands/plan/references/audit-template.md` for review card formats.
+   - Read `commands/plan/references/audit-auto-template.md` for the auto-fix list format.
+   - Write `_planning/audit-review.md` with `<!-- STATUS: DRAFT -->`, `<!-- DEBT PASS: PENDING -->`, `<!-- TEST PASS: PENDING -->`, document header, and ranked module list.
+   - Write `_planning/audit-auto.md` with document header and empty module sections.
+
+---
+
+## Classification Rules
+
+Every finding is routed to one of two tiers. Apply these rules before writing any item.
+
+**AUTO tier** — executable by an agent without human judgment:
+- Unused imports (confirmed not dynamically referenced)
+- Confirmed dead code (no callers, no dynamic dispatch, not a test fixture or API endpoint)
+- Missing type annotations on simple functions (no complex generics or protocol types involved)
+- Style/naming violations that are purely mechanical (casing, underscore consistency)
+- Redundant/duplicate tests confirmed identical (same code path, same assertions)
+- Orphan tests for confirmed-deleted or confirmed-renamed production code
+- Trivial assertion fixes (`>=` where `==` is clearly correct; untested field in return object)
+- Missing trivial tests for pure functions with deterministic, obvious behavior
+- Unused variables, dead branches, unreachable code
+
+**REVIEW tier** — requires human judgment:
+- Architectural pattern changes (any structural redesign)
+- Design principle violations (SRP, DI, separation of concerns)
+- Security concerns of any kind
+- Dead code where usage is ambiguous (dynamic dispatch, monkey patching, plugin systems)
+- Refactors touching shared interfaces
+- Mutant analysis (determining which test should catch what and why it doesn't)
+- Coverage gaps requiring new test logic or understanding of business rules
+- Test smells requiring test redesign (not just a trivial assertion fix)
+- Seam/integration test needs
+- Any fix with Medium or High risk
+- Any item where the correct answer depends on context or tradeoffs
+
+**When uncertain**: default to REVIEW. An over-cautious review deck is better than an agent making architectural decisions.
 
 ---
 
@@ -40,7 +74,7 @@ Before starting, check if `_planning/code_audit.md` exists:
 
 Update the draft marker to `<!-- DEBT PASS: IN_PROGRESS -->`.
 
-**Quick antipattern scan first** — before per-module analysis, use Grep to find critical patterns across the whole codebase. Create ARCH or QUALITY cards immediately for any match:
+**Quick antipattern scan first** — before per-module analysis, use Grep to find critical patterns across the whole codebase. Route each match per the classification rules above (all patterns below are REVIEW tier):
 
 | Pattern | Card type | Severity |
 |---------|-----------|----------|
@@ -59,6 +93,7 @@ For each module, delegate to a `code-reviewer` subagent. The subagent receives:
 - The module's files (use Grep and Read to gather them)
 - `my-style` standards
 - The debt-specific checks listed below
+- The classification rules above — the subagent must label each finding AUTO or REVIEW
 
 Debt-specific checks per module:
 - File organization follows feature-folder pattern
@@ -66,10 +101,10 @@ Debt-specific checks per module:
 - All queries use parameterized syntax (no string concatenation or f-strings)
 - Semantic HTML used appropriately (not div-for-everything)
 - Interactive elements have ARIA labels, keyboard navigation, and focus management
-- **Dead code**: use Grep to find functions/classes defined but never called outside their own file. Verify before flagging — check for dynamic calls, test fixtures, and API endpoints that may not appear as static callers. Confirmed dead code → 🧹 QUALITY card.
-- **Redundant code**: near-identical functions across files, copy-paste artifacts, multiple implementations of the same utility → 🧹 QUALITY card.
+- **Dead code**: use Grep to find functions/classes defined but never called outside their own file. Verify before flagging — check for dynamic calls, test fixtures, and API endpoints. Route confirmed dead code per classification rules.
+- **Redundant code**: near-identical functions across files, copy-paste artifacts, multiple implementations of the same utility → route per classification rules.
 
-**Write each module's debt cards to the document before moving to the next module.**
+**After each module**: Write AUTO findings to `audit-auto.md` and REVIEW findings as cards to `audit-review.md` before moving to the next module.
 
 When all modules are complete: update marker to `<!-- DEBT PASS: COMPLETE -->`.
 
@@ -81,17 +116,17 @@ Update the draft marker to `<!-- TEST PASS: IN_PROGRESS -->`.
 
 **Run tooling first — always coverage before mutation:**
 
-1. Run `coverage-wrapper run` → get branch coverage percentage. Append results to document.
-2. Run `coverage-wrapper gaps` → identify uncovered files. Append results to document.
+1. Run `coverage-wrapper run` → get branch coverage percentage. Append results to `audit-review.md`.
+2. Run `coverage-wrapper gaps` → identify uncovered files. Append results to `audit-review.md`.
 3. Assess:
    - **Below 80%**: Skip mutation testing entirely. Focus all test cards on 🎯 GAP cards. Add note to document: "Mutation testing deferred — branch coverage must reach 80% first."
-   - **80–90%**: Run `mutmut-wrapper run` (no pattern filter — targeted runs fail without complete coverage data). Append results.
+   - **80–90%**: Run `mutmut-wrapper run` (no pattern filter). Append results.
    - **Above 90%**: Run `mutmut-wrapper run`, then `mutmut-wrapper show-all`. Read `mutmut_output/survived_all.txt` for diffs. Append results.
 
 **Quick antipattern scan for test files** — use Grep before per-module analysis:
-- `sys.modules[` in test files → 🔍 SMELL card
-- `MagicMock` in `src/` → 🔍 SMELL card (mock in production)
-- `assert True` or assertion-free tests → 🔍 SMELL card
+- `sys.modules[` in test files → 🔍 SMELL card (REVIEW)
+- `MagicMock` in `src/` → 🔍 SMELL card (REVIEW)
+- `assert True` or assertion-free tests → route per classification rules
 
 **Per-module test analysis** (same priority order as Pass 1):
 
@@ -109,27 +144,38 @@ For each module's test file(s), use Grep for test function definitions to see al
 | **Obsolete** | Tests for renamed or deleted functions |
 | **Parallel coverage** | Similar modules (same pattern) have similar test coverage |
 
-**Write each module's test cards to the document before moving to the next module.**
+**After each module**: Write AUTO findings to `audit-auto.md` and REVIEW findings as cards to `audit-review.md`.
 
 When all modules are complete: update marker to `<!-- TEST PASS: COMPLETE -->`.
 
 ---
 
-## Pass 3 — Merge and Cluster
+## Pass 3 — Dual Output
 
-1. **Read all cards** from Passes 1 and 2.
+### Finalize audit-auto.md
 
-2. **Group into module clusters**: Every card that touches the same source module belongs in one cluster — debt and test cards together. A card spanning multiple files may appear in multiple clusters; add a cross-reference note when it does.
+1. Review all AUTO items written across both passes.
+2. Within each module section, order by safety: dead code and unused imports first, then style/naming, then test fixes.
+3. Assign sequential IDs: `AUTO-001`, `AUTO-002`, etc. across the entire document.
+4. Ensure the Escalations section is present at the bottom.
+5. Write the header summary: total items, modules affected.
+
+### Finalize audit-review.md
+
+1. Read all REVIEW cards from Passes 1 and 2.
+
+2. **Group into module clusters**: Every card touching the same source module belongs in one cluster — debt and test cards together. A card spanning multiple files may appear in multiple clusters; add a cross-reference note.
 
 3. **Within each cluster**:
    - Assign a 👾 BOSS card if the cluster has 3 or more cards total (debt + test combined).
    - Order: BOSS card first, then remaining cards by severity/difficulty descending.
+   - Add a note: "N auto-fix item(s) for this module → see audit-auto.md" (omit if zero).
 
 4. **Order clusters**: Higher-severity clusters first. Tiebreak: clusters whose files are touched by other clusters come first (fixing them unblocks others).
 
-5. **Write the cluster deck** to the document using the template format from `audit-template.md`. Each row in the cluster table must include the type emoji in the Type column.
+5. **Write the cluster deck** using the template from `audit-template.md`. Each row in the cluster table must include the type emoji in the Type column.
 
-6. **Generate the scorecard** now that all cards are counted. Fill in the Scorecard section at the top of the document.
+6. **Generate the scorecard** now that all cards are counted.
 
 7. Replace `<!-- STATUS: DRAFT -->` with `<!-- STATUS: COMPLETE -->`.
 
@@ -137,14 +183,16 @@ When all modules are complete: update marker to `<!-- TEST PASS: COMPLETE -->`.
 
 ## Rules
 
-- **Emojis are required — not optional.** Every card heading must open with its type emoji (🔥 ⚙️ 🧹 🗃️ ♿ 🔍 🎯 💀 🧪 🔗 🔁 👻 👾). Every Difficulty field must include a colored circle (🟢 🟡 🔴 ⚫). Every Type column in cluster tables must show the emoji. These are functional visual cues — never omit them, never replace them with plain text.
-- Do not rewrite production code. Trivial test fixes during the test pass are allowed.
+- **Emojis are required — not optional.** Every review card heading must open with its type emoji (🔥 ⚙️ 🧹 🗃️ ♿ 🔍 🎯 💀 🧪 🔗 🔁 👻 👾). Every Difficulty field must include a colored circle (🟢 🟡 🔴 ⚫). Every Type column in cluster tables must show the emoji. These are functional visual cues — never omit them.
+- Auto-fix items do not use card emojis. They use the terse format from `audit-auto-template.md`.
+- Do not rewrite production code during analysis. Trivial test assertion fixes are allowed.
 - Delegate per-module debt analysis to `code-reviewer` subagents — do not analyze debt inline.
 - Always run `coverage-wrapper` before `mutmut-wrapper` — never skip the order of operations.
 - Use `coverage-wrapper` and `mutmut-wrapper` — never raw `coverage` or `mutmut` commands.
-- Write cards to disk after each module — do not batch all writes to the end.
-- Provide a brief corrected example when the fix is obvious.
-- Explain why each issue matters — connect it to the bug or maintenance cost it creates.
+- Write findings to disk after each module — do not batch all writes to the end.
+- **When uncertain about tier**: default to REVIEW.
+- Review cards: provide a brief corrected example when the fix is obvious. Explain why the issue matters.
+- Auto items: no examples, no explanation beyond the one-line why.
 
 
 $ARGUMENTS

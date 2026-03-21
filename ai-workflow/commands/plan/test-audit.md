@@ -1,7 +1,9 @@
 ---
-description: Audit the test suite for quality, effectiveness, and coverage gaps. Generates investigation cards — small, self-contained tasks for manually verifying and improving tests. Does NOT rewrite code.
+description: DEPRECATED — use /plan:audit instead. Audits the test suite in isolation. Retained for reference only.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
+
+> **Deprecated**: This command has been replaced by `/plan:audit`, which runs test analysis and debt analysis together and produces both an agent-executable auto-fix list and a gamified human review deck. Do not run this command for new audits.
 
 # Audit Test Suite
 
