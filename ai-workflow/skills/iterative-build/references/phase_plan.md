@@ -47,7 +47,16 @@
 
 ## Security Checklist
 
-- [Description of security practice utilized in this phase, if applicable]
+> Complete applicable items during build. Review verifies these were addressed.
+
+- [ ] Input validation: user input sanitized before use
+- [ ] SQL injection prevention: parameterized queries, no string concatenation
+- [ ] Auth protection: sensitive routes check authentication
+- [ ] Secrets handling: no hardcoded credentials, secrets excluded from source control
+- [ ] Destructive actions: confirmation required before irreversible operations
+- [ ] Dependency review: (if new dependencies added) viewed source, no unexpected network calls or dynamic code execution
+
+**Notes:** [Any security-relevant decisions or trade-offs made in this phase]
 
 ## Issues Discovered During Verification Stage
 

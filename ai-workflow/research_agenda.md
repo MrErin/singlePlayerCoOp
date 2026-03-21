@@ -211,6 +211,11 @@ This is a standing research agenda for the workflow system in this repository (s
 **Why not yet**: Designed to replace context files, not supplement them. Stores in SQLite or in-memory — no git-backed persistence. Would require maintaining two parallel systems (lessons.md + Memory graph) with no clear benefit over current lessons.md pattern.
 **Watch for**: Git-backed persistence support (commits per memory update, mergeable via standard git) that would integrate with the existing worktree/planning-artifact model.
 
+### Third-Party Component Security Scanning
+**What it is**: Automated vetting of third-party code before adding to codebase — scanning for unexpected network calls, dynamic code execution, environment access, and obfuscation patterns.
+**Why not yet**: Currently only practical for specific ecosystems (shadcn registries have `view` commands). Generalizable pattern needs more ecosystem support — npm/pip don't have standardized "view source before install" workflows.
+**Watch for**: IDE-integrated supply chain security tools, `npm audit`-style vetting that checks behavioral patterns (not just CVEs), or registry-level malware scanning that makes per-package review unnecessary.
+
 ---
 
 ## Incorporated Findings
