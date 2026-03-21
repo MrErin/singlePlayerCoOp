@@ -28,6 +28,18 @@ Read project directory first:
 
 **Mode D:** Read `roadmap.md`, `state.md`, current phase plan, and any relevant phase summaries. Understand what's been built and what's blocked or needs rework.
 
+## Backlog Integration
+
+Before starting the interview (Modes A, B, and C), check if `_planning/backlog/` exists. If it does:
+
+1. Ask: "Do you have backlog items to incorporate? Reference them by ID (e.g., F-008, B-003) or say 'no' to skip."
+2. If yes: read the referenced entries from the catalog files, plus any linked specs in `_planning/backlog/specs/`. Use their descriptions as **seed context** — the user shouldn't have to re-explain ideas already captured in the backlog.
+3. At the **end** of the interrogation (after the final requirements draft is written):
+   - Update each referenced backlog item's status from `open` to `planned`
+   - Add an `Incorporates:` line to the requirements doc listing the IDs: `**Incorporates:** F-008, B-003, Q-003`
+
+If `_planning/backlog/` doesn't exist, skip this step silently.
+
 ## Running Draft
 
 Create/open `requirements.md` before interviewing. Update after each section. User can stop anytime and have useful output.

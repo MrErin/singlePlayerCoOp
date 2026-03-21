@@ -42,10 +42,16 @@ allowed-tools: Bash, Read, Write
    - Do NOT close or remove open items automatically — the user decides.
    - Once the user has made decisions, update `deferred.md` to reflect them (remove won't-fix items, leave carry-forwards as open).
 
-6. **Present the extraction for review**: Show the user what was written to `project-requirements/[name].md` and what lines were added to `index.md`. Say: "Review these before I clear the workspace. Edit the files directly if anything is missing or wrong."
+6. **Update backlog statuses**: If `_planning/backlog/` exists:
+   - Read the archived `requirements.md` for any `**Incorporates:**` lines listing backlog IDs (e.g., `F-008, B-003, Q-003`)
+   - For each referenced ID, find its entry in the corresponding catalog file and update its status from `planned` to `shipped`
+   - Add a note to each entry: `Shipped in [archive-slug] (YYYY-MM-DD)`
+   - If `_planning/backlog/` doesn't exist, skip this step silently.
+
+7. **Present the extraction for review**: Show the user what was written to `project-requirements/[name].md` and what lines were added to `index.md`. If backlog items were updated in step 6, include them: "Updated backlog items to shipped: F-008, B-003, Q-003." Say: "Review these before I clear the workspace. Edit the files directly if anything is missing or wrong."
    - **STOP and wait for user confirmation before continuing.**
 
-7. **Clear the workspace** (only after user confirms step 6):
+8. **Clear the workspace** (only after user confirms step 7):
    - Delete any `phase_shift_requirements_*.md` files from `_planning/` root (already archived in step 3)
    - Overwrite `_planning/requirements.md` with an empty placeholder:
      ```markdown
@@ -58,11 +64,11 @@ allowed-tools: Bash, Read, Write
    - Update `_planning/state.md`: clear the current phase, wipe the session log, set status to "archived — ready for next feature", and add a one-line entry noting the archive slug and date
    - Leave `decisions.md`, `deferred.md`, `codebase.md`, and `lessons.md` at root — these persist across features unchanged
 
-8. **Output**: Confirm archive location, confirm `project-requirements/` was updated, and suggest next step: "Run `/plan:interrogate` to start requirements gathering for the next feature."
+9. **Output**: Confirm archive location, confirm `project-requirements/` was updated, and suggest next step: "Run `/plan:interrogate` to start requirements gathering for the next feature."
 
 ## Rules
 
-- Do not clear workspace before user confirms extraction (step 6)
+- Do not clear workspace before user confirms extraction (step 7)
 - `decisions.md`, `deferred.md`, `codebase.md`, and `lessons.md` stay at root and are never deleted — only `lessons.md` gets an archive copy
 - Phase summaries are required reading in step 4 — they capture behavior changes the requirements doc may not mention
 - Deferred triage (step 5) must happen before workspace clear — do not skip it even if deferred.md looks empty
