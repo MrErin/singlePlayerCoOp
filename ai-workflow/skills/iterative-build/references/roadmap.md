@@ -31,3 +31,16 @@ Requirements: [path to requirements file] Created: [date]
 ## Notes
 
 [Any scope adjustments, phase splits, or other context]
+
+## Audit Checkpoints
+
+> **User-initiated audits** — run `/plan:audit` at these optimal points. Not automated, just guidance.
+
+| Checkpoint | Trigger | Why |
+|------------|---------|-----|
+| **First Logic** | After first read/write/logic phase group, before its test phase | Early drift caught; basic tests exist for validation |
+| **Pre-Architecture** | Before adding a major subsystem (auth, notifications, etc.) | Validate foundation before building on it |
+| **Mid-Project** | ~50% through implementation phases | Prevent late-game debt avalanche |
+| **Pre-Polish** | Before final polish/cleanup phase | Clean slate for finish work |
+
+**How to use:** When you reach a checkpoint, run `/plan:audit` if you've made manual fixes outside the workflow or feel uncertainty about accumulated drift. Skip if the last audit was recent or phases have been clean.

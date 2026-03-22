@@ -148,6 +148,19 @@ If unclear: "I see existing code and `_planning/`. Continue previous work, add f
 - **Only the user accepts UAT.** Never check the Result checkboxes in `ua_testing.md`. Never mark a phase `complete` based on your own assessment — a phase closes only after the user explicitly confirms. Before closing, all open items from `ua_testing.md` (Issues Found, Follow-up Items, Known Limitations) must be triaged to `_planning/deferred.md` or `_planning/decisions.md`.
 - **Incremental writes:** When generating documents (plans, audits, reviews), write to disk after each major section — not at the end. If the session ends mid-task, partial work survives. Mark documents `<!-- STATUS: DRAFT -->` at the top while in progress, replace with `<!-- STATUS: COMPLETE -->` when done. On resume, check for DRAFT files and continue from the last written section.
 
+## Audit Checkpoints
+
+Audits are **user-initiated** (`/plan:audit`), not automated. The roadmap includes guidance on optimal timing:
+
+| Checkpoint | Trigger | Why |
+|------------|---------|-----|
+| **First Logic** | After first read/write/logic phase group, before its test phase | Early drift caught; basic tests exist for validation |
+| **Pre-Architecture** | Before adding a major subsystem (auth, notifications, etc.) | Validate foundation before building on it |
+| **Mid-Project** | ~50% through implementation phases | Prevent late-game debt avalanche |
+| **Pre-Polish** | Before final polish/cleanup phase | Clean slate for finish work |
+
+**When to suggest an audit:** If the user mentions they've made manual fixes outside the workflow, or if you notice significant drift during a build, mention the checkpoint guidance and ask if they want to run `/plan:audit`.
+
 # Reference Files (Lazy Load)
 
 | File | Load When |
