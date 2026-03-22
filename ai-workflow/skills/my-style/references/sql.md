@@ -15,6 +15,39 @@ FROM user_stats;
 
 **Why:** Easy to comment out any line, commas align vertically for scanning, no trailing comma issues.
 
+# Embedded SQL in Python
+Always use triple-quoted multi-line strings for SQL queries in Python code. This avoids line-length battles and keeps queries readable.
+ ```python
+# ✅ Correct — triple-quoted, multi-line
+rows = conn.execute(
+    """
+    SELECT id, campaign_id, title, description
+    FROM mission
+    WHERE campaign_id = ? AND status = ?
+    ORDER BY title
+    """,
+    (campaign_id, status),
+    ).fetchall()
+
+# ❌ Wrong — single line, triggers line-length lint
+row = conn.execute("SELECT * FROM mission WHERE campaign_id = ?", (id,)).fetchone()
+
+# ❌ Wrong — implicit concatenation, harder to read
+row = conn.execute(
+	"SELECT id, campaign_id, title, description FROM mission "
+	"WHERE campaign_id = ?",
+	(campaign_id,),
+	).fetchall()
+ ```
+**Why:**
+- Avoids linter line-length battles (SQL queries are naturally verbose)
+- Readable — query stands out as a distinct block
+- Easy to copy/paste into a database tool for debugging
+- Consistent with repository pattern used in this codebase
+
+**Exception:** Trivial one-liners like `SELECT 1` are acceptable inline.
+
+
 ## Naming Conventions
 
 - **Tables:** Singular nouns, snake_case — `user` not `users`, `exercise_log` not `exercise_logs`
