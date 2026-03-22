@@ -53,6 +53,24 @@ Every finding is routed to one of two tiers. Apply these rules before writing an
 - Missing trivial tests for pure functions with deterministic, obvious behavior
 - Unused variables, dead branches, unreachable code
 
+**Renames require a mandatory protocol:**
+
+Before any rename, the agent MUST:
+1. Grep for the symbol across the entire codebase (not just the current file)
+2. Enumerate all matches: imports, usages, tests, docstrings, comments, string literals
+3. Verify each match is the same symbol (not a homonym in different scope)
+4. Update ALL matches in a single pass
+
+**Escalate if:**
+- Symbol has >20 matches (too many to verify safely)
+- Matches span config files, migrations, or external references
+- Symbol name is common enough to have false positives (e.g., `process`, `handle`, `run`)
+
+**Safe to auto-fix if:**
+- <10 matches, all clearly the same symbol
+- Matches are confined to source and test files
+- No ambiguous usages found
+
 **REVIEW tier** — requires human judgment:
 - Architectural pattern changes (any structural redesign)
 - Design principle violations (SRP, DI, separation of concerns)

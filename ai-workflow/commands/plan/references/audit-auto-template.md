@@ -41,6 +41,15 @@ It contains only items that require no human judgment — no architectural decis
 > If an item is more complex than described — requires architectural judgment, touches shared interfaces,
 > or has ambiguous callers — add it to the Escalations section at the bottom and skip it.
 > Do NOT attempt fixes that require tradeoffs or could affect other modules unexpectedly.
+>
+> **Renames require a mandatory protocol:**
+> 1. Grep for the symbol across the entire codebase first
+> 2. Enumerate ALL matches: imports, usages, tests, docstrings, comments, string literals
+> 3. Verify each match is the same symbol (not a homonym)
+> 4. Update ALL matches in a single pass
+>
+> **Escalate renames if:** >20 matches, spans config/migrations, or symbol name has false-positive risk (e.g., `process`, `handle`).
+> **Safe to auto-fix if:** <10 matches, confined to source/test files, no ambiguity.
 
 ---
 
@@ -52,9 +61,9 @@ It contains only items that require no human judgment — no architectural decis
   Why: Never referenced in this file; leftover from a previous refactor
   Done: Import removed; no remaining references to `os` in file
 
-- [ ] AUTO-002 `path/to/file.py:34` — Rename `getData` to `get_data`
-  Why: Naming convention violation; all other functions in this module use snake_case
-  Done: Function renamed; all callers in the module updated
+- [ ] AUTO-002 `path/to/file.py:34` — Add type hint `-> int` to `calculate_total`
+  Why: Missing return type annotation; return value is always an integer
+  Done: Type hint added; function signature is `def calculate_total(...) -> int:`
 
 ---
 
