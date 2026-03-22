@@ -115,17 +115,6 @@ Each: complexity, impact, files, approach.
 - Where to look for specific features
 - What to test for verification
 
-## Integration
+## Output Naming
 
-**Greenfield:** Generate after Phase 5 complete.
-
-**Feature addition:** Generate as `feature_[name]_review_guide.md`.
-
-## Critical Reminders
-
-- User has ADHD — structure reduces cognitive load
-- Checkboxes provide progress sense
-- Time estimates help planning
-- Testing-first approach (do before reading code)
-- Code reading order is logical
-- Break into resumable sections
+**Feature addition:** Generate as `feature_[name]_review_guide.md`. Greenfield builds use the default `review_guide.md`.

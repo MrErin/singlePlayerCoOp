@@ -63,7 +63,7 @@ Create/open `requirements.md` before interviewing. Update after each section. Us
 
 ## Interview Sequence (Mode A)
 
-Load `references/interrogate-guide.md` for detailed probing questions.
+Load `commands/plan/references/interrogate-guide.md` for detailed probing questions.
 
 ```
 [ ] 1. Problem & Purpose

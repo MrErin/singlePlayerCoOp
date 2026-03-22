@@ -10,6 +10,10 @@ BLOCKED = [
     "git merge",
     "git rebase",
     "git checkout -b",
+    "git reset --hard",
+    "git restore .",
+    "git clean -f",
+    "git stash drop",
 ]
 
 

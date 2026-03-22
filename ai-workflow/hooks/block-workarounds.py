@@ -10,8 +10,10 @@ Inspects both Write/Edit (file content) and Bash (environment manipulation)
 tool calls.
 
 Content patterns (shutil monkeypatch, os.chmod, ctypes) are only checked for
-files outside known project source directories. This avoids false positives
-when the project's own code legitimately uses os.chmod or similar calls.
+files outside the project source tree. This avoids false positives when the
+project's own code legitimately uses os.chmod or similar calls. Absolute paths
+under /project/ are allowed if at least one subdirectory deep (covers both
+src/ layout and flat package layouts like /project/myapp/models.py).
 Filename blocks (sitecustomize.py, usercustomize.py) apply globally.
 """
 import json
@@ -19,18 +21,9 @@ import re
 import sys
 
 
-# Directories that contain project source code. Files under these paths are
-# allowed to use os.chmod, shutil, etc. — the content patterns only apply
-# to files OUTSIDE these directories (i.e., ad-hoc workaround scripts).
-PROJECT_SOURCE_PREFIXES = (
-    "/project/src/",
-    "/project/lib/",
-    "/project/tests/",
-    "/project/test/",
-    "/project/app/",
-    "/project/apps/",
-    "/project/packages/",
-    # Relative paths (Claude sometimes uses these)
+# Relative path prefixes for conventional layouts.
+# Absolute paths under /project/ are handled by _is_project_source().
+_RELATIVE_SOURCE_PREFIXES = (
     "src/",
     "lib/",
     "tests/",
@@ -39,6 +32,20 @@ PROJECT_SOURCE_PREFIXES = (
     "apps/",
     "packages/",
 )
+
+
+def _is_project_source(file_path: str) -> bool:
+    """Return True if file_path is inside the project source tree.
+
+    Covers both conventional layouts (src/, lib/, tests/) and flat
+    package layouts (e.g., /project/myapp/models.py). Root-level scripts
+    like /project/fix_something.py are NOT considered project source.
+    """
+    if file_path.startswith("/project/"):
+        remainder = file_path[len("/project/"):]
+        # At least one subdirectory deep — not a root-level file
+        return "/" in remainder
+    return any(file_path.startswith(p) for p in _RELATIVE_SOURCE_PREFIXES)
 
 # Patterns in file content that indicate an agent is trying to patch
 # around fish tank restrictions rather than reporting the issue.
@@ -90,9 +97,9 @@ def check_write_or_edit(data: dict) -> str | None:
                 f"Report the underlying error to the user instead."
             )
 
-    # Content patterns only apply outside project source directories.
+    # Content patterns only apply outside the project source tree.
     # Project code is allowed to use os.chmod, shutil, etc. legitimately.
-    if any(file_path.startswith(prefix) for prefix in PROJECT_SOURCE_PREFIXES):
+    if _is_project_source(file_path):
         return None
 
     # Check content (Write tool) or new_string (Edit tool)

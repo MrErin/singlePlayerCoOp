@@ -35,13 +35,13 @@ Example: "I can't install that package in the fish tank — it's an ephemeral co
 
 ## Hard Limits
 
-Permission changes (`chmod`, `chown`), package installation (`apt`, `pip`, `npm`), process management (`kill`, `systemctl`), and privilege escalation (`sudo`) are blocked at the kernel/policy level. The deny list in `settings.json` and `block-dangerous.py` hook enforce this mechanically.
+System modifications (permissions, package installation, process management, privilege escalation) are blocked at the kernel/policy level by the deny list in `settings.json` and `block-dangerous.py`.
 
 **When a command is denied or fails due to permissions: stop. Do not try alternative approaches. Ask the user to handle it outside the container.**
 
 ## Secrets and Environment Variables
 
-Secret and credential files (`.env*`, `*.pem`, `*.key`, SSH keys, `secrets/`, `credentials.*`) are blocked by the settings deny list and `block-secrets.py` hook across all tools.
+Secret and credential files are blocked by the settings deny list and `block-secrets.py` hook across all tools.
 
 **If you need to know what environment variables an app expects:** Read `.env.example` or search source code for `os.getenv(...)`, `process.env.X`, or equivalent config lookups.
 
@@ -51,6 +51,7 @@ Secret and credential files (`.env*`, `*.pem`, `*.key`, SSH keys, `secrets/`, `c
 
 - Standard dev tools already installed: pytest, coverage, mutmut, hypothesis, ruff
 - Git is available for reading (status, diff, log) — commits are handled by the user
+- `format-on-save.py` hook runs automatically after every file write — no need to manually format after edits
 
 ## Ephemeral Environment
 

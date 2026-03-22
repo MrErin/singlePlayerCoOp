@@ -22,6 +22,10 @@ This repository contains the source-of-truth configuration files. I deploy them 
 
 The `/plan:build` command references `frontend-design`, which is an Anthropic-maintained external skill, not part of this repository. Do not look for it locally or flag it as missing.
 
+## Standalone Skills
+
+`code-buddy` is a collaborative coding and teaching skill — use it when the user wants to write code themselves with the agent guiding, explaining, and reviewing (as opposed to the standard build flow where the agent writes the code). It has no `/plan:` command; invoke it directly with the Skill tool.
+
 ## Instruction System Review
 
 When asked to "review instructions", "audit the system", or "check for redundancy":
@@ -29,7 +33,9 @@ When asked to "review instructions", "audit the system", or "check for redundanc
 1. Read all files: both CLAUDE.md files, all skills (`/project/ai-workflow/skills/`), agents (`/project/ai-workflow/agents/`), commands (`/project/ai-workflow/commands/`), hooks (`/project/ai-workflow/hooks/`), and settings (`/project/ai-workflow/fish-tanks/settings*.json`)
 2. Check for: redundancies across files, contradictions, dangling references, gaps, token waste
 3. Report organized as: **Redundancies** (with line citations and frequency count), **Contradictions**, **Gaps**, **Token Efficiency** (estimated line savings)
-4. Propose specific edits — do not apply without approval
+4. **If there are more than 3 proposals:** write findings to `/project/still-thinking/instruction-review.md` instead of 
+   outputting inline. Give each item a unique ID (R1, C1, G1, etc.) so items can be referenced individually for discussion and approval. Mark status as `[OPEN]` initially.
+5. Propose specific edits — do not apply without approval
 
 Key principle: hooks and settings deny lists are the mechanical enforcement layer. CLAUDE.md and skills should provide *behavioral guidance* (what to do instead) without re-listing what's already enforced. Skills loaded independently may repeat critical rules that also appear in CLAUDE.md — flag these but note whether the repetition serves a purpose (independent load context) or is pure waste.
 

@@ -24,7 +24,7 @@ SAFE_COMMANDS = {
     "stat",
     "ls",
     "tree",
-    "find",  # find is read-only
+    "find",  # find is read-only (exec/delete modifiers checked below)
     # System info (read-only)
     "uname",
     "hostname",
@@ -110,6 +110,10 @@ def is_safe_command(cmd: str) -> bool:
     # Additional safety checks for specific commands
     # sed with -i modifies files
     if base_cmd == "sed" and "-i" in cmd:
+        return False
+
+    # find with -exec, -execdir, or -delete can modify files
+    if base_cmd == "find" and any(flag in cmd for flag in ("-exec", "-execdir", "-delete")):
         return False
 
     # curl with -X POST/PUT/DELETE/PATCH modifies state
