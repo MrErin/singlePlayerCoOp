@@ -10,6 +10,7 @@ Load this file when ready to generate `code_audit.md` output.
 
 | Emoji | Prefix | Domain | What it flags |
 |-------|--------|--------|---------------|
+| 📄 | DOC | Doc | Documentation drift — planning docs out of sync with codebase or each other |
 | 🔥 | ARCH | Debt | Architecture violations — invisible deps, global state, env workarounds, swallowed errors |
 | ⚙️ | DESIGN | Debt | Design principle violations — SRP, DI, separation of concerns |
 | 🧹 | QUALITY | Debt | Code quality — long functions, missing types, stale comments, dead code |
@@ -45,6 +46,21 @@ Load this file when ready to generate `code_audit.md` output.
 - **Your mission**: Review all cards in this cluster. Decide: fix incrementally or restructure from scratch?
 - **Done when**: All referenced cards resolved AND a brief decision comment added at the top of the affected source file
 - **Time box**: 45 min (or split across sessions)
+```
+
+---
+
+### 📄 DOC-[NNN]: [Drift Description]
+
+```markdown
+### 📄 DOC-[NNN]: [Drift Description]
+- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large]
+- **Files**: [planning doc(s) affected]
+- **Drift type**: [status mismatch | stale listing | feature drift | decision violation | contradiction]
+- **What's out of sync**: [specific discrepancy between doc and reality]
+- **Fix**: [update doc to reflect reality / investigate which is correct / escalate to user]
+- **Done when**: [clear completion criteria — usually doc updated to match codebase]
+- **Time box**: [N minutes]
 ```
 
 ---
@@ -239,6 +255,7 @@ Load this file when ready to generate `code_audit.md` output.
 # Code Audit — [Project Name]
 
 <!-- STATUS: DRAFT -->
+<!-- DOC PASS: PENDING -->
 <!-- DEBT PASS: PENDING -->
 <!-- TEST PASS: PENDING -->
 
@@ -263,6 +280,7 @@ Load this file when ready to generate `code_audit.md` output.
 
 | Severity | Cards |
 |----------|-------|
+| 📄 DOC (Drift) | [n] |
 | 🔥 ARCH (Critical) | [n] |
 | ⚙️ DESIGN (High) | [n] |
 | 🧹 QUALITY (Medium) | [n] |
@@ -295,6 +313,7 @@ Load this file when ready to generate `code_audit.md` output.
 > Complete one cluster before moving to the next — fixing debt and tests together prevents churn.
 > Boss cards are the entry point for clusters with 3+ cards — read those first.
 >
+> **Doc cards**: 📄 DOC
 > **Debt cards**: 🔥 ARCH | ⚙️ DESIGN | 🧹 QUALITY | 🗃️ DATA | ♿ ACCESS
 > **Test cards**: 🔍 SMELL | 🎯 GAP | 💀 MUTANT | 🧪 UPGRADE | 🔗 SEAM | 🔁 REDUNDANT | 👻 ORPHAN
 > **Boss card**: 👾 BOSS (clusters with 3+ cards)

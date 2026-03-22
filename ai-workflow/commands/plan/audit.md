@@ -14,7 +14,8 @@ Before starting, check if `_planning/audit-review.md` exists:
 - `<!-- STATUS: COMPLETE -->` → tell the user the audit is current. Suggest re-running only if significant code has changed since the audit date.
 - `<!-- STATUS: DRAFT -->` + `<!-- TEST PASS: COMPLETE -->` → skip to Pass 3 (Dual Output).
 - `<!-- STATUS: DRAFT -->` + `<!-- DEBT PASS: COMPLETE -->` → skip to Pass 2 (Test Analysis).
-- `<!-- STATUS: DRAFT -->` + no pass markers → resume debt analysis from the last written module cluster.
+- `<!-- STATUS: DRAFT -->` + `<!-- DOC PASS: COMPLETE -->` → skip to Pass 1 (Debt Analysis).
+- `<!-- STATUS: DRAFT -->` + no pass markers → start with Pass 0 (Documentation Drift).
 
 ---
 
@@ -33,7 +34,7 @@ Before starting, check if `_planning/audit-review.md` exists:
 5. **Scaffold both documents**:
    - Read `commands/plan/references/audit-template.md` for review card formats.
    - Read `commands/plan/references/audit-auto-template.md` for the auto-fix list format.
-   - Write `_planning/audit-review.md` with `<!-- STATUS: DRAFT -->`, `<!-- DEBT PASS: PENDING -->`, `<!-- TEST PASS: PENDING -->`, document header, and ranked module list.
+   - Write `_planning/audit-review.md` with `<!-- STATUS: DRAFT -->`, `<!-- DOC PASS: PENDING -->`, `<!-- DEBT PASS: PENDING -->`, `<!-- TEST PASS: PENDING -->`, document header, and ranked module list.
    - Write `_planning/audit-auto.md` with document header and empty module sections.
 
 ---
@@ -85,6 +86,53 @@ Before any rename, the agent MUST:
 - Any item where the correct answer depends on context or tradeoffs
 
 **When uncertain**: default to REVIEW. An over-cautious review deck is better than an agent making architectural decisions.
+
+---
+
+## Pass 0 — Documentation Drift
+
+Update the draft marker to `<!-- DOC PASS: IN_PROGRESS -->`.
+
+**Purpose:** Catch inconsistencies between planning docs and actual codebase state before analyzing code. This surfaces manual fixes the user made that weren't reflected back into planning docs.
+
+**Delegate to a `general-purpose` subagent** with the following task:
+
+The subagent reads all active planning files (exclude `_planning/archive/`):
+- `_planning/roadmap.md`
+- `_planning/state.md`
+- `_planning/codebase.md`
+- `_planning/decisions.md`
+- `_planning/requirements.md`
+- `_planning/deferred.md`
+- Current phase `_planning/phase[N]/plan.md` (if any)
+
+The subagent checks for drift and classifies each finding as AUTO or REVIEW:
+
+### AUTO-tier drift (mechanical mismatches)
+
+| Check | AUTO if |
+|-------|---------|
+| Phase status mismatch | roadmap.md shows phase N "in progress" but state.md shows different status |
+| Stale directory listing | codebase.md lists directories that no longer exist (verify with Glob) |
+| Stale dependency listing | codebase.md lists dependencies not in requirements.txt / package.json |
+| Orphan phase files | plan.md exists for phase but roadmap has no such phase number |
+| Deferred item resolved | deferred.md lists an item that appears implemented (grep shows usage in codebase) |
+
+### REVIEW-tier drift (requires judgment)
+
+| Check | REVIEW if |
+|-------|-----------|
+| Feature drift | Code implements behavior not mentioned in requirements.md (user may have added scope informally) |
+| Decision violation | decisions.md says "use X pattern" but code uses Y (may be intentional override or drift) |
+| Missing from codebase.md | New directories/modules added but codebase.md not updated |
+| Contradictory requirements | requirements.md and decisions.md say different things about same concern |
+| Stale phase intent | Roadmap phase intent doesn't match what was actually built (per phase_summary.md or code) |
+
+**Output format:** The subagent returns findings as a list with tier classification. Main agent writes AUTO findings to `audit-auto.md` and REVIEW findings as 📄 DOC cards to `audit-review.md`.
+
+**The subagent must NOT modify files** — only read and report.
+
+When complete: update marker to `<!-- DOC PASS: COMPLETE -->`.
 
 ---
 
@@ -172,17 +220,17 @@ When all modules are complete: update marker to `<!-- TEST PASS: COMPLETE -->`.
 
 ### Finalize audit-auto.md
 
-1. Review all AUTO items written across both passes.
-2. Within each module section, order by safety: dead code and unused imports first, then style/naming, then test fixes.
+1. Review all AUTO items written across all three passes (Doc, Debt, Test).
+2. Within each module section, order by safety: doc sync first, then dead code and unused imports, then style/naming, then test fixes.
 3. Assign sequential IDs: `AUTO-001`, `AUTO-002`, etc. across the entire document.
 4. Ensure the Escalations section is present at the bottom.
 5. Write the header summary: total items, modules affected.
 
 ### Finalize audit-review.md
 
-1. Read all REVIEW cards from Passes 1 and 2.
+1. Read all REVIEW cards from Passes 0, 1, and 2.
 
-2. **Group into module clusters**: Every card touching the same source module belongs in one cluster — debt and test cards together. A card spanning multiple files may appear in multiple clusters; add a cross-reference note.
+2. **Group into module clusters**: Every card touching the same source module belongs in one cluster — doc, debt, and test cards together. A card spanning multiple files may appear in multiple clusters; add a cross-reference note. Doc-only cards (no module) go in a "Planning Docs" cluster at the start.
 
 3. **Within each cluster**:
    - Assign a 👾 BOSS card if the cluster has 3 or more cards total (debt + test combined).
@@ -201,7 +249,7 @@ When all modules are complete: update marker to `<!-- TEST PASS: COMPLETE -->`.
 
 ## Rules
 
-- **Emojis are required — not optional.** Every review card heading must open with its type emoji (🔥 ⚙️ 🧹 🗃️ ♿ 🔍 🎯 💀 🧪 🔗 🔁 👻 👾). Every Difficulty field must include a colored circle (🟢 🟡 🔴 ⚫). Every Type column in cluster tables must show the emoji. These are functional visual cues — never omit them.
+- **Emojis are required — not optional.** Every review card heading must open with its type emoji (📄 🔥 ⚙️ 🧹 🗃️ ♿ 🔍 🎯 💀 🧪 🔗 🔁 👻 👾). Every Difficulty field must include a colored circle (🟢 🟡 🔴 ⚫). Every Type column in cluster tables must show the emoji. These are functional visual cues — never omit them.
 - Auto-fix items do not use card emojis. They use the terse format from `audit-auto-template.md`.
 - Do not rewrite production code during analysis. Trivial test assertion fixes are allowed.
 - Delegate per-module debt analysis to `code-reviewer` subagents — do not analyze debt inline.
