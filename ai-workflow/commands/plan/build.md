@@ -12,6 +12,17 @@ For phases with UI/template/component work: also load the `frontend-design` skil
 
 For test phases: use the `test-writer` subagent for all test generation tasks. If test-writer flags implementation bugs, follow the "If Test-Writer Flags Implementation Bugs" section below before proceeding to step 6.
 
+## Tests in Non-Test Phases
+
+Polish, bugfix, and implementation phases may include tests. These are **inline tests**, not a dedicated test phase.
+
+**Rules:**
+- **Substantial test work (>5 tests or new test file):** Delegate to `test-writer` subagent
+- **Minor test additions (1-2 tests):** Write inline, but place in existing test files per `my-style` testing standards
+- **Never create phase-named test files** — `test_phaseN_*.py` indicates the agent didn't check existing test structure
+
+If the phase plan includes "write tests for X" and X is a substantial feature, treat it as a test-writer task even though it's not a dedicated test phase.
+
 ## Argument Modes
 
 The command accepts arguments in two formats:

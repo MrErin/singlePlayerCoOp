@@ -245,6 +245,27 @@ Tests must track code they verify. Delete/update when:
 
 Modules sharing architecture (e.g., all repos with `create_many()`) need test parity. If Module A has edge case test X, Module B (same pattern) needs it too. Bug fix without parallel tests invites regression.
 
+## Test File Organization
+
+**Tests belong in existing test modules.** Match the project's test structure:
+
+| Source File | Test File |
+|-------------|-----------|
+| `src/services/user.py` | `tests/services/test_user.py` |
+| `src/repo/order.py` | `tests/repo/test_order.py` |
+
+**Never create catch-all test files.** Names like `test_phase20_functions.py`, `test_bugfixes.py`, or `test_misc.py` are forbidden. They:
+- Hide related tests across multiple files
+- Make test discovery harder
+- Signal "I didn't check where this belongs"
+
+**When adding tests for bug fixes:**
+1. Find the existing test file for that module
+2. Add a test class or method to that file if the appropriate test class or method does not exist
+3. If no test file exists, create one with the canonical name (`test_<module>.py`)
+
+**Exception:** If the bug spans multiple modules and requires integration-style testing, create a file named for the *feature* being tested (e.g., `test_checkout_flow.py`), not the *phase* that found it.
+
 ## Phase Integration (with iterative-build)
 
 - **Setup/data layer:** Tests optional — verify manually
