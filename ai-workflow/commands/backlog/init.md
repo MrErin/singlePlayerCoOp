@@ -78,7 +78,7 @@ Feature ideas and enhancements with stable IDs.
 **Size guide** (optional — assign during planning, not triage):
 - **small** — a few hours, limited scope
 - **medium** — a day or two, new UI or backend logic
-- **large** — multi-phase, needs full `/plan:interrogate`
+- **large** — multi-phase, needs full `/plan:MVP` or `/plan:feature`
 
 | Status | Meaning |
 |--------|---------|

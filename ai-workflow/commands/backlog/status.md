@@ -54,7 +54,7 @@ allowed-tools: Read, Glob
 
 7. **Suggest next action**:
    - If inbox has items: "Run `/backlog:triage` to process the inbox."
-   - If there are open items but no planned items: "Consider pulling items into your next feature with `/plan:interrogate`."
+   - If there are open items but no planned items: "Consider pulling items into your next feature with `/plan:feature`."
    - If everything is shipped/closed: "🎉 Backlog is clear!"
 
 ## Rules

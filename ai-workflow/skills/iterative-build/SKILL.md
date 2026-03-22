@@ -10,7 +10,7 @@ Build in digestible phases. Maintain persistent planning state. Never build ever
 
 # Slash Commands
 
-`/plan:interrogate` · `/plan:init` · `/plan:phase` · `/plan:build` · `/plan:status` · `/plan:review` · `/plan:audit` · `/plan:archive`
+`/plan:MVP` · `/plan:feature` · `/plan:shift` · `/plan:init` · `/plan:phase` · `/plan:build` · `/plan:status` · `/plan:review` · `/plan:audit` · `/plan:archive`
 
 If command invoked, follow its instructions. Otherwise, determine appropriate phase.
 
@@ -106,7 +106,7 @@ Rules:
 
 When requirements change mid-build or unexpected work is discovered:
 
-1. **Run `/plan:interrogate`** — automatically detects phase shift mode when user mentions requirements change, refactoring needs, or blocked work
+1. **Run `/plan:shift`** — for requirements changes, phase insertions, or blocked work mid-build
 2. **Creates `phase_shift_requirements_phase[N].md`** — documents the trigger, scope, and approach
 3. **Updates roadmap** — inserts new phase(s) and renumbers all subsequent phases
 4. **Continue with `/plan:phase [N]`** — plans the new phase using the shift requirements

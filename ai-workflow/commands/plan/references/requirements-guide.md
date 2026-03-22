@@ -1,4 +1,4 @@
-# Requirements Interrogation Guide
+# Requirements Interview Guide
 
 Load this file when conducting requirements interviews. Contains detailed probing questions for each section.
 

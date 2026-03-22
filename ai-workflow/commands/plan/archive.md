@@ -38,7 +38,7 @@ allowed-tools: Bash, Read, Write
      ```
 
 5. **Triage deferred items**: Read `_planning/deferred.md`.
-   - If there are open items, present them to the user: "These items were deferred during this feature. For each one: carry forward to next feature, promote to a phase shift via `/plan:interrogate`, or close as won't-fix."
+   - If there are open items, present them to the user: "These items were deferred during this feature. For each one: carry forward to next feature, promote to a phase shift via `/plan:shift`, or close as won't-fix."
    - Do NOT close or remove open items automatically — the user decides.
    - Once the user has made decisions, update `deferred.md` to reflect them (remove won't-fix items, leave carry-forwards as open).
 
@@ -52,19 +52,14 @@ allowed-tools: Bash, Read, Write
    - **STOP and wait for user confirmation before continuing.**
 
 8. **Clear the workspace** (only after user confirms step 7):
-   - Delete any `phase_shift_requirements_*.md` files from `_planning/` root (already archived in step 3)
-   - Overwrite `_planning/requirements.md` with an empty placeholder:
-     ```markdown
-     # Requirements
-
-     _No active feature in progress. Run /plan:interrogate to begin requirements gathering for the next feature._
-     ```
-   - Delete the contents of `_planning/phases/` (already archived in step 3)
+   - Delete `_planning/requirements.md`
    - Reset `_planning/roadmap.md` to an empty template (phases moved to archive)
+   - Delete the `_planning/phases/` directory
+   - Delete any `phase_shift_requirements_*.md` files from `_planning/` root
    - Update `_planning/state.md`: clear the current phase, wipe the session log, set status to "archived — ready for next feature", and add a one-line entry noting the archive slug and date
    - Leave `decisions.md`, `deferred.md`, `codebase.md`, and `lessons.md` at root — these persist across features unchanged
 
-9. **Output**: Confirm archive location, confirm `project-requirements/` was updated, and suggest next step: "Run `/plan:interrogate` to start requirements gathering for the next feature."
+9. **Output**: Confirm archive location, confirm `project-requirements/` was updated, and suggest next step: "Run `/plan:MVP` for a new project or `/plan:feature` for the next feature on this codebase."
 
 ## Rules
 

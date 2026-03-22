@@ -28,11 +28,11 @@ For archived documentation rules, see `iterative-build` skill: "Archived Documen
 Load first found from `_planning/`:
 1. `code_buddy_plan.md`
 2. `scratch.md`
-3. `requirements.md`
-4. `state.md`
-5. `review_guide.md`
-6. `test_audit.md`
-7. `technical_debt.md`
+3. `audit-review.md`
+4. `requirements.md`
+5. `state.md`
+6. `review_guide.md`
+
 
 If none exist, be available for questions.
 

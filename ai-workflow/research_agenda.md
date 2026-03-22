@@ -182,7 +182,7 @@ This is a standing research agenda for the workflow system in this repository (s
 **What would trigger a change**: Evidence that spec-driven tools with robust human gates show measurable improvement over the current planning-artifact approach — particularly around requirements traceability.
 
 **Review cadence**: Semi-annual
-**Maps to**: plan:interrogate, plan:phase, requirements.md management
+**Maps to**: plan:MVP, plan:feature, plan:shift, plan:phase, requirements.md management
 
 **Last checked**: 2026-03-20
 
