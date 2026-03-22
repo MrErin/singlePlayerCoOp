@@ -153,3 +153,18 @@ Review Future Features list. Confirm which are explicitly deferred.
 
 ### For Mode B/C (Existing Project)
 Treat `decisions.md` as settled ground. Don't re-ask answered questions.
+
+### Package Feasibility Check
+
+Before accepting any third-party dependency as part of the solution:
+
+1. **Verify via Context7** — check the package docs for the specific capability needed
+2. **Name limitations explicitly** — if a package does 80% but not the critical 20%, say so
+3. **Don't assume** — "there's probably a library for that" is not a plan
+
+Common failure modes:
+- Assuming a JS framework has built-in state management it doesn't
+- Assuming a Python library handles async when it doesn't
+- Assuming a database supports a query pattern it doesn't
+
+If you can't verify, flag it as an Open Question: "Need to confirm [package] supports [feature]."
