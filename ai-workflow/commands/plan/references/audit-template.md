@@ -268,38 +268,63 @@ Load this file when ready to generate `code_audit.md` output.
 
 ## Scorecard
 
+> **Trend columns**: Previous = most recent entry in `_planning/audit-scorecard.md`. Δ = Current − Previous. Leave blank on first run. For card counts: ↓ is good. For coverage/mutation/ratio: ↑ is good.
+
 ### Coverage & Mutation
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Branch coverage | [n%] | |
-| Mutation score | [n% or "deferred — coverage gaps must be addressed first"] | |
-| Modules with zero test coverage | [n] | [list below] |
+| Metric | Current | Previous | Δ |
+|--------|---------|----------|---|
+| Branch coverage | [n%] | | |
+| Mutation score | [n% or "deferred — coverage <80%"] | | |
+| Modules with zero test coverage | [n] | | |
+
+### Test Quality
+
+| Metric | Current | Previous | Δ | Healthy |
+|--------|---------|----------|---|---------|
+| Total tests | [n] | | | — |
+| Total assertions | [n] | | | — |
+| Assertion ratio | [n.n per test] | | | 1.5–3.0 |
+| Tests with 0 assertions | [n] | | | 0 |
+| Skipped tests | [n] | | | 0 or documented |
+| Largest file assertion share | [n%] | | | <30% |
+
+### ⚠️ Warning Signs
+
+Check these before closing. A checked box means the signal is present — investigate before moving on.
+
+- [ ] Coverage ≥80% but mutation score <50% — tests run code but don't verify behavior
+- [ ] One file holds >30% of all assertions — concentrated coverage, gaps elsewhere
+- [ ] Assertion ratio <1.5 — tests are probably too shallow overall
+- [ ] Tests with 0 assertions exist — coverage theater
+- [ ] No negative/error path tests visible in test names — missing edge cases
 
 ### Debt Summary
 
-| Severity | Cards |
-|----------|-------|
-| 📄 DOC (Drift) | [n] |
-| 🔥 ARCH (Critical) | [n] |
-| ⚙️ DESIGN (High) | [n] |
-| 🧹 QUALITY (Medium) | [n] |
-| 🗃️ DATA | [n] |
-| ♿ ACCESS | [n] |
+| Severity | Current | Previous | Δ |
+|----------|---------|----------|---|
+| 📄 DOC (Drift) | [n] | | |
+| 🔥 ARCH (Critical) | [n] | | |
+| ⚙️ DESIGN (High) | [n] | | |
+| 🧹 QUALITY (Medium) | [n] | | |
+| 🗃️ DATA | [n] | | |
+| ♿ ACCESS | [n] | | |
+| **Total review cards** | [n] | | |
+| **Auto-fix items** | [n] | | |
 
-### Test Summary
+### Test Cards
 
-| Type | Cards |
-|------|-------|
-| 🔍 SMELL | [n] |
-| 🎯 GAP | [n] |
-| 💀 MUTANT | [n] |
-| 🧪 UPGRADE | [n] |
-| 🔗 SEAM | [n] |
-| 🔁 REDUNDANT | [n] |
-| 👻 ORPHAN | [n] |
-| 👾 BOSS | [n] |
-| **Total** | [n] |
+| Type | Current | Previous | Δ |
+|------|---------|----------|---|
+| 🔍 SMELL | [n] | | |
+| 🎯 GAP | [n] | | |
+| 💀 MUTANT | [n] | | |
+| 🧪 UPGRADE | [n] | | |
+| 🔗 SEAM | [n] | | |
+| 🔁 REDUNDANT | [n] | | |
+| 👻 ORPHAN | [n] | | |
+| 👾 BOSS | [n] | | |
+| **Total** | [n] | | |
 
 ### Untested Modules
 

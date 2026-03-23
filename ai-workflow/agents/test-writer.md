@@ -86,6 +86,20 @@ Read `my-style/references/antipatterns.md` "Testing Anti-Patterns" section. AI-g
 - Happy-path-only coverage (check your negative test ratio)
 - Near-duplicate tests across test classes (copy-paste without adaptation)
 
+## Suite-Level Quality Check
+
+After writing all tests for the phase, run these against the full output before delivering. Adjust the `tests/` path to match the project's test directory.
+
+1. **Assertion ratio**: Count assertions (`grep -r "^\s*assert " tests/ | wc -l`) and test functions (`grep -r "def test_" tests/ | wc -l`). Ratio should be 1.5–3.0. Below 1.5 → tests are probably shallow; scan for missing assertions. Above 5 → tests are doing too much; consider splitting.
+
+2. **Empty tests**: `grep -rn "pass$" tests/` — any test function ending in `pass` with no assertions is coverage theater. Fix before delivering.
+
+3. **Skipped tests**: `grep -r "@pytest.mark.skip\|pytest.skip" tests/` — every skipped test must have a documented reason in the skip message. Do not deliver silently skipped tests.
+
+4. **Negative test coverage**: Scan test names for "error", "fail", "invalid", "missing", "empty", "none", "raises", "not_found". For every 2 happy-path tests, there should be at least 1 negative or edge case. If the ratio is short, identify the gaps and write them.
+
+5. **Distribution**: If any single test file accounts for more than 40% of all assertions, flag it. Concentrated coverage means gaps elsewhere.
+
 ## Output
 
 - Write test files following the project's existing test file conventions

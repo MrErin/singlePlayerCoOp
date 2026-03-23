@@ -1,5 +1,5 @@
 ---
-description: Full codebase sweep producing two outputs — an agent-executable auto-fix list (audit-auto.md) for delegation to a cheap model, and a gamified human review deck (audit-review.md) for decisions that require judgment. Replaces /plan:debt and /plan:test-audit.
+description: Full codebase sweep producing two outputs — an agent-executable auto-fix list (audit-auto.md) for delegation to a cheap model, and a gamified human review deck (audit-review.md) for decisions that require judgment. Covers debt analysis, test analysis, and documentation drift.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, Agent
 ---
 
@@ -140,7 +140,20 @@ When complete: update marker to `<!-- DOC PASS: COMPLETE -->`.
 
 Update the draft marker to `<!-- DEBT PASS: IN_PROGRESS -->`.
 
-**Quick antipattern scan first** — before per-module analysis, use Grep to find critical patterns across the whole codebase. Route each match per the classification rules above (all patterns below are REVIEW tier):
+**Linter scan first** — run across the full codebase before any grep or per-module analysis:
+
+- Python: `ruff check --output-format=json <source dirs>`
+- JavaScript/TypeScript: `npx eslint --format=json <source dirs>`
+- If no linter config found: skip and note in the debt summary.
+
+Parse the output. Route each finding per the classification rules:
+- Autofix-capable violations (ruff `fix` field present; eslint `fixable`) → **AUTO tier**: add to `audit-auto.md` as a single grouped item per rule (e.g., "Fix 14 E501 line-length violations across 6 files"). Do not list every line individually.
+- Non-autofix violations where the fix is unambiguous and mechanical → **AUTO tier**
+- Non-autofix violations requiring judgment (ruff B/C/S rules; complex restructuring) → **REVIEW tier**: QUALITY or ARCH card as appropriate
+
+Note total linter violation count in the Debt Summary. Skip any grep pattern below that ruff already caught.
+
+**Quick antipattern scan** — use Grep for patterns ruff doesn't cover. Route each match per the classification rules above (all patterns below are REVIEW tier):
 
 | Pattern | Card type | Severity |
 |---------|-----------|----------|
@@ -194,6 +207,22 @@ Update the draft marker to `<!-- TEST PASS: IN_PROGRESS -->`.
 - `MagicMock` in `src/` → 🔍 SMELL card (REVIEW)
 - `assert True` or assertion-free tests → route per classification rules
 
+**Quantitative metrics scan** — run before per-module analysis. Adjust path from `codebase.md`. Write results directly into the Test Quality section of `audit-review.md`.
+
+| Metric | Command | Note |
+|--------|---------|------|
+| Total tests | `grep -r "def test_" tests/ \| wc -l` | |
+| Total assertions | `grep -r "^\s*assert " tests/ \| wc -l` | |
+| Assertion ratio | assertions ÷ tests | Healthy: 1.5–3.0 |
+| Skipped tests | `grep -r "@pytest.mark.skip\|pytest.skip" tests/ \| wc -l` | Each needs a documented reason |
+| Empty tests | `grep -rn "def test_" tests/ \| grep -A1 "def test_" \| grep -cE "^\s*pass$"` | Should be 0 |
+| Largest file assertion share | `grep -c "assert" tests/test_*.py \| sort -t: -k2 -n` | Flag if one file >30% of total |
+
+Route findings:
+- Undocumented skipped tests → 🔍 SMELL (REVIEW)
+- Empty tests (pass/no assertions) → AUTO if obvious fix; REVIEW if behavior unclear
+- Assertion ratio <1.5 or >5 → note in Warning Signs checklist, not a card unless systemic
+
 **Per-module test analysis** (same priority order as Pass 1):
 
 For each module's test file(s), use Grep for test function definitions to see all test functions. Evaluate against these standards:
@@ -217,6 +246,16 @@ When all modules are complete: update marker to `<!-- TEST PASS: COMPLETE -->`.
 ---
 
 ## Pass 3 — Dual Output
+
+### Trend Data
+
+Before finalizing either document, check for `_planning/audit-scorecard.md`:
+
+1. If it exists: read the most recent entry (newest at top). Extract Previous values from its Coverage & Mutation, Test Quality, Debt, and Test Cards sections.
+2. Populate the **Previous** and **Δ** columns in the current `audit-review.md` scorecard. Δ = Current − Previous. For card counts and zero-coverage modules, negative Δ is improvement (↓ is good). For coverage, mutation score, and assertion ratio, positive Δ is improvement (↑ is good).
+3. If `audit-scorecard.md` does not exist: leave Previous and Δ blank. Note "First audit — no baseline yet" in the scorecard header.
+
+After both documents are finalized, prepend a new snapshot entry to `_planning/audit-scorecard.md` (create if it doesn't exist). Load `commands/plan/references/audit-scorecard-template.md` for the entry format.
 
 ### Finalize audit-auto.md
 

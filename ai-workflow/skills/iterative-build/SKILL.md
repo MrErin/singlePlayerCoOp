@@ -25,10 +25,11 @@ _planning/
 ├── decisions.md            # Architectural decisions (append-only)
 ├── deferred.md             # Cross-phase flags
 ├── lessons.md              # Issues caught during builds (append-only)
+├── audit-scorecard.md      # Audit metric history (append-only, survives archive)
 ├── codebase.md             # Stack, structure, architecture
-├── requirements.md         # Current active scope
-├── technical_debt.md       # Existing codebase problems
-├── test_audit.md           # Test suite analysis
+├── requirements.md         # Current active scope (absent between features)
+├── audit-review.md         # Working audit deck — disposable, deleted when done
+├── audit-auto.md           # Agent-executable fix list — disposable, deleted when done
 ├── project-requirements/   # Accumulated permanent requirements
 │   ├── index.md            # Dense summaries + file refs
 │   ├── core.md             # Non-feature requirements

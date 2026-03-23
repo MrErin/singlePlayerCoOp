@@ -57,7 +57,8 @@ allowed-tools: Bash, Read, Write
    - Delete the `_planning/phases/` directory
    - Delete any `phase_shift_requirements_*.md` files from `_planning/` root
    - Update `_planning/state.md`: clear the current phase, wipe the session log, set status to "archived — ready for next feature", and add a one-line entry noting the archive slug and date
-   - Leave `decisions.md`, `deferred.md`, `codebase.md`, and `lessons.md` at root — these persist across features unchanged
+   - Leave `decisions.md`, `deferred.md`, `codebase.md`, `lessons.md`, and `audit-scorecard.md` at root — these persist across features unchanged
+   - If `_planning/audit-review.md` or `_planning/audit-auto.md` exist, copy them to `_planning/archive/[name]/` before clearing (the user may have already deleted them — skip silently if absent)
 
 9. **Output**: Confirm archive location, confirm `project-requirements/` was updated, and suggest next step: "Run `/plan:MVP` for a new project or `/plan:feature` for the next feature on this codebase."
 

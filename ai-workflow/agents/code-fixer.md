@@ -57,15 +57,21 @@ You MUST NOT:
 ### Step 1 — Linter pass (deterministic first)
 
 Detect the project linter from config files:
-- Python: `pyproject.toml` with `[tool.ruff]` or `ruff.toml` → run `ruff check --fix <files>`
-- JavaScript/TypeScript: `.eslintrc*`, `eslint.config.*`, or `eslint` in `package.json` → run `npx eslint --fix <files>`
+- Python: `pyproject.toml` with `[tool.ruff]` or `ruff.toml`:
+  1. Run `ruff check --fix <files>` — autofix what ruff can
+  2. Run `ruff check <files>` — capture remaining violations (these are not autofix-safe)
+- JavaScript/TypeScript: `.eslintrc*`, `eslint.config.*`, or `eslint` in `package.json`:
+  1. Run `npx eslint --fix <files>`
+  2. Run `npx eslint <files>` — capture remaining violations
 - If no linter config is found: skip this step and note it in the report.
 
-Run with autofix. Note the count of violations fixed.
+Note the autofix count. Keep the remaining violations list — Step 2 starts with it.
 
 ### Step 2 — LLM style pass
 
-Read each file (post-linter) and apply fixes in this priority order. Fix as you find them — do not accumulate a list:
+**Start with the remaining linter violations from Step 1.** Fix every remaining violation before moving to the priority list below. Common non-autofix violations include line length (`E501`) in docstrings, comments, and long strings — wrap or shorten as needed. Do not suppress with `# noqa` unless there is a genuine reason; if suppressing, add a comment explaining why.
+
+Then scan each file for the following, in priority order. Fix as you find them — do not accumulate a list:
 
 1. **AI anti-patterns** (highest priority — often critical severity)
 2. **Missing type hints** on public functions
