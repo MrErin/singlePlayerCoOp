@@ -23,6 +23,7 @@ Before starting, check if `_planning/audit-review.md` exists:
 
 1. **Read**: `_planning/codebase.md`, `_planning/requirements.md`, `_planning/decisions.md`
    - If `_planning/` does not exist: STOP. Tell user to run `/plan:init` first.
+   - If `_planning/backlog/bugs.md` exists, read it and keep the list of known bugs in context. Any finding that matches an already-tracked bug must be skipped — do not create a duplicate card or AUTO item for it.
 
 2. **Check for tests**: Use Glob to find test files. If no test files exist, skip Pass 2 (Test Analysis) entirely — note this in both document headers.
 
@@ -42,6 +43,8 @@ Before starting, check if `_planning/audit-review.md` exists:
 ## Classification Rules
 
 Every finding is routed to one of two tiers. Apply these rules before writing any item.
+
+**Backlog deduplication** — before writing any card or AUTO item, check it against `_planning/backlog/bugs.md` (loaded in Setup). If the finding describes the same issue as an existing bug entry, skip it entirely. Do not create a cross-reference card — the backlog is already tracking it.
 
 **AUTO tier** — executable by an agent without human judgment:
 - Unused imports (confirmed not dynamically referenced)
@@ -206,6 +209,8 @@ Update the draft marker to `<!-- TEST PASS: IN_PROGRESS -->`.
 - `sys.modules[` in test files → 🔍 SMELL card (REVIEW)
 - `MagicMock` in `src/` → 🔍 SMELL card (REVIEW)
 - `assert True` or assertion-free tests → route per classification rules
+- **Phantom mocks:** `grep -r 'patch("' tests/` — for each unique patch path, attempt to resolve the import. Paths that don't exist are phantom mocks → 🔍 SMELL card (REVIEW — phantom mock patches nothing, real code runs untested)
+- **Dead mock smell:** Files where `patch(` count ≥ 3× the `def test_` count — likely asserting only on mocks, never on real output → 🔍 SMELL card (REVIEW)
 
 **Quantitative metrics scan** — run before per-module analysis. Adjust path from `codebase.md`. Write results directly into the Test Quality section of `audit-review.md`.
 
@@ -238,6 +243,9 @@ For each module's test file(s), use Grep for test function definitions to see al
 | **Redundancy** | No duplicate tests covering same path with same assertions |
 | **Obsolete** | Tests for renamed or deleted functions |
 | **Parallel coverage** | Similar modules (same pattern) have similar test coverage |
+| **Mock integrity** | No phantom mocks (patch paths that don't resolve); no dead mock smell (3+ patches, assertions only on mock calls) |
+| **Name-assertion alignment** | Test names match what's asserted — not just a mock call count |
+| **Test organization** | No `*Integration*`/`*Misc*`/`*Other*` catch-all classes with >3 tests across different categories |
 
 **After each module**: Write AUTO findings to `audit-auto.md` and REVIEW findings as cards to `audit-review.md`.
 
@@ -272,8 +280,7 @@ After both documents are finalized, prepend a new snapshot entry to `_planning/a
 2. **Group into module clusters**: Every card touching the same source module belongs in one cluster — doc, debt, and test cards together. A card spanning multiple files may appear in multiple clusters; add a cross-reference note. Doc-only cards (no module) go in a "Planning Docs" cluster at the start.
 
 3. **Within each cluster**:
-   - Assign a 👾 BOSS card if the cluster has 3 or more cards total (debt + test combined).
-   - Order: BOSS card first, then remaining cards by severity/difficulty descending.
+   - Order cards by severity/difficulty descending.
    - Add a note: "N auto-fix item(s) for this module → see audit-auto.md" (omit if zero).
 
 4. **Order clusters**: Higher-severity clusters first. Tiebreak: clusters whose files are touched by other clusters come first (fixing them unblocks others).
@@ -288,7 +295,7 @@ After both documents are finalized, prepend a new snapshot entry to `_planning/a
 
 ## Rules
 
-- **Emojis are required — not optional.** Every review card heading must open with its type emoji (📄 🔥 ⚙️ 🧹 🗃️ ♿ 🔍 🎯 💀 🧪 🔗 🔁 👻 👾). Every Difficulty field must include a colored circle (🟢 🟡 🔴 ⚫). Every Type column in cluster tables must show the emoji. These are functional visual cues — never omit them.
+- **Emojis are required — not optional.** Every review card heading must open with its type emoji (📄 🔥 ⚙️ 🧹 🗃️ ♿ 🔍 🎯 💀 🧪 🔗 🔁 👻). Every Difficulty field must include a colored circle (🟢 🟡 🔴 ⚫). Every Type column in cluster tables must show the emoji. These are functional visual cues — never omit them.
 - Auto-fix items do not use card emojis. They use the terse format from `audit-auto-template.md`.
 - Do not rewrite production code during analysis. Trivial test assertion fixes are allowed.
 - Delegate per-module debt analysis to `code-reviewer` subagents — do not analyze debt inline.

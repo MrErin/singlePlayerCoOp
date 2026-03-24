@@ -23,7 +23,6 @@ Load this file when ready to generate `code_audit.md` output.
 | 🔗 | SEAM | Test | Missing integration test at module boundary |
 | 🔁 | REDUNDANT | Test | Duplicate tests covering the same path with the same assertions |
 | 👻 | ORPHAN | Test | Test for renamed or deleted code |
-| 👾 | BOSS | Either | Entry point for clusters with 3+ cards |
 
 **Difficulty scale (use for all card types):**
 - 🟢 Quick — under 30 min
@@ -34,21 +33,6 @@ Load this file when ready to generate `code_audit.md` output.
 ---
 
 ## Card Templates
-
-### 👾 BOSS-[NNN]: [Module Name]
-
-```markdown
-### 👾 BOSS-[NNN]: [Module Name]
-- **Difficulty**: 🔴
-- **Module**: [source module or feature area]
-- **Cards in this cluster**: [count] — [list card IDs, e.g., ARCH-002, GAP-001, SMELL-003]
-- **The situation**: [2–3 sentences describing the combined debt + test problem in this area]
-- **Your mission**: Review all cards in this cluster. Decide: fix incrementally or restructure from scratch?
-- **Done when**: All referenced cards resolved AND a brief decision comment added at the top of the affected source file
-- **Time box**: 45 min (or split across sessions)
-```
-
----
 
 ### 📄 DOC-[NNN]: [Drift Description]
 
@@ -323,7 +307,6 @@ Check these before closing. A checked box means the signal is present — invest
 | 🔗 SEAM | [n] | | |
 | 🔁 REDUNDANT | [n] | | |
 | 👻 ORPHAN | [n] | | |
-| 👾 BOSS | [n] | | |
 | **Total** | [n] | | |
 
 ### Untested Modules
@@ -336,12 +319,10 @@ Check these before closing. A checked box means the signal is present — invest
 
 > **How to use**: One cluster = one source module. Each cluster contains all debt AND test cards for that area.
 > Complete one cluster before moving to the next — fixing debt and tests together prevents churn.
-> Boss cards are the entry point for clusters with 3+ cards — read those first.
 >
 > **Doc cards**: 📄 DOC
 > **Debt cards**: 🔥 ARCH | ⚙️ DESIGN | 🧹 QUALITY | 🗃️ DATA | ♿ ACCESS
 > **Test cards**: 🔍 SMELL | 🎯 GAP | 💀 MUTANT | 🧪 UPGRADE | 🔗 SEAM | 🔁 REDUNDANT | 👻 ORPHAN
-> **Boss card**: 👾 BOSS (clusters with 3+ cards)
 >
 > **Difficulty**: 🟢 Quick (<30 min) | 🟡 Medium (30–60 min) | 🔴 Large (1–3 hr) | ⚫ XL (3+ hr)
 > **Risk** (debt cards): Low — isolated | Medium — shared interface | High — core component
@@ -354,10 +335,9 @@ Auto-fix items delegated: [n or "none"] → see `audit-auto.md`
 
 | # | Done | Card | Type | Difficulty | Time |
 |---|------|------|------|------------|------|
-| 1 | [ ] | BOSS-001 | 👾 | 🔴 | 45 min |
-| 2 | [ ] | ARCH-001 | 🔥 | 🔴 | 60 min |
-| 3 | [ ] | GAP-001 | 🎯 | 🟡 | 30 min |
-| 4 | [ ] | SMELL-001 | 🔍 | 🟢 | 15 min |
+| 1 | [ ] | ARCH-001 | 🔥 | 🔴 | 60 min |
+| 2 | [ ] | GAP-001 | 🎯 | 🟡 | 30 min |
+| 3 | [ ] | SMELL-001 | 🔍 | 🟢 | 15 min |
 
 **Total estimated effort**: [time]
 

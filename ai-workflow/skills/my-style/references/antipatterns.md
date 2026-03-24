@@ -108,6 +108,9 @@ Patterns that strongly suggest AI-generated code without human review.
 | Happy path only | No error/edge case tests | HIGH | Add negative tests (1:2 ratio minimum) |
 | Tautological assertion | `assert x == x` or `assert True` | CRITICAL | Remove or test something real |
 | Mock protocol mismatch | MagicMock used with operator overloading (`\|`, `>>`, `@`) | HIGH | Verify mock works with actual operator usage; prefer patching call site or using framework test utilities |
+| Name-assertion mismatch | Test name implies real-world effect (file created, data saved) but assertions only check mock calls were made | HIGH | Fix assertions to verify the stated effect, or rename the test to match what it actually checks |
+| Dead mock smell | Test patches 3+ functions and asserts only on mock call counts, never on actual return values or side effects | HIGH | Add assertions on real output; if impossible, the test is only verifying wiring, not behavior |
+| Phantom mock | `patch("some.module.func")` where `some.module.func` doesn't exist — mock patches nothing, real code runs untested | CRITICAL | Verify import path resolves before writing the test |
 
 ---
 
@@ -138,6 +141,26 @@ with patch("module.PROMPT") as mock_prompt:
 ```
 
 **Why it matters:** Tests compile, collection succeeds, but every test fails at runtime with confusing errors like "Expected X, got MagicMock". The failure is in the mock setup, not the production code.
+
+---
+
+## Enum Exhaustiveness Gaps (HIGH)
+
+When code dispatches on an enum, AI frequently omits handling for added or renamed values, causing silent failures.
+
+| Pattern | Detection | Severity | Action |
+|---------|-----------|----------|--------|
+| Incomplete `elif` chain on enum | `elif` chain on enum values with no `else` clause | HIGH | Add `else: raise ValueError(f"Unhandled: {value}")` |
+| Dict dispatch without exhaustiveness check | Dict mapping enum values, used with `.get()` or silent fallback | HIGH | Assert all enum values are in the dict at module load |
+| New enum value, no handler | Value added to enum but dispatch table not updated | HIGH | Fail fast at import time — see fix pattern below |
+
+**Fix pattern:**
+```python
+_MISSING = set(MyEnum) - set(_HANDLERS.keys())
+assert not _MISSING, f"Missing handlers for: {_MISSING}"
+```
+
+**Why it matters:** Silent omissions cause features to silently disappear. New enum values added in one place break dispatch elsewhere with no error.
 
 ---
 

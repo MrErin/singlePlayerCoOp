@@ -21,6 +21,15 @@ def process_form():
 
 Write tests before or alongside implementation. **TDD** when design is unclear; **test-alongside** when iterating quickly on clear design. Requirement: coverage exists and covers edge cases before feature is complete.
 
+## Mocking Philosophy
+
+Mock at the boundary between your code and the outside world. Don't mock internals.
+
+- **Mock:** External I/O (network, filesystem, database, LLM calls, third-party APIs)
+- **Don't mock:** Internal functions you're trying to test — mock the seam below them, not the function under test
+- **Coupling signal:** If mocking 5+ things to test 1 function, the design is too coupled — refactor the code, don't add more mocks
+- **Integration > unit for AI-generated code:** Unit tests with mocks only verify "this code calls these functions." Integration tests verify "the right thing actually happens." AI-generated code benefits more from the latter because it catches hallucinated APIs, wrong argument order, and logic errors that mocked tests can't see.
+
 ## Critical Rules
 
 - **Pure unit tests for business logic** — frozen dataclasses as input, no database
@@ -71,6 +80,21 @@ test_validate_email
 **Pattern:** `test_[action]_[condition]_[expected_result]`
 
 The action is what the user/system does, not the method name.
+
+## Category-Specific Test Classes
+
+When testing a function that dispatches on categories, types, or variants (e.g., an enum, a status field, an entry type), organize tests into per-category classes.
+
+**Pattern:** `Test{FunctionName}{CategoryName}` — one class per category, testing that category's specific behavior (section headers, output shape, category-specific fields).
+
+Cross-cutting concerns (parameter validation, error handling, budget enforcement) go in separate classes named for the concern: `Test{FunctionName}ErrorHandling`, `Test{FunctionName}TokenBudget`.
+
+**Anti-patterns:**
+- ❌ `TestBuildContextIntegration` with 8 tests spanning 4 categories — split by category
+- ❌ `TestMisc` or `TestOther` catch-all classes — if a class has >3 tests covering different categories, split them
+- ❌ Generic test names like `test_produces_valid_output` — name for what specifically is verified: `test_testing_category_includes_coverage_subsection`
+
+**Audit signal:** Flag classes named `*Integration*`, `*Misc*`, `*Other*` with more than 3 tests. Flag test names referencing specific categories that live in a generic class.
 
 ## Test Suite Structure
 
@@ -135,6 +159,10 @@ AI agents have predictable blind spots. These rules are mandatory for AI-written
 - List returned duplicates?
 - Create ignored half the input fields?
 - Calculation off by 1?
+
+**Name-Assertion Alignment** — Test name must describe what's actually asserted, not a side effect or unrelated behavior.
+- ❌ `test_file_created` that only asserts a mock was called
+- ✅ `test_file_created` that asserts `path.exists()` or the file content
 
 **No Mirror Tests** — Never reimplement production logic in test. Assert `== 25`, not `== 5 * input`.
 

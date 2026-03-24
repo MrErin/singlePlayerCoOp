@@ -52,6 +52,7 @@ After writing each test, before writing the next one:
 1. **Wrong data check:** Could the implementation return wrong values and this test still pass?
 2. **Tautology check:** Are you asserting data you constructed yourself, rather than data the function computed?
 3. **Field check:** If the function returns an object or dict, are all fields asserted?
+4. **Phantom mock check:** If the test uses `patch()`, verify that each import path being patched actually resolves to a real symbol in the codebase. A phantom mock patches nothing — the real code runs untested and the test proves nothing. Use Grep to confirm the path exists before continuing.
 
 If any answer is concerning, fix the test before continuing.
 
@@ -85,6 +86,9 @@ Read `my-style/references/antipatterns.md` "Testing Anti-Patterns" section. AI-g
 - Tests with no assertions or only generic assertions (`is not None`)
 - Happy-path-only coverage (check your negative test ratio)
 - Near-duplicate tests across test classes (copy-paste without adaptation)
+- Phantom mocks — `patch()` paths that don't resolve to real symbols (use Grep to verify each one)
+- Name-assertion mismatch — test name implies a real-world effect but assertions only check mock calls
+- Orphan feature tests — if a test name or docstring references a specific feature (e.g., "fallback to X", "retry on Y"), grep for that feature in the implementation. If it doesn't exist, the test is for cut scope — flag it before delivering
 
 ## Suite-Level Quality Check
 

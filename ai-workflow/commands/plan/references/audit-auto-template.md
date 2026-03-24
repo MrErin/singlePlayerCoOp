@@ -37,7 +37,11 @@ It contains only items that require no human judgment — no architectural decis
 **Total items**: [n] across [n] modules
 **Source audit**: `_planning/audit-review.md`
 
-> **Instructions for executing agent**: Work through items in order within each module.
+> **Instructions for executing agent**: Before starting, load `my-style` (skill) and read
+> `my-style/references/antipatterns.md`. All fixes must conform to project style standards —
+> do not introduce new style violations while fixing existing ones.
+>
+> Work through items in order within each module.
 > If an item is more complex than described — requires architectural judgment, touches shared interfaces,
 > or has ambiguous callers — add it to the Escalations section at the bottom and skip it.
 > Do NOT attempt fixes that require tradeoffs or could affect other modules unexpectedly.

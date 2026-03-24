@@ -54,7 +54,6 @@ _Append-only. Newest entry at top. Persists across /plan:archive — do not dele
 | SEAM | [n] |
 | REDUNDANT | [n] |
 | ORPHAN | [n] |
-| BOSS | [n] |
 | Total | [n] |
 
 ---
