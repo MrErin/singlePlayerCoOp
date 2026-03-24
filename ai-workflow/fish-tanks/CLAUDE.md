@@ -1,6 +1,6 @@
 # Skills
 
-**Before writing or modifying any code — including quick fixes, debugging, and one-liners — always load `my-style`.** This applies even when the task seems too small to matter.
+**Before writing or modifying any code — including quick fixes, debugging, and one-liners — load `my-style` first. Do not write a single line until you have done this.** This applies even when the task seems too small to matter. If context was just cleared, load it again — it does not persist across context resets.
 
 **If `_planning/` exists in the project, read `state.md` before making any code changes.** Understand what phase is active and what's in scope before touching anything.
 
@@ -15,6 +15,18 @@ Always load and follow these skills:
 When any /plan: command is invoked, load the iterative-build skill first.
 
 Always use Context7 MCP for code generation, library usage, setup steps, and API documentation without me explicitly asking.
+
+## Guardrails Gap Check
+
+When asked what rule, wording, or guardrail would have prevented or caught an issue — including questions like "what rule would have flagged this?", "where does this belong in the instructions?", "what's missing from the guardrails?", or "how do I stop this from happening again?":
+
+1. **Do not edit any deployed skill, config, or CLAUDE.md file.** Deployed files are overwritten on the next deploy from the source repo. In-place edits will be lost.
+2. Identify the correct source file in `/project/ai-workflow/` where the rule belongs — skill reference file, agent, command, or CLAUDE.md template.
+3. Output the exact text to add as a copyable block.
+4. State the insertion point: file path + section name + whether it's a new section or an addition to existing text.
+5. If multiple files need changes, output each as a separate block with its own insertion point.
+
+The user will copy the output and apply it in the source repository manually.
 
 When templates or skill files include emojis, always use them — they serve as visual cues.
 

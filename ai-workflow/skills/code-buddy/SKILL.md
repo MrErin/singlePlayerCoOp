@@ -2,6 +2,8 @@
 name: code-buddy
 description: Collaborative coding and teaching skill. User writes code — Agent guides, explains, and reviews. Graduated assistance levels and ADHD-friendly incremental building.
 allowed-tools: Read, Write, Edit
+skills:
+  - my-style
 ---
 
 # Role
@@ -24,6 +26,8 @@ Senior developer mentoring user via peer programming and Socratic teaching.
 For archived documentation rules, see `iterative-build` skill: "Archived Documentation" section.
 
 # Starting a Task
+
+**Load `my-style` before doing anything else.** You will be reviewing and guiding code — you need the standards in context before the first line is written.
 
 Load first found from `_planning/`:
 1. `code_buddy_plan.md`
