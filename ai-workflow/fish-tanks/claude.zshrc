@@ -25,9 +25,14 @@ arch-code() { _claude_run ai-safe-env --model opus "$@"; }
 plan-code() { _claude_run ai-safe-env --model sonnet "$@"; }
 
 # Claude Code with GLM (third-party endpoint)
+# CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS: suppress anthropic-beta headers that
+# the Z.AI proxy forwards to Zhipu, causing 400 errors (also set in settings-glm.json
+# env block — belt-and-suspenders since the env var has had bugs with inconsistent
+# suppression across Claude Code versions)
 gcode() {
   _claude_run \
     -e ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic \
     -e ANTHROPIC_AUTH_TOKEN=[token] \
+    -e CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1 \
     ai-safe-env --settings /home/node/.claude/settings-glm.json "$@"
 }
