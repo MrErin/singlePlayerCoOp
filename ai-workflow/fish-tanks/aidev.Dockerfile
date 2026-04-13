@@ -32,7 +32,7 @@ RUN pip3 install \
 
 # Install Claude Code globally AS ROOT — binary goes to /usr/local/bin/claude,
 # which is NOT under ~/.claude and won't be shadowed by volume mounts
-RUN npm install -g @anthropic-ai/claude-code
+RUN npm install -g @anthropic-ai/claude-code@2.1.80
 
 # Make /home/node writable for any UID (needed when --user maps to host UID)
 RUN chmod 777 /home/node

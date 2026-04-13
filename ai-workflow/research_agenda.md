@@ -165,7 +165,42 @@ This is a standing research agenda for the workflow system in this repository (s
 
 ---
 
-### 6. Spec-Driven Development with Human Gates
+### 6. Model Selection and Benchmark Tracking for This Workflow
+
+**Why it matters**: The right model choice per task is one of the highest-leverage cost and quality levers in this workflow. Model lineups and pricing change fast — Anthropic, Z.ai, and Google have all made significant changes in the last 6 months. The plan/execute split (Opus plans, Sonnet executes) is now explicitly supported in Claude Code, but GLM pricing pressure may shift what "default" means. An outdated selection guide means paying too much for mechanical tasks or getting worse results on planning tasks.
+
+**Current baseline** *(as of 2026-04-13)*:
+- Claude model lineup: Haiku 4.5 ($1/$5), Sonnet 4.6 ($3/$15), Opus 4.6 ($5/$25). All 200K context.
+- Plan/execute split is the validated core pattern: Opus for requirements/planning/architecture, Sonnet for code generation/test writing/review.
+- GLM-5.1 (Z.ai): self-reported SWE-bench Pro #1 (58.4%), $1.40/$4.40 per M — credible Sonnet alternative for code generation. Self-reported benchmarks not independently corroborated.
+- GLM-4.7-Flash: free, 203K context, no hard daily cap — best free-tier model for sustained dev workflow use.
+- Haiku 4.5's key constraint: IFBench 54.3% — fails multi-constraint instruction prompts. Not suitable for code-fixer, test-writer, code-reviewer agents.
+- Free ChatGPT (GPT-5.2, 10 msgs/5 hrs) and Gemini 2.5 Pro (5 deep prompts/day): not suitable as daily-driver workflow models. Gemini useful only for occasional large-context (1M) analysis.
+- Full model selection guide written at: `still-thinking/dev-workflow_model-selection-guide.md`
+
+**Questions to ask when re-researching**:
+- Has the Haiku-tier IFBench score improved enough to use in code-fixer/test-writer agents?
+- Has GLM-5.1's SWE-bench performance been independently corroborated? What's the current external benchmark standing?
+- Are new GLM models (5.2+, Z.ai next-gen) available that change the cost/quality math?
+- Has Claude Code's plan mode (Opus plan + Sonnet execute) improved or changed in how it routes model selection?
+- Have free tier caps changed for Gemini 2.5 Pro or GLM-4.7-Flash?
+- Are any new frontier models from Anthropic, Z.ai, or Google meaningfully changing the value proposition for any specific workflow task?
+- Has anyone published empirical comparisons of Opus vs. Sonnet specifically for requirements interview quality (not just code benchmarks)?
+
+**What would trigger a change**:
+- Haiku IFBench score crosses ~70%+ → reconsider for code-fixer and test-writer agents
+- GLM-5.1 benchmarks independently corroborated → update confidence level for code generation recommendation
+- A new Claude or GLM model that materially changes the pricing tier structure
+- Any model that meaningfully outperforms Opus specifically on conversational requirements ambiguity-surfacing tasks
+
+**Review cadence**: Quarterly
+**Maps to**: `still-thinking/dev-workflow_model-selection-guide.md`; agent frontmatter model settings in `agents/`
+
+**Last checked**: 2026-04-13
+
+---
+
+### 7. Spec-Driven Development with Human Gates
 
 **Why it matters**: Fowler's critique of Kiro/spec-kit/Tessl is about fully autonomous spec-to-code generation — agents ignore specs, specs drift from code, false confidence accumulates. This system avoids those failure modes via continuous planning artifact updates and human phase gates. But the tools in this space are evolving, and if spec-driven approaches add meaningful human checkpoints, there may be useful techniques to borrow.
 

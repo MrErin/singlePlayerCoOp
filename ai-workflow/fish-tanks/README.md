@@ -19,6 +19,7 @@ cp seccomp-no-chmod.json ~/.claude/docker/
 cd ~/projects/my-app
 arch-code          # Opus
 plan-code          # Sonnet
+mech-code          # Haiku
 gcode              # GLM endpoint
 arch-code -p "fix the login bug"   # extra args pass through
 ```

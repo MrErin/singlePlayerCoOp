@@ -24,6 +24,9 @@ arch-code() { _claude_run ai-safe-env --model opus "$@"; }
 # Claude Code with Sonnet
 plan-code() { _claude_run ai-safe-env --model sonnet "$@"; }
 
+# Claude Code with Haiku
+mech-code() { _claude_run ai-safe-env --model haiku "$@";}
+
 # Claude Code with GLM (third-party endpoint)
 # CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS: suppress anthropic-beta headers that
 # the Z.AI proxy forwards to Zhipu, causing 400 errors (also set in settings-glm.json
