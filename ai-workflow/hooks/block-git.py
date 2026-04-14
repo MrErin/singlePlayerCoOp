@@ -9,7 +9,7 @@ BLOCKED = [
     "git push",
     "git merge",
     "git rebase",
-    "git checkout -b",
+    "git checkout -b", "git switch -c", "git switch --create",
     "git reset --hard",
     "git restore .",
     "git clean -f",

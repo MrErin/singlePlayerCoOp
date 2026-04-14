@@ -38,13 +38,12 @@ def _is_project_source(file_path: str) -> bool:
     """Return True if file_path is inside the project source tree.
 
     Covers both conventional layouts (src/, lib/, tests/) and flat
-    package layouts (e.g., /project/myapp/models.py). Root-level scripts
-    like /project/fix_something.py are NOT considered project source.
+    package layouts (e.g., /project/myapp/models.py). Root-level
+    project files like /project/app.py are included.
     """
     if file_path.startswith("/project/"):
         remainder = file_path[len("/project/"):]
-        # At least one subdirectory deep — not a root-level file
-        return "/" in remainder
+        return bool(remainder)
     return any(file_path.startswith(p) for p in _RELATIVE_SOURCE_PREFIXES)
 
 # Patterns in file content that indicate an agent is trying to patch
