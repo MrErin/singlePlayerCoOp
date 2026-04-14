@@ -1,0 +1,44 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "model": "zhipu/glm-5-turbo",
+
+  "provider": {
+    "zhipu": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Z.AI (GLM)",
+      "options": {
+        "baseURL": "https://api.z.ai/v4"
+      },
+      "models": {
+        "glm-5-turbo": {
+          "name": "GLM-5 Turbo"
+        }
+      }
+    }
+  },
+
+  "permission": {
+    "edit": { "*": "allow" },
+    "bash": {
+      "*": "ask",
+      "ls *": "allow",
+      "cat *": "allow",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow"
+    },
+    "read": { "*": "allow" }
+  },
+
+  "mcp": {
+    "web-search-prime": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:ZHIPU_API_KEY}"
+      }
+    }
+  }
+}
