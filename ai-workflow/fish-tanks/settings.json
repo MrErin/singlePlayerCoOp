@@ -57,7 +57,23 @@
       "Write(.env)",
       "Write(.env.*)",
       "Write(./.env)",
-      "Write(./.env.*)"
+      "Write(./.env.*)",
+      "Edit(ruff.toml)",
+      "Edit(.ruff.toml)",
+      "Write(ruff.toml)",
+      "Write(.ruff.toml)",
+      "Edit(eslint.config.*)",
+      "Write(eslint.config.*)",
+      "Edit(.eslintrc*)",
+      "Write(.eslintrc*)",
+      "Edit(.prettierrc*)",
+      "Write(.prettierrc*)",
+      "Edit(biome.json*)",
+      "Write(biome.json*)",
+      "Edit(tslint.json)",
+      "Write(tslint.json)",
+      "Edit(.stylelintrc*)",
+      "Write(.stylelintrc*)"
     ],
     "defaultMode": "acceptEdits"
   },
@@ -97,7 +113,20 @@
           },
           {
             "type": "command",
+            "command": "python3 ~/.claude/hooks/block-config-edit.py"
+          },
+          {
+            "type": "command",
             "command": "python3 ~/.claude/hooks/block-workarounds.py"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/compaction-nudge.py"
           }
         ]
       }
@@ -110,6 +139,21 @@
             "type": "command",
             "command": "python3 ~/.claude/hooks/format-on-save.py",
             "timeout": 15
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/cost-tracker.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/notify-completion.py"
           }
         ]
       }

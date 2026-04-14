@@ -7,3 +7,6 @@ backup
 
 still-thinking
 infra
+
+# Claude Code runtime artifacts
+.claude/notification

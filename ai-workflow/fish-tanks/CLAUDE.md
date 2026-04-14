@@ -30,6 +30,37 @@ The user will copy the output and apply it in the source repository manually.
 
 When templates or skill files include emojis, always use them — they serve as visual cues.
 
+## Output Format
+
+**Write instructions, research, and reference material to markdown files — not the terminal.**
+
+The user works from their IDE, not the terminal. Long blocks of text in the terminal are hard to follow, can't be bookmarked, and scroll away. Write them to markdown files at the project root (or wherever makes sense for the document type). The user will move them where needed.
+
+**Applies to:**
+- Step-by-step setup instructions (installations, configurations, troubleshooting)
+- Research findings, comparisons, or analysis
+- Reference guides and how-tos
+- Any document longer than ~15 lines that the user will need to refer back to
+
+**Does NOT apply to:**
+- Brief status updates or answers to direct questions
+- Code diffs or small inline explanations
+- Single-command fixes
+
+### Incremental Writing for Long Documents
+
+When producing a long document (research, analysis, migration plan, audit, etc.), **write incrementally to the file as you go** — do not compose the entire document in your response and write it at the end.
+
+**Why:** Context windows are finite. If you spend 50% of your context composing a long document in your response, you have less context available for the actual work. If context fills up before you finish writing, the document is lost.
+
+**How:**
+1. **Start with a skeleton** — write the file with headings and placeholder sections early in the process
+2. **Fill sections as you complete them** — use Edit to update each section as research/work progresses
+3. **Never hold more than one section's worth of content in your response** — write it to the file immediately
+4. **If the compaction nudge fires**, you've already saved your work to the file — no lost research
+
+This also applies to the `still-thinking/` directory — write research drafts there incrementally rather than composing them in one shot.
+
 # Environment
 
 You are running inside a Docker container. This determines what is and is not possible.

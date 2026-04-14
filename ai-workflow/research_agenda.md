@@ -251,6 +251,16 @@ This is a standing research agenda for the workflow system in this repository (s
 **Why not yet**: Currently only practical for specific ecosystems (shadcn registries have `view` commands). Generalizable pattern needs more ecosystem support — npm/pip don't have standardized "view source before install" workflows.
 **Watch for**: IDE-integrated supply chain security tools, `npm audit`-style vetting that checks behavioral patterns (not just CVEs), or registry-level malware scanning that makes per-package review unnecessary.
 
+### De-Sloppify Pattern (Separate Cleanup Agent)
+**What it is**: Instead of constraining the coding agent with negative instructions ("don't over-engineer", "don't add unnecessary tests"), let it build freely, then run a separate cleanup agent that removes unnecessary defensive code, over-engineered abstractions, redundant tests, and excessive error handling for impossible scenarios. From ECC's autonomous loops skill.
+**Why not yet**: Works best for greenfield code. On brownfield projects with existing complexity, the cleanup agent might remove things that look unnecessary but serve a purpose. Current code-fixer agent operates on style only and explicitly cannot touch logic. Would need a new agent definition with careful scoping.
+**Watch for**: A cleanup agent pattern that reliably distinguishes intentional complexity from over-engineering on brownfield code, OR a benchmark showing measurable reduction in code complexity without regression increase.
+
+### Continuous Learning / Instinct System
+**What it is**: An observation-and-extraction pipeline where hooks capture tool use events, a background agent analyzes them for behavioral patterns, and extracted patterns become "instincts" — atomic behavioral units with one trigger, one action, a confidence score (0.3-0.9), and domain tag. Instincts scoped per-project and promoted to global at high confidence. From ECC v1.9.0.
+**Why not yet**: Complex system (multiple hooks, background agents, confidence scoring, project scoping). Adds token overhead per turn. Quality of automatically extracted "instincts" is unproven. Current explicit memory approach is simpler and more predictable.
+**Watch for**: Evidence that automatically extracted behavioral patterns improve agent output quality over explicit memory, OR a simplified implementation that captures the key benefit (project-scoped behavioral patterns) without the full pipeline complexity. See Active Topics item 1 (Agent Memory).
+
 ---
 
 ## Incorporated Findings
