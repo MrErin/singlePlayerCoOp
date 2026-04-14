@@ -72,6 +72,7 @@ Single-task mode:
       ```
       Mark task `BLOCKED` in heading. Do NOT proceed to next task. Output blocker summary and wait for user.
     - After each task, verify against the task's verify criteria.
+    - **Deliverable existence check:** Before marking a task done, confirm the task's stated deliverable physically exists — function signatures present in the expected file, files created are non-empty, test files contain actual test functions. If the deliverable is missing, do NOT mark the task DONE — investigate and fix or log a blocker.
     - **Per-task style fix** (mandatory for tasks that write business logic or features; skip for config-only, comment-only, or scaffold-only tasks): Delegate to a `code-fixer` subagent after each task completes. Provide: task name, files touched, and the file types involved (so it loads the correct my-style reference). The fixer runs the project linter first for deterministic violations, then does an LLM style pass for what the linter cannot reach, and applies all fixes in-place. It operates with a two-round maximum — if violations remain after two rounds it reports them. Log all items from the code-fixer's **Needs User Review** section in plan.md "Issues Discovered" — these will surface in `ua_testing.md` when `/plan:review` generates it.
     - **Mark task `DONE`** in plan.md heading after the code-fixer pass completes.
     - **Explore during implementation** — use Grep to find existing similar code and match patterns and conventions.

@@ -40,7 +40,8 @@ For each file changed in the current phase:
     - ARIA attributes on interactive elements
     - Keyboard navigation support
     - Form labels and error messaging
-4. Check comment quality:
+4. **Dependency review:** Check for new imports and changes to dependency files (`pyproject.toml`, `package.json`, `requirements.txt`, `Cargo.toml`). For each new external dependency added, verify it is not solving a problem already covered by an existing dependency in the project. Flag any new dependency that could reasonably be eliminated with stdlib or existing packages. Flag duplicate dependencies serving the same purpose (e.g., two HTTP client libraries).
+5. Check comment quality:
     - Do comments explain WHY, not WHAT?
     - Are there stale comments that describe behavior that no longer exists?
     - Do public functions have interface contracts in their docstrings?

@@ -33,24 +33,32 @@ This is an independent verification pass. You are in a fresh context — do not 
 
 2. **Read the phase's `plan.md`** — get the full task list and verify criteria.
 
-3. **Verify task completion:** For each task in the plan, confirm it was actually completed as described.
+3. **Structural verification:** Before verifying individual tasks, perform three cross-cutting checks:
+    a. **Architectural coherence:** Identify established patterns in the codebase (layer boundaries, state management approach, error handling strategy) by reading `_planning/codebase.md` and scanning existing code with Grep/Read. Check each new file/change against those patterns. Flag anything that introduces a new pattern without evidence it's intentional — even if the code is functionally correct.
+    b. **Scope verification:** List all files actually modified in this phase (use `git diff --name-only`). Cross-reference against the plan's task list. Flag plan-specified files that were not touched (silent skips) and files modified outside the plan's scope (scope creep).
+    c. **Constraint reconciliation:** Extract all explicit constraints from the plan and `_planning/decisions.md` (dependency restrictions, interface contracts, scope limits, style mandates beyond `my-style` defaults). Verify each constraint against the final codebase state. Report any stated constraint not honored in the output.
+    Add all findings to a "Review Findings" section.
+
+4. **Verify task completion:** For each task in the plan, confirm it was actually completed as described.
     - Use Grep and Read to inspect code structure and implementations.
     - Use Grep to find how functions are called and connected.
     - For each task: check that the code matches what the plan called for. Missing, partial, or incorrect implementations must be flagged.
     - If a task is incomplete or incorrect, document it in a "Review Findings" section — flag it to the user before proceeding.
 
-4. **Test integrity audit** (if this phase includes new or modified test files):
+5. **Test integrity audit** (if this phase includes new or modified test files):
     - **Phantom mocks:** Grep for `patch("` in modified test files. For each patch path, verify the import path resolves to a real symbol. A phantom mock patches nothing — flag any that don't exist.
     - **Name-assertion alignment:** Scan test names. If a name implies a real-world effect (file created, data saved, record returned), verify the test asserts on that effect — not only that a mock was called.
     - **Real assertion check:** Every test must have at least one assertion on actual return values or side effects, not only mock call counts.
     - **Orphan tests:** If a test name or docstring references a feature, grep for that feature in implementation code. Tests for cut scope pass vacuously — flag them.
     Add any findings to the "Review Findings" section.
 
-5. **Code quality review:** Check all new/modified code against `my-style` standards.
+    **Test adequacy check:** Load `my-style/references/testing.md` and verify test adequacy per the "Test Adequacy Verification" section. Flag any function with no failure-path test as under-tested. Add to "Review Findings."
+
+6. **Code quality review:** Check all new/modified code against `my-style` standards.
     - If a `code-reviewer` subagent is available, delegate this for an independent assessment.
     - Research any uncertain patterns or architectural decisions.
 
-6. **UI quality check (frontend phases only):** If the phase modified any `.tsx`, `.jsx`, `.html`, `.css`, or `.vue` files:
+7. **UI quality check (frontend phases only):** If the phase modified any `.tsx`, `.jsx`, `.html`, `.css`, or `.vue` files:
     - Load `my-style/references/ui-antipatterns.md`.
     - Run the grep patterns from each section against all frontend files modified in this phase.
     - Organize findings by severity: CRITICAL → HIGH → MEDIUM → LOW.
@@ -58,7 +66,7 @@ This is an independent verification pass. You are in a fresh context — do not 
     - HIGH and MEDIUM violations are summarized in the review output (file + line) and included in `ua_testing.md` for user awareness.
     - If no frontend files were modified, skip this step.
 
-7. **Naming consistency check:** Run against all `.ts`, `.tsx`, `.py`, and `.js` files modified in this phase (skip if the phase touches none of these):
+8. **Naming consistency check:** Run against all `.ts`, `.tsx`, `.py`, and `.js` files modified in this phase (skip if the phase touches none of these):
     - Load `my-style/references/naming.md`.
     - Run the detection patterns from the "Cross-Layer Naming Consistency" section.
     - For each match, determine: does this mapper bridge an **external** boundary (third-party API, legacy system, external service) or an **internal** one (your own backend ↔ frontend, your own service ↔ service)?
@@ -66,13 +74,13 @@ This is an independent verification pass. You are in a fresh context — do not 
     - **Unclear boundary (MEDIUM):** Include in review output as an item for the user to inspect. Note in `ua_testing.md`.
     - External boundary mappers are expected and do not need flagging.
 
-8. **Security verification:** Explicitly verify each applicable Security Checklist item:
+9. **Security verification:** Explicitly verify each applicable Security Checklist item:
     - If the phase added new dependencies, confirm dependency review was performed (viewed source, checked for suspicious patterns)
     - If the phase has user input, confirm validation/sanitization is in place
     - If the phase has sensitive routes, confirm auth checks exist
     - Flag any unchecked items or gaps found during verification
 
-9. **Generate `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references.
+10. **Generate `phase_summary.md`** in the phase directory using the `phase_summary` template from `iterative-build` references.
     - Generate "At a Glance" section first (most important):
         - One-sentence summary of what this phase accomplishes
         - Files Changed: each file with one-line description
@@ -81,17 +89,17 @@ This is an independent verification pass. You are in a fresh context — do not 
     - Then complete the remaining sections (What Was Built, Key Decisions, Major Logic Flows, Connection to Previous Phases).
     - Write incrementally — mark `<!-- STATUS: DRAFT -->` at top while generating, replace with `<!-- STATUS: COMPLETE -->` when done.
 
-10. **Generate `ua_testing.md`** in the phase directory using the `ua_testing` template from `iterative-build` references.
+11. **Generate `ua_testing.md`** in the phase directory using the `ua_testing` template from `iterative-build` references.
     - Use progressive disclosure: Quick Smoke tests first (2–5 min), then Priority 1 features (15–20 min), then Priority 2 if time permits.
     - Include any "Possibly Obsolete Tests" flagged during the build.
-    - Include any coverage gaps, code-fixer flags from plan.md "Issues Discovered", and HIGH/MEDIUM UI violations from step 6 — remaining violations, scope warnings, and linter bypass flags all need user visibility.
-    - Populate the "Required Manual Renames" section with all HIGH findings from step 7. If no renames are needed, delete that section from the generated file.
+    - Include any coverage gaps, code-fixer flags from plan.md "Issues Discovered", and HIGH/MEDIUM UI violations from step 7 — remaining violations, scope warnings, and linter bypass flags all need user visibility.
+    - Populate the "Required Manual Renames" section with all HIGH findings from step 8. If no renames are needed, delete that section from the generated file.
     - The User Testing Notes section at the bottom is left blank — the user fills it in after testing.
     - Write incrementally — mark `<!-- STATUS: DRAFT -->` at top while generating, replace with `<!-- STATUS: COMPLETE -->` when done.
 
-11. **Update `state.md`** — set phase status to `ua-testing`.
+12. **Update `state.md`** — set phase status to `ua-testing`.
 
-12. **STOP.** Output:
+13. **STOP.** Output:
     - **Review Findings** (if any issues were found — be explicit, don't bury them)
     - Confirmation that `phase_summary.md` and `ua_testing.md` are ready in the phase directory
     - Instruction: "Complete UA testing using the checklist in `ua_testing.md`. Fill in the User Testing Notes section with what you find. Then run `/plan:review` to record results and close the phase."

@@ -294,6 +294,22 @@ Modules sharing architecture (e.g., all repos with `create_many()`) need test pa
 
 **Exception:** If the bug spans multiple modules and requires integration-style testing, create a file named for the *feature* being tested (e.g., `test_checkout_flow.py`), not the *phase* that found it.
 
+## Test Adequacy Verification
+
+Checklist for verifying test completeness during review (used by `/plan:review` and `code-reviewer`).
+
+For each function or feature added, verify tests exist for all three categories:
+
+| Category | What to check | Common gaps |
+|----------|--------------|-------------|
+| **Success path** | Primary happy path with realistic input produces correct output | Missing for utility functions, "obvious" helpers |
+| **Failure/error path** | At least one invalid-input or error-condition test per function | Missing `None`/null handling, type errors, permission denied |
+| **Boundary conditions** | Empty input, `None`/null, zero, max values, empty collections | Missing edge-of-domain tests that expose off-by-one and type errors |
+
+**Minimum standard:** 1 error/edge case test per 2 happy path tests (see "Negative Test Ratio" above).
+
+**Verification method:** After identifying functions added in a phase, grep for test classes/functions covering each one. If a function has tests but all are success-path, flag it as under-tested — even if the tests pass.
+
 ## Phase Integration (with iterative-build)
 
 - **Setup/data layer:** Tests optional — verify manually
