@@ -53,6 +53,8 @@ When two parts of the same system refer to the same concept, they use the same n
 
 If the backend calls something `ProductVariant`, the frontend calls it `ProductVariant`. If a Python model is `OrderItem`, the TypeScript type is `OrderItem`. Names travel with the concept across layers.
 
+**API-derived types are a hard case, not a soft one.** Types shaped by `response.json()` from your own backend must use the backend's exact property names — no mapping layer, no renaming. The casing may differ (camelCase in TypeScript is fine), but the *words* must match. If the backend returns `{ daily_tasks: [...] }`, the TypeScript type has `daily_tasks`, not `tasksOfTheDay`.
+
 ### When Mappers Are Acceptable
 
 Only at **external system boundaries** — where you don't control the naming:

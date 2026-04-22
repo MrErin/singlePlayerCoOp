@@ -409,6 +409,27 @@ Modules sharing architecture (e.g., all repos with `create_many()`) need test pa
 
 **Exception:** If the bug spans multiple modules and requires integration-style testing, create a file named for the *feature* being tested (e.g., `test_checkout_flow.py`), not the *phase* that found it.
 
+### Frontend (Vitest + React)
+
+All frontend tests live in a single flat directory beneath `src/`:
+
+```
+frontend/src/tests/
+├── BadgesView.test.tsx
+├── ActivityCard.test.tsx
+├── ProgressView.test.tsx
+└── ...
+```
+
+**Rules:**
+
+- **Location:** `src/tests/` — one directory, flat, no subdirectories
+- **Naming:** `[Component].test.tsx` — matches the component under test
+- **Vitest include:** `src/tests/**/*.{test,spec}.{ts,tsx}`
+- **No co-location** — tests do not live next to their source files
+
+**Why:** A single tests directory keeps test infrastructure (MSW server, setup files) close to the tests, avoids cluttering component directories, and makes test discovery trivial — one glob finds everything.
+
 ## Test Adequacy Verification
 
 Checklist for verifying test completeness during review (used by `/plan:review` and `code-reviewer`).

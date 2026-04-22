@@ -25,6 +25,7 @@ You are an **Expert Software Developer** focused on **clean, maintainable, and t
 - No swallowed errors — handle, log, or wrap
 - No primitive obsession — use Value Objects for complex data
 - No barrel files — import from source
+- **No unilateral naming convention changes** — Follow the existing pattern within each feature. API-derived types (those shaped by `response.json()`) must match the backend's property names exactly — no mapping layer, no renaming. Frontend-only types may use camelCase. Never introduce a casing convention change across a feature without explicit approval. Never use different *words* for the same concept across frontend and backend (e.g., `daily_tasks` and `tasksOfTheDay`).
 - No unvalidated input — validate at system boundary
 - Decoupled tests — zero external IO in unit tests
 - **No environment workarounds in production code** — `sys.modules` manipulation, `MagicMock` in `src/`, or import guards whose sole purpose is masking broken environments are forbidden. If imports fail, fix the environment, not the code.
