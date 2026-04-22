@@ -22,7 +22,7 @@ Single source of truth. Any session can read it and know exactly where things st
 _planning/
 ├── roadmap.md              # Phase breakdown with status
 ├── state.md                # Current progress, session log, blockers
-├── decisions.md            # Architectural decisions (append-only)
+├── decisions.md            # Architectural decisions (cycled at archive)
 ├── deferred.md             # Cross-phase flags
 ├── lessons.md              # Issues caught during builds (append-only)
 ├── audit-scorecard.md      # Audit metric history (append-only, survives archive)
@@ -56,7 +56,8 @@ _planning/
 **Never modify archived documentation.** Only update:
 
 - **Modifiable:** `state.md`, `requirements.md`, `codebase.md`, `project-requirements/`, active phase files in `phases/[NN-name]/`
-- **Append-only:** `decisions.md`, `lessons.md`
+- **Append-only:** `lessons.md`
+- **Cycled at archive:** `decisions.md` — codified decisions move to `project-requirements/`, feature-specific trade-offs archive with the feature, only active undecided items survive
 - **Never touch:** `_planning/archive/` — frozen snapshots reflecting state at time of build. Modifying them creates false history.
 
 # Phase System
