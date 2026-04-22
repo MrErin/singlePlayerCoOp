@@ -110,7 +110,24 @@ Patterns that strongly suggest AI-generated code without human review.
 | Mock protocol mismatch | MagicMock used with operator overloading (`\|`, `>>`, `@`) | HIGH | Verify mock works with actual operator usage; prefer patching call site or using framework test utilities |
 | Name-assertion mismatch | Test name implies real-world effect (file created, data saved) but assertions only check mock calls were made | HIGH | Fix assertions to verify the stated effect, or rename the test to match what it actually checks |
 | Dead mock smell | Test patches 3+ functions and asserts only on mock call counts, never on actual return values or side effects | HIGH | Add assertions on real output; if impossible, the test is only verifying wiring, not behavior |
+| Prop-through render test | Test passes prop X and asserts X appears in DOM, with no conditional or computed behavior | HIGH | Delete or replace with interaction/conditional test |
+| Factory-default assertion | Test creates data via factory with no overrides, then asserts factory defaults appear in output | MEDIUM | Assert computed/transformed values, not pass-through defaults |
+| CSS class assertion | Test asserts specific CSS class names (`animate-pulse`, `w-5 h-5`) | MEDIUM | Assert behavior (element visible, disabled) not styling mechanism |
+| Child component render test | Parent test asserts child component renders its own props correctly | LOW | Delete — child's own tests cover this |
+| Text-content coupling | Test breaks on label/copy change with zero functional regression | MEDIUM | Use `data-testid` or role queries for element selection; only assert text when text IS the behavior under test |
 | Phantom mock | `patch("some.module.func")` where `some.module.func` doesn't exist — mock patches nothing, real code runs untested | CRITICAL | Verify import path resolves before writing the test |
+
+### React-Specific Testing Anti-Patterns
+
+These patterns are unique to component testing with React Testing Library / jsdom:
+
+| Pattern | Detection | Severity | Action |
+|---------|-----------|----------|--------|
+| Loading state as `animate-pulse` | `animate-pulse` in class assertion for loading check | MEDIUM | Assert loading behavior (data not shown, spinner present) not CSS class |
+| Shape-only assertion | `toHaveProperty('bg')` without checking the value of `bg` | HIGH | Assert actual expected values, not just that keys exist |
+| Circular assertion | Test calls function with two inputs and asserts they return equal — verifying internal consistency, not correctness | HIGH | Assert against independently-known expected value |
+| Misleading callback test | Test name says "passes callbacks" but never clicks the element that should fire them | HIGH | Actually interact with the element and verify callback fires |
+| Timer without cleanup test | Test verifies timer fires but doesn't verify cleanup on unmount | MEDIUM | Add unmount-and-advance-timer test |
 
 ---
 

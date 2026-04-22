@@ -53,6 +53,7 @@ After writing each test, before writing the next one:
 2. **Tautology check:** Are you asserting data you constructed yourself, rather than data the function computed?
 3. **Field check:** If the function returns an object or dict, are all fields asserted?
 4. **Phantom mock check:** If the test uses `patch()`, verify that each import path being patched actually resolves to a real symbol in the codebase. A phantom mock patches nothing — the real code runs untested and the test proves nothing. Use Grep to confirm the path exists before continuing.
+5. **React tautology check (component tests only):** Is this test asserting that a prop value appears as text in the DOM? If yes, is the prop ALWAYS rendered (no conditional), and is the value pass-through (no computation/transformation)? If both are true, the test is a tautology — delete it or rewrite to test a conditional branch or interaction instead.
 
 If any answer is concerning, fix the test before continuing.
 
@@ -89,6 +90,9 @@ Read `my-style/references/antipatterns.md` "Testing Anti-Patterns" section. AI-g
 - Phantom mocks — `patch()` paths that don't resolve to real symbols (use Grep to verify each one)
 - Name-assertion mismatch — test name implies a real-world effect but assertions only check mock calls
 - Orphan feature tests — if a test name or docstring references a specific feature (e.g., "fallback to X", "retry on Y"), grep for that feature in the implementation. If it doesn't exist, the test is for cut scope — flag it before delivering
+- **Component test balance** — For each component test file, count render-only assertions vs behavior assertions (clicks, callbacks, state transitions, conditional branches). If render-only exceeds 50%, identify which tests should be rewritten as interaction tests
+- **Prop-through ratio** — Scan for `getByText(PROP_VALUE)` patterns where PROP_VALUE is a variable set earlier in the test. These are candidate tautologies. Verify each one exercises conditional logic or computed behavior, not just prop rendering
+- **API wrapper necessity** — For each API test, check if the source function contains non-trivial logic. If it's a pure `fetch → json` wrapper, the test should be deleted or consolidated into a single integration test
 
 ## Suite-Level Quality Check
 

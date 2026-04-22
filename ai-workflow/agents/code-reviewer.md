@@ -40,6 +40,13 @@ For each file changed in the current phase:
     - ARIA attributes on interactive elements
     - Keyboard navigation support
     - Form labels and error messaging
+3b. **For test files in the change set** (files matching `*.test.*`, `*.spec.*`, or in `tests/`/`src/tests/` directories), additionally check:
+    - **Prop-through tautologies:** Does a test pass a value as a prop/argument and then assert that same value appears in the output, without any conditional logic or computation being exercised? Flag as tautology.
+    - **Factory-default assertions:** Does the test create data via a factory with no overrides, then assert factory-default values appear? Flag if the value is pass-through (not computed).
+    - **Render-only tests in component files:** Does the test file have more render-only assertions than interaction/behavior assertions? Flag if render-only exceeds 50%.
+    - **Misleading callback tests:** Does a test name imply callback verification but the test never triggers the interaction? Flag as misleading.
+    - **Mirror tests:** Does the test reimplement the component's math in the assertion (e.g., asserting `500` when the component computes `1000 - 500`)? Flag as mirror test.
+    - **CSS class coupling:** Does the test assert specific CSS class names like `animate-pulse`, `w-5`, `h-8`? Flag as implementation coupling.
 4. **Dependency review:** Check for new imports and changes to dependency files (`pyproject.toml`, `package.json`, `requirements.txt`, `Cargo.toml`). For each new external dependency added, verify it is not solving a problem already covered by an existing dependency in the project. Flag any new dependency that could reasonably be eliminated with stdlib or existing packages. Flag duplicate dependencies serving the same purpose (e.g., two HTTP client libraries).
 5. Check comment quality:
     - Do comments explain WHY, not WHAT?

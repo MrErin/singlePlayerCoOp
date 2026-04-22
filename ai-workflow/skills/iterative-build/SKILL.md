@@ -119,17 +119,19 @@ Typical phase shift adds 1-2 phases (implementation + optional test phase). Phas
 
 Test phases have stricter verification requirements than implementation phases because tests that don't run are worse than no tests (they create false confidence).
 
-1. **Per-task verification is mandatory.** After writing tests for each task, run `pytest <test_file> -v` and confirm all tests pass. If any fail:
-   - If the failure is a test bug (wrong mock setup, bad assertion): fix the test
+**Test execution permissions vary by agent and language.** `pytest` is auto-allowed in settings; `npm run test` is not. Agents without Bash access (e.g., `code-buddy`) cannot run tests at all. Before attempting to run tests, check whether your agent has Bash access and whether the test command is in the settings allow list. If either is missing, ask the user to run the tests and report back — do not attempt workarounds.
+
+1. **Per-task verification is mandatory.** After writing tests for each task, run the test command if you have Bash access and the command is allowed. Otherwise, ask the user to run it. If tests fail:
+   - If the failure is a test bug (wrong mock setup, bad assertion): fix the test, then re-run (or ask the user to)
    - If the failure is an implementation bug: log it in the Issues section, do NOT fix the implementation (test phase doesn't modify source)
    - If the failure is an environment limitation (blocked syscall, missing package): log it in the Issues section and ask the user for direction
 
-2. **Full suite check at phase end.** After all tasks are complete, run the FULL test suite (`pytest --tb=short -q`) and report:
+2. **Full suite check at phase end.** After all tasks are complete, run the FULL test suite (or ask the user to) and report:
    - Total pass/fail count
    - Any regressions from existing tests (new failures in files not touched by this phase)
    - Regressions are blockers — do not mark the phase complete
 
-3. **Environment setup before first test.** At the start of a test phase, verify the test environment works by running `pytest --collect-only -q` on existing tests. If collection fails, resolve the environment issue before writing any tests.
+3. **Environment setup before first test.** At the start of a test phase, verify the test environment works by running `pytest --collect-only -q` (or ask the user to). If collection fails, resolve the environment issue or ask the user for direction before writing tests.
 
 4. **Helper consistency check.** After creating test helpers (Task 1 of test phases), review all helpers and document which scenarios each is designed for. When writing subsequent test tasks, reference this documentation. If multiple helpers exist for similar purposes (e.g., `mock_chat_model` vs `mock_mission_chain`), explicitly note which one to use and why.
 

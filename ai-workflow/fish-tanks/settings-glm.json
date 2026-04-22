@@ -23,7 +23,11 @@
       "Bash(coverage*)",
       "Bash(python3 -m coverage*)",
       "Bash(mutmut-wrapper*)",
-      "Bash(coverage-wrapper*)"
+      "Bash(coverage-wrapper*)",
+      "Bash(npm test*)",
+      "Bash(npm run test*)",
+      "Bash(npx vitest*)",
+      "Bash(npx jest*)"
     ],
     "deny": [
       "Bash(sudo *)",

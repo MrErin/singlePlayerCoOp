@@ -166,7 +166,7 @@ AI agents have predictable blind spots. These rules are mandatory for AI-written
 
 **No Mirror Tests** — Never reimplement production logic in test. Assert `== 25`, not `== 5 * input`.
 
-**No Tautologies** — Asserting setup data tests nothing. The value must be **computed** by the function.
+**No Tautologies** — Asserting setup data tests nothing. The value must be **computed** by the function. This applies to ALL languages and frameworks, not just Python.
 
 ```python
 # ❌ Tautology — you set name="Alice"
@@ -178,9 +178,124 @@ user = User(name="Alice", role="admin")
 assert get_display_name(user) == "Alice (admin)"
 ```
 
+```tsx
+// ❌ Tautology — you pass level_name="Intermediate"
+render(<ProgressOverview level_name="Intermediate" />)
+expect(screen.getByText('Intermediate')).toBeInTheDocument()
+
+// ✅ Component computed something — conditional branch
+render(<ProgressOverview next_level_xp={null} />)
+expect(screen.getByText('Maximum Level Reached!')).toBeInTheDocument()
+```
+
+**The replacement test:** If you can replace the function/component with `return input` (or `<div>{props.x}</div>`) and the test still passes, it's a tautology.
+
 **No Section Dividers** — No `# ---` or flowerboxes. Class names are the grouping mechanism.
 
 **No Generic Assertions** — `is not None`, `isinstance(dict)`, `len > 0` never acceptable as sole assertion.
+
+## React / JSX Component Testing
+
+Component tests have a different failure mode than function tests: it's trivially easy to write tests that pass by accident because they only verify that React renders props. These tests create false confidence.
+
+### The "Would This Catch a Bug?" Standard
+
+Before writing a component test, ask: **if the component's logic were wrong, would this test fail?**
+
+If the answer is "no" or "only if someone deleted the JSX entirely," the test is not worth writing. Replace it with a test that exercises actual behavior.
+
+### Prop-In-Text-Out Is a Tautology
+
+Passing a prop and asserting that value appears in the DOM is the React equivalent of `assert x == x`. The test checks React's rendering pipeline, not your component's logic.
+
+```tsx
+// ❌ Tautology — tests React, not the component
+test('renders level name', () => {
+  render(<ProgressOverview level_name="Intermediate" />)
+  expect(screen.getByText('Intermediate')).toBeInTheDocument()
+})
+
+// ❌ Same problem, even with multiple props
+test('renders name and XP', () => {
+  render(<BadgeCard name="First Steps" achievements_completed={1} />)
+  expect(screen.getByText('First Steps')).toBeInTheDocument()
+  expect(screen.getByText('1/3')).toBeInTheDocument()
+})
+
+// ✅ Tests component logic — the conditional branch
+test('shows maximum reached when no next level', () => {
+  render(<ProgressOverview next_level_xp={null} total_xp={500} />)
+  expect(screen.getByText('Maximum Level Reached!')).toBeInTheDocument()
+})
+```
+
+**Rule:** A render-only assertion (prop appears in DOM) is acceptable ONLY when testing a conditional rendering branch. If the prop ALWAYS appears regardless of other props/state, the test is a tautology.
+
+### Test Behavior, Not Rendering
+
+Component tests should focus on what the component **does**, not what it **looks like**:
+
+**Test these:**
+- Conditional rendering based on computed values (not raw props)
+- User interactions (clicks, selections, form submissions)
+- Callback firing with correct arguments
+- State transitions (loading → error → success)
+- Side effects (timers, scroll lock, focus management)
+- Data fetching lifecycle (mount fetch, refetch on prop change)
+
+**Don't test these (unless they're conditional):**
+- That a prop value appears as text in the DOM
+- That child components render (that's the child's responsibility)
+- CSS class names (they break on style refactors with zero logic change)
+- Hardcoded label text (they break on copy changes with zero logic change)
+
+### API Wrapper Tests: Skip or Consolidate
+
+When the production code is a thin `fetch` wrapper with no business logic (URL construction + `response.json()` + error check), individual unit tests have negative value — they test the mock framework, not application code.
+
+**When to skip entirely:** If the function is `fetch(url) → response.json()` with no transformation, parameter construction, or conditional logic beyond `if (!response.ok) throw`, do not write a test for it.
+
+**When to consolidate:** Multiple API wrappers in the same module can share a single integration test that verifies URL construction, parameter encoding, and error handling in one test per non-trivial function.
+
+**What IS worth testing in API modules:**
+- Non-obvious error handling (e.g., HTTP 409 treated as success)
+- Request body construction (verify `activity_id`, `bonus_completed` are in the POST body)
+- Query parameter construction with multiple filters
+- Error message parsing from response body (especially fallback paths for non-JSON responses)
+
+### Factory-Default Tautologies
+
+When using test factories, asserting that factory defaults appear in the output is a tautology wrapped in indirection:
+
+```tsx
+// ❌ Tautology — factory default passes through unchanged
+const response = createActivitiesResponse()  // creates { activities: [{ name: 'Forward Crossovers' }] }
+render(<ActivityList activities={response.activities} />)
+expect(screen.getByText('Forward Crossovers')).toBeInTheDocument()
+
+// ✅ Tests computed behavior — filter logic, sorting, conditional display
+const activities = createActivitiesResponse({ activities: [
+  createActivity({ name: 'A', branch_code: 'BAL' }),
+  createActivity({ name: 'B', branch_code: 'CORE' }),
+]})
+render(<ActivityList activities={activities} filterBranch="BAL" />)
+expect(screen.getByText('A')).toBeInTheDocument()
+expect(screen.queryByText('B')).not.toBeInTheDocument()
+```
+
+**Rule:** When asserting values from factory-created data, the value must be **computed** by the component (filtered, transformed, formatted, conditionally shown) — not passed through unchanged.
+
+### Interaction Tests Over Render Tests
+
+The ratio in a component test file should favor interaction and behavior tests over render-only tests. A file with 7 render tests and 3 interaction tests is inverted.
+
+**Target ratio:** At least 50% of tests in a component file should exercise behavior (interactions, callbacks, state transitions, conditional branches).
+
+### Thin Wrapper Components
+
+Components that only compose other components (e.g., `ProgressView` renders `<ProgressOverview />`, `<BranchBreakdown />`, `<XPGraph />`) have no logic to test. Do not write render tests for them — the child components' tests provide that coverage.
+
+**Exception:** If the wrapper conditionally shows/hides children, test that conditional logic.
 
 ## Test Independence from Implementation
 
