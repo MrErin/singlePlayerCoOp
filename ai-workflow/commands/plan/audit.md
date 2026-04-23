@@ -186,6 +186,15 @@ Debt-specific checks per module:
 - **Dead code**: use Grep to find functions/classes defined but never called outside their own file. Verify before flagging — check for dynamic calls, test fixtures, and API endpoints. Route confirmed dead code per classification rules.
 - **Redundant code**: near-identical functions across files, copy-paste artifacts, multiple implementations of the same utility → route per classification rules.
 
+**Architectural assessment** (from `my-style/references/architecture.md`) — evaluate each module for:
+- **Coupling:** Does the module import from the wrong layer? Are there circular or inverted dependencies? Can the module be used in isolation?
+- **Separation of concerns:** Does the module mix responsibilities? Are models pure data? Are repositories pure CRUD? Is business logic in services, not UI or DB?
+- **Data layer:** Are column lists duplicated across methods? Are repositories single-responsibility? Do query results map to typed models? Is there a migration system?
+- **External service integration:** Is provider config externalized? Does retry logic distinguish transient from permanent errors? Is adding a provider low-friction (≤3 files)?
+- **Configuration:** Are constants centralized or scattered? Are display strings duplicated between constants and views?
+- **Code duplication:** Are filter lists, column lists, or input preparation logic duplicated across methods or files?
+- **Extensibility:** For each module, estimate the file touch count for adding a new table, provider, screen, or enum value. Flag any scenario that's high friction (7+ files) as an 🔥 ARCH card.
+
 **After each module**: Write AUTO findings to `audit-auto.md` and REVIEW findings as cards to `audit-review.md` before moving to the next module.
 
 When all modules are complete: update marker to `<!-- DEBT PASS: COMPLETE -->`.

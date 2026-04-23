@@ -33,7 +33,7 @@ Before starting, check if the target phase's `plan.md` exists with `<!-- STATUS:
 6. **Check `_planning/deferred.md`** for any items targeting this phase or a relevant work area. Incorporate them into the plan explicitly — note their origin so the user knows they're being surfaced from a previous phase's flag.
 7. **Scaffold `plan.md`** in the phase directory (e.g., `_planning/phases/02-read-ops/plan.md`) with `<!-- STATUS: DRAFT -->`, the goal statement, and dependencies on previous phases. This file is now the working output.
 8. **Research before planning:** Libraries, patterns, API docs, accessibility, security, and pitfalls relevant to this phase. **Append findings to plan.md** under "Research Notes." Flag uncertainties for user review.
-9. **Generate tasks**: Write specific tasks with files, action, verify, and done-when criteria. **Append to plan.md.**
+9. **Generate tasks**: Write specific tasks with files, action, verify, and done-when criteria. **Append to plan.md.** For tasks that add structural elements (new tables, providers, screens, services, enum values), estimate the file touch count per the extensibility guardrails in `my-style/references/architecture.md`. Flag any task estimated at 7+ file touches — this is high-friction and may need a prerequisite refactoring task added before it.
 10. **For implementation phases that will have a corresponding test phase:** Generate the **Interface Contracts** section. **Append to plan.md.** For each public function/method planned:
     - Signature with types
     - Purpose (one sentence)

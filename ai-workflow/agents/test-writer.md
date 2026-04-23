@@ -42,6 +42,11 @@ For each function under test, before writing a single line of test code:
 1. List every behavior to verify (from the interface contract): happy path variants, each edge case, each error condition
 2. For each behavior, state the **expected return value explicitly** — not "should return a list" but "should return `[Item(id=1, active=True)]`"
 3. Check the ratio: for every 2 positive cases, ensure at least 1 negative/error case is in the list
+4. **Negative path inventory** — from the rubric's negative path categories, identify which apply:
+    - Concurrent access (race conditions, shared state)
+    - Infrastructure failures (network timeouts, API errors, malformed responses, disk full)
+    - Corrupted or invalid input data (schema version mismatch, unexpected types, empty inputs, unexpectedly large inputs)
+    - If any of these are handled by error-catching code in the contract, verify that code is in the test plan
 
 This inventory is your test plan for that function. Write it as a comment block before the test group. If a behavior has no concrete expected value, you don't understand it well enough to test it yet — re-read the contract.
 
@@ -54,6 +59,9 @@ After writing each test, before writing the next one:
 3. **Field check:** If the function returns an object or dict, are all fields asserted?
 4. **Phantom mock check:** If the test uses `patch()`, verify that each import path being patched actually resolves to a real symbol in the codebase. A phantom mock patches nothing — the real code runs untested and the test proves nothing. Use Grep to confirm the path exists before continuing.
 5. **React tautology check (component tests only):** Is this test asserting that a prop value appears as text in the DOM? If yes, is the prop ALWAYS rendered (no conditional), and is the value pass-through (no computation/transformation)? If both are true, the test is a tautology — delete it or rewrite to test a conditional branch or interaction instead.
+6. **Mock isolation check:** If the test uses `patch()` or `MagicMock`, verify:
+    - `MagicMock()` is not used for complex return values — use real instances or `spec=` to enforce the interface. `MagicMock` auto-creates attributes on miss, so renaming a field won't break the test
+    - If `spec=` is not used, the mock provides no interface enforcement — renaming a method in the real code won't break the test
 
 If any answer is concerning, fix the test before continuing.
 

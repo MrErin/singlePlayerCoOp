@@ -34,7 +34,13 @@ This is an independent verification pass. You are in a fresh context — do not 
 2. **Read the phase's `plan.md`** — get the full task list and verify criteria.
 
 3. **Structural verification:** Before verifying individual tasks, perform three cross-cutting checks:
-    a. **Architectural coherence:** Identify established patterns in the codebase (layer boundaries, state management approach, error handling strategy) by reading `_planning/codebase.md` and scanning existing code with Grep/Read. Check each new file/change against those patterns. Flag anything that introduces a new pattern without evidence it's intentional — even if the code is functionally correct.
+    a. **Architectural coherence:** Identify established patterns in the codebase (layer boundaries, state management approach, error handling strategy) by reading `_planning/codebase.md` and scanning existing code with Grep/Read. Check each new file/change against those patterns. Flag anything that introduces a new pattern without evidence it's intentional — even if the code is functionally correct. Additionally, load `my-style/references/architecture.md` and verify:
+        - No inverted dependencies (high-level modules importing from low-level)
+        - No cross-layer responsibility mixing (business logic in UI/DB, rendering in services)
+        - Data layer patterns are consistent (column lists not duplicated, repos single-responsibility)
+        - External service integration follows existing patterns (config externalized, retry logic correct)
+        - Configuration is centralized, not scattered
+        - New structural elements (tables, providers, screens) are low-friction additions (≤3 files to change)
     b. **Scope verification:** List all files actually modified in this phase (use `git diff --name-only`). Cross-reference against the plan's task list. Flag plan-specified files that were not touched (silent skips) and files modified outside the plan's scope (scope creep).
     c. **Constraint reconciliation:** Extract all explicit constraints from the plan and `_planning/decisions.md` (dependency restrictions, interface contracts, scope limits, style mandates beyond `my-style` defaults). Verify each constraint against the final codebase state. Report any stated constraint not honored in the output.
     Add all findings to a "Review Findings" section.

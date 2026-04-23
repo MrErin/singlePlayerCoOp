@@ -79,6 +79,7 @@ Load these ONLY when the trigger condition matches:
 | `references/sql.md` | Writing queries or schema |
 | `references/web.md` | Working with HTML/CSS/ARIA |
 | `references/antipatterns.md` | Reviewing AI-generated code, running debt assessment, or auditing brownfield projects |
+| `references/architecture.md` | Creating new modules, adding cross-layer dependencies, extending data/service layer, or planning structural changes |
 
 **Do NOT preload references.** Load on demand.
 
