@@ -315,37 +315,63 @@ Check these before closing. A checked box means the signal is present — invest
 
 ---
 
-## 🃏 The Cluster Deck
+## 📄 Documentation Drift
 
-> **How to use**: One cluster = one source module. Each cluster contains all debt AND test cards for that area.
-> Complete one cluster before moving to the next — fixing debt and tests together prevents churn.
->
-> **Doc cards**: 📄 DOC
-> **Debt cards**: 🔥 ARCH | ⚙️ DESIGN | 🧹 QUALITY | 🗃️ DATA | ♿ ACCESS
-> **Test cards**: 🔍 SMELL | 🎯 GAP | 💀 MUTANT | 🧪 UPGRADE | 🔗 SEAM | 🔁 REDUNDANT | 👻 ORPHAN
->
-> **Difficulty**: 🟢 Quick (<30 min) | 🟡 Medium (30–60 min) | 🔴 Large (1–3 hr) | ⚫ XL (3+ hr)
-> **Risk** (debt cards): Low — isolated | Medium — shared interface | High — core component
-
-### Cluster: [Module Name]
-
-Source: `[module path]` | Tests: `[test file path or "none"]`
-Total: [n] cards ([n] debt / [n] test) | Est. effort: [time] | Risk ceiling: [High / Medium / Low / —]
-Auto-fix items delegated: [n or "none"] → see `audit-auto.md`
-
-| # | Done | Card | Type | Difficulty | Time |
-|---|------|------|------|------------|------|
-| 1 | [ ] | ARCH-001 | 🔥 | 🔴 | 60 min |
-| 2 | [ ] | GAP-001 | 🎯 | 🟡 | 30 min |
-| 3 | [ ] | SMELL-001 | 🔍 | 🟢 | 15 min |
-
-**Total estimated effort**: [time]
+[DOC cards written during Pass 0]
 
 ---
 
-## Card Details
+## Debt
 
-> All cards in card-number order. Use the cluster deck above to find priority order.
+### 🔥 Architecture Violations
 
-[Cards appear here, each using the exact template format from audit-template.md]
+[ARCH cards written during Pass 1]
+
+### ⚙️ Design Violations
+
+[DESIGN cards written during Pass 1]
+
+### 🧹 Code Quality
+
+[QUALITY cards written during Pass 1]
+
+### 🗃️ Data Issues
+
+[DATA cards written during Pass 1]
+
+### ♿ Accessibility
+
+[ACCESS cards written during Pass 1]
+
+---
+
+## Tests
+
+### 🔍 Test Smells
+
+[SMELL cards written during Pass 2]
+
+### 🎯 Coverage Gaps
+
+[GAP cards — derived mechanically from `coverage-wrapper gaps` output]
+
+### 💀 Survived Mutants
+
+[MUTANT cards written during Pass 2]
+
+### 🧪 Property-Based Testing Candidates
+
+[UPGRADE cards written during Pass 2]
+
+### 🔗 Integration Test Gaps
+
+[SEAM cards written during Pass 2]
+
+### 🔁 Duplicate Tests
+
+[REDUNDANT cards written during Pass 2]
+
+### 👻 Orphan Tests
+
+[ORPHAN cards written during Pass 2]
 ```
