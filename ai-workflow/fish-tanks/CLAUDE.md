@@ -30,6 +30,18 @@ The user will copy the output and apply it in the source repository manually.
 
 When templates or skill files include emojis, always use them — they serve as visual cues.
 
+## Effort Levels
+
+Claude Code has 5 effort levels (low, medium, high, xhigh, max). Use appropriate effort per task — don't pay high-effort token costs for mechanical work.
+
+**Defaults by task type:**
+- **low**: `/plan:status`, file reading/summarization, simple search
+- **medium**: `/plan:build` (task execution), `code-fixer`, `test-writer`, routine edits
+- **high**: `/plan:phase` (architecture decisions), `/plan:shift`, complex debugging
+- **max**: `/plan:MVP`, `/plan:feature` (requirements interviews), unfamiliar codebase deep exploration
+
+Default to medium when unsure. Only explicitly lower effort for known-mechanical tasks.
+
 ## Output Format
 
 **Write instructions, research, and reference material to markdown files — not the terminal.**

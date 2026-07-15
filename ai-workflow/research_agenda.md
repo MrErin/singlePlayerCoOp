@@ -15,17 +15,22 @@ This is a standing research agenda for the workflow system in this repository (s
 
 ## Active Research Topics
 
+> **"Harness Engineering"** — the practice of engineering the system around an AI agent (CLAUDE.md, hooks, skills, agents, phase gates) rather than just prompting — is now a recognized discipline. Multiple 2026 sources use this term (AWS re:Invent 2025, builder.aws, Addy Osmani). This agenda is a harness engineering effort. The term is useful for future research framing.
+
 ---
 
 ### 0. MCP Server Ecosystem for Development Workflow
 
 **Why it matters**: MCP servers extend Claude Code's capabilities with specialized tools for code analysis, documentation retrieval, testing, and more. The ecosystem is rapidly expanding — new servers appear weekly. Periodic re-evaluation ensures we're using the best tools available and not missing capabilities that would meaningfully improve the workflow.
 
-**Current baseline** *(as of 2026-03-20)*:
-- **In use**: Context7 (documentation lookup), web_reader (URL to markdown), 4_5v_mcp (image analysis)
+**Current baseline** *(as of 2026-07-14)*:
+- **In use**: Context7 (documentation lookup — still dominant, no challenger with broader coverage), web_reader (URL to markdown), 4_5v_mcp (image analysis)
 - **Reference servers available**: Memory (knowledge graph), Sequential Thinking, Filesystem, Git, Fetch, Time
-- **Ecosystem size**: 500+ servers in official registry, 200+ community servers
+- **Ecosystem size**: 500+ official + 200+ community servers (steady growth, no new dominant category)
 - **Key categories**: Database connectors, code analysis, browser automation, documentation, memory/RAG, API integrations
+- GitHub MCP integration for full PR lifecycle (read issues, implement, test, submit) now common across Claude Code, Cursor, and Windsurf
+- Browser automation (Playwright MCP) more stable but still not CI-gate-reliable
+- No AST-based code navigation server without pre-indexing; no file-based memory MCP integrating with git worktrees
 
 **Questions to ask when re-researching**:
 - Are there new servers specifically designed for agentic coding workflows (not just API wrappers)?
@@ -44,7 +49,7 @@ This is a standing research agenda for the workflow system in this repository (s
 **Review cadence**: Quarterly
 **Maps to**: All skills and agents; potentially replaces manual context management
 
-**Last checked**: 2026-03-20
+**Last checked**: 2026-07-14
 
 ---
 
@@ -52,10 +57,12 @@ This is a standing research agenda for the workflow system in this repository (s
 
 **Why it matters**: Within a build session, the code-fixer handles style drift. Across sessions, we rely on planning artifacts (lessons.md, decisions.md, codebase.md). Structured memory systems could make cross-session quality more consistent — agents that learn from previous phases rather than starting fresh each time.
 
-**Current baseline** *(as of 2026-03-20)*:
-- MemCoder (arXiv 2603.13258) converts git commit history into structured retrievable memory (functional keywords, root-cause analysis, verified solution summaries). Uses dual-stage retrieval — approximate nearest-neighbor then cross-encoder reranker.
-- Letta Context Repositories: git-backed agent memory with version-controlled commits per memory update. Concurrent subagents work in isolated worktrees and merge learned context back via standard git conflict resolution.
-- Both require external infrastructure not available in this setup. lessons.md is the current lightweight equivalent.
+**Current baseline** *(as of 2026-07-14)*:
+- Claude Code's **auto-memory** is now a first-class, documented system. Per-project `MEMORY.md` in `.claude/projects/` loads into every session. This system already has it in place.
+- Top 8 memory frameworks in 2026: Hindsight, mem0, Zep, Letta, Cognee, MemSync, plus AWS and Azure managed offerings — **all require external infrastructure** (vector DBs, graph DBs, or managed services).
+- File-based memory with CLAUDE.md + auto-memory + lessons.md remains the practical state of the art for Claude Code workflows without external dependencies.
+- Oracle published a comparison (filesystem vs database for agent memory) confirming filesystems excel for single-user prototypes and small teams — exactly this use case.
+- No published evidence that lessons.md-style accumulation measurably changes agent output quality over time. Benefit appears to be human-facing (audit trail, onboarding) rather than agent-facing.
 
 **Questions to ask when re-researching**:
 - Are there practical, file-based structured memory approaches that work with Claude Code's session model without external services?
@@ -65,9 +72,11 @@ This is a standing research agenda for the workflow system in this repository (s
 **What would trigger a change**: A file-based structured memory approach that works within the existing worktree/planning-artifacts model — no vector database, no external service required.
 
 **Review cadence**: Quarterly
-**Maps to**: iterative-build SKILL.md, lessons.md, potentially a new structured memory format
+**Maps to**: iterative-build SKILL.md, lessons.md, auto-memory MEMORY.md, potentially a new structured memory format
 
-**Last checked**: 2026-03-20
+**Last checked**: 2026-07-14
+
+> **Potential action**: Consider whether high-value `lessons.md` entries should be selectively promoted to auto-memory MEMORY.md for stronger cross-session persistence. Auto-memory loads into every session; lessons.md only loads when iterative-build is active. Caveat: MEMORY.md has a 200-line truncation limit — only truly stable, cross-project patterns should be promoted. Requires careful curation, not automation.
 
 ---
 
@@ -75,10 +84,12 @@ This is a standing research agenda for the workflow system in this repository (s
 
 **Why it matters**: The current agent set (code-fixer per-task, code-reviewer at phase level, test-writer for test phases) was designed around today's model context and cost constraints. As parallelism gets cheaper and models improve, the optimal agent split may shift.
 
-**Current baseline** *(as of 2026-03-20)*:
-- Qodo 2.0: parallel specialist reviewers (security, logic, style, test quality) running concurrently, merged by a synthesizer. Achieves 60.1% F1 on real issues — best in class, but still misses 40%.
-- SWE-Search (arXiv 2410.20285, ICLR 2025): Value Agent evaluates whether a solution strategy is worth pursuing before code is written. 23% relative improvement over baseline SWE-agent via Monte Carlo Tree Search.
-- OpenHands `AgentDelegateAction`: formal primitive for any agent to spawn a subtask agent with clean context, receive condensed summary, continue.
+**Current baseline** *(as of 2026-07-14)*:
+- Claude Code's subagent system is mature and well-documented. Worktree isolation (`isolation: "worktree"`) is a first-class feature — each subagent gets its own git worktree, preventing conflicts.
+- Qodo 2.0: parallel specialist reviewers (security, logic, style, test quality) running concurrently, merged by a synthesizer. Achieves 60.1% F1 on real issues — best in class, but still misses 40%. No F1 improvement past 80% threshold yet.
+- "Harness Engineering" is emerging as a named discipline for exactly what this system does — the harness (CLAUDE.md, hooks, skills, agents) that shapes agent behavior.
+- Running 10+ parallel Claude agents on the same codebase is now documented and practical. Orchestration patterns: sequential delegation, parallel specialist, fan-out/fan-in, hierarchical coordination.
+- Agent Teams: emerging Claude Code feature for coordinated multi-agent work beyond simple subagents. Worth monitoring (see Watching section).
 
 **Questions to ask when re-researching**:
 - Have parallel specialist reviewer F1 scores improved past 80%? What architecture enabled it?
@@ -90,7 +101,7 @@ This is a standing research agenda for the workflow system in this repository (s
 **Review cadence**: Quarterly
 **Maps to**: code-reviewer agent, code-fixer agent, plan:build, plan:review
 
-**Last checked**: 2026-03-20
+**Last checked**: 2026-07-14
 
 ---
 
@@ -98,10 +109,12 @@ This is a standing research agenda for the workflow system in this repository (s
 
 **Why it matters**: Factory.ai's framing — lint rules as executable specifications, not style preferences — suggests that more of my-style's reasoning could be encoded deterministically rather than relying on LLM judgment. Deterministic catches are cheaper, faster, and more consistent than LLM-based ones.
 
-**Current baseline** *(as of 2026-03-20)*:
-- Factory.ai (factory.ai/news/using-linters-to-direct-agents): categorizes lint rules into seven types for agent navigability: grep-ability, glob-ability, architectural boundaries, security/privacy, testability, observability, documentation signals.
-- CodeRabbit: AST Grep extracts deterministic structural facts (variable names, call graphs) which ground LLM review — reduces hallucination in review feedback.
-- Ruff supports custom plugins but the ecosystem for AI-generated antipattern rules is thin as of early 2026.
+**Current baseline** *(as of 2026-07-14)*:
+- Ruff now has **900+ built-in rules** (up from ~800). GitHub discussion on custom plugin support (astral-sh/ruff#8409) remains open — no resolution.
+- Factory.ai (factory.ai/news/using-linters-to-direct-agents): categorizes lint rules into seven types for agent navigability.
+- CodeRabbit: AST Grep + LLM hybrid for grounded review feedback.
+- Semgrep Assistant added AI-powered triage and remediation guidance. The `/project/semgrep-rules/` directory with 16 custom rules remains the best option for custom antipattern detection.
+- No tooling converts prose guidelines into lint configuration. "AI-native Python stack" articles in 2026 consistently recommend uv + ruff + Claude Code but all use ruff's built-in rules only.
 
 **Questions to ask when re-researching**:
 - Are teams publishing shared ruff/eslint rule sets for AI-generated antipatterns specifically (mutable defaults, bare except, mirror tests, etc.)?
@@ -113,7 +126,7 @@ This is a standing research agenda for the workflow system in this repository (s
 **Review cadence**: Semi-annual
 **Maps to**: code-fixer agent, my-style/references/antipatterns.md
 
-**Last checked**: 2026-03-20
+**Last checked**: 2026-07-14
 
 ---
 
@@ -121,10 +134,14 @@ This is a standing research agenda for the workflow system in this repository (s
 
 **Why it matters**: The core quality problem this system addresses is context dilution over long builds. If larger context windows (200k+, 1M+) genuinely solve dilution, the architecture simplifies significantly. If it's a relevance problem rather than a size problem, the current approach of loading specialist files on demand is correct and should be strengthened.
 
-**Current baseline** *(as of 2026-03-20)*:
-- Agent READMEs study (arXiv 2511.12884): context files score 16.6 Flesch Reading Ease (comparable to legal documents) — effectively unreadable even in large windows. Suggests relevance, not size, is the binding constraint.
-- Stripe's directory-scoped rules: rules attach automatically as agents traverse the filesystem. Works better than large single context dumps regardless of model window size.
-- Codified Context paper (arXiv 2602.20478): 660-line always-loaded constitution + specialist files loaded per context outperforms one large file across 283 sessions.
+**Current baseline** *(as of 2026-07-14)*:
+- **"Context Engineering" is now a named discipline.** Multiple 2026 articles and guides on curating agent context for quality.
+- Research paper "The Maximum Effective Context Window": all tested models fall **far short of their maximum context window by as much as >99%**. Effective context shrinks dramatically as window fills.
+- "State of Context Engineering in 2026" (Towards AI): "Every token in the context window competes for attention. As context grows, precision drops, reasoning weakens." Frames this as a relevance problem, not a size problem.
+- Stanford research: model accuracy drops 30%+ when relevant information sits in the **middle** of long context ("lost in the middle" problem persists into 2026).
+- Agent READMEs study (arXiv 2511.12884): context files score 16.6 Flesch Reading Ease — effectively unreadable even in large windows.
+- Codified Context paper (arXiv 2602.20478): 660-line constitution + specialist files loaded per context outperforms one large file.
+- Directory-scoped context injection has NOT become a native Claude Code feature — still requires manual implementation.
 
 **Questions to ask when re-researching**:
 - Is there published evidence (not vendor claims) that 200k+ context windows reduce style-drift errors in multi-task builds?
@@ -136,7 +153,7 @@ This is a standing research agenda for the workflow system in this repository (s
 **Review cadence**: Quarterly
 **Maps to**: code-fixer tiered loading, CLAUDE.md structure, my-style skill loading discipline
 
-**Last checked**: 2026-03-20
+**Last checked**: 2026-07-14
 
 ---
 
@@ -144,11 +161,23 @@ This is a standing research agenda for the workflow system in this repository (s
 
 **Why it matters**: Benchmark scores are a rough proxy for underlying model and scaffold improvement. Significant score jumps usually signal an architectural change worth understanding, not just a better model. They're also useful for calibrating expectations — the 29.6% regression rate on "plausible" agent fixes (arXiv 2509.06216) is a useful grounding number to track over time.
 
-**Current baseline** *(as of 2026-03-20)*:
-- SWE-bench Verified: Live-SWE-agent at 77.4% (open scaffolds). SWE-bench Pro (harder subset): 45.8%.
-- SWE-bench-CL (arXiv 2507.00014): new continual learning benchmark — measures cross-task knowledge accumulation. Directly relevant to whether lessons.md-style accumulation works.
-- Production: Devin's merged PR rate at 67% (up from 34% in 2024). 29.6% of plausible agent fixes introduce behavioral regressions on rigorous retesting.
-- Review delay: 68%+ of agent PRs face review delays, suggesting output quality is a human-trust bottleneck as much as a technical one.
+**Current baseline** *(as of 2026-07-14)*:
+
+| Model | SWE-bench Verified | SWE-bench Pro | Notes |
+|---|---|---|---|
+| Fable 5 | 95.0% | 80.3% | New leader |
+| Claude Mythos Preview | 93.9% | — | Anthropic preview |
+| Claude Opus 4.8 | 88.6% | 69.2% | Released May 28, 2026 |
+| GPT-5.5 | 88.7% | — | Near-tied with Opus 4.8 |
+| Claude Opus 4.7 | 87.6% | 64.3% | Released April 16, 2026 |
+| Claude Opus 4.6 | 80.8% | ~57.5% | **Current system model** |
+| Claude Sonnet 4.6 | 79.6% | — | **Current execution model** |
+
+- **AI-assisted PRs merge at less than half the rate of human code** (LinearB 2026 benchmarks) — worse than the previous 68% review delay baseline. Quality/trust remains the primary bottleneck.
+- Human reviewers exchange **11.8% more rounds** when reviewing AI-generated code vs human-written (arXiv 2603.15911).
+- Devin's merged PR rate: still at **67%** on defined tasks (unchanged). Pricing dropped to $20/month + $2.25/agent.
+- SWE-bench Verified scores have crossed 85%+ for Opus 4.7/4.8. The scaffold change: improved tool use, better reasoning chains, harness-level improvements.
+- Windsurf merged with/acquired Devin.
 
 **Questions to ask when re-researching**:
 - Have SWE-bench Verified scores crossed 85%+ for open scaffolds? What scaffold change enabled it?
@@ -161,7 +190,7 @@ This is a standing research agenda for the workflow system in this repository (s
 **Review cadence**: Quarterly
 **Maps to**: Calibration baseline; architectural decisions about agent complexity
 
-**Last checked**: 2026-03-20
+**Last checked**: 2026-07-14
 
 ---
 
@@ -169,13 +198,16 @@ This is a standing research agenda for the workflow system in this repository (s
 
 **Why it matters**: The right model choice per task is one of the highest-leverage cost and quality levers in this workflow. Model lineups and pricing change fast — Anthropic, Z.ai, and Google have all made significant changes in the last 6 months. The plan/execute split (Opus plans, Sonnet executes) is now explicitly supported in Claude Code, but GLM pricing pressure may shift what "default" means. An outdated selection guide means paying too much for mechanical tasks or getting worse results on planning tasks.
 
-**Current baseline** *(as of 2026-04-13)*:
-- Claude model lineup: Haiku 4.5 ($1/$5), Sonnet 4.6 ($3/$15), Opus 4.6 ($5/$25). All 200K context.
-- Plan/execute split is the validated core pattern: Opus for requirements/planning/architecture, Sonnet for code generation/test writing/review.
-- GLM-5.1 (Z.ai): self-reported SWE-bench Pro #1 (58.4%), $1.40/$4.40 per M — credible Sonnet alternative for code generation. Self-reported benchmarks not independently corroborated.
-- GLM-4.7-Flash: free, 203K context, no hard daily cap — best free-tier model for sustained dev workflow use.
-- Haiku 4.5's key constraint: IFBench 54.3% — fails multi-constraint instruction prompts. Not suitable for code-fixer, test-writer, code-reviewer agents.
-- Free ChatGPT (GPT-5.2, 10 msgs/5 hrs) and Gemini 2.5 Pro (5 deep prompts/day): not suitable as daily-driver workflow models. Gemini useful only for occasional large-context (1M) analysis.
+**Current baseline** *(as of 2026-07-14)*:
+- Claude model lineup: Haiku 4.5 ($1/$5), Sonnet 4.6 ($3/$15), Opus 4.8 ($5/$25). All 200K context.
+- **Opus 4.7** released April 16, 2026. **Opus 4.8** released May 28, 2026 (SWE-bench Verified: 88.6%, SWE-bench Pro: 69.2%). Same pricing as Opus 4.6.
+- **Opus 4.8 fast mode pricing dropped 3x** — worth noting for cost-conscious sessions.
+- Plan/execute split is even more justified — gap between Opus 4.8 and Sonnet 4.6 widened (88.6% vs 79.6%).
+- Sonnet 4.6: users prefer over Sonnet 4.5 ~70% of the time; preferred over Opus 4.6 for many practical tasks; 128K output vs Opus 4.6's 64K output.
+- GLM-5.1 (Z.ai): no new independent corroboration since last check. No GLM-5.2 or next-gen release found.
+- GLM-4.7-Flash: free tier status unchanged. Still best free-tier model.
+- Haiku 4.5's key constraint: IFBench still at **54.3%**. Claude models cluster between 54.3% and 58.6% on IFBench. Not suitable for code-fixer, test-writer, code-reviewer agents. No Haiku update released.
+- Fable 5 at 95.0% SWE-bench Verified — new leader. GPT-5.5 at 88.7% — near-tied with Opus 4.8.
 - Full model selection guide written at: `still-thinking/dev-workflow_model-selection-guide.md`
 
 **Questions to ask when re-researching**:
@@ -192,11 +224,12 @@ This is a standing research agenda for the workflow system in this repository (s
 - GLM-5.1 benchmarks independently corroborated → update confidence level for code generation recommendation
 - A new Claude or GLM model that materially changes the pricing tier structure
 - Any model that meaningfully outperforms Opus specifically on conversational requirements ambiguity-surfacing tasks
+- Opus 4.8 fast mode quality benchmarks suggesting it's viable as the default for execution tasks (cost savings without quality regression)
 
-**Review cadence**: Quarterly
+**Review cadence**: Event-driven (triggered by Anthropic model announcements, major benchmark shifts, or pricing changes). Quarterly at minimum.
 **Maps to**: `still-thinking/dev-workflow_model-selection-guide.md`; agent frontmatter model settings in `agents/`
 
-**Last checked**: 2026-04-13
+**Last checked**: 2026-07-14
 
 ---
 
@@ -204,10 +237,12 @@ This is a standing research agenda for the workflow system in this repository (s
 
 **Why it matters**: Fowler's critique of Kiro/spec-kit/Tessl is about fully autonomous spec-to-code generation — agents ignore specs, specs drift from code, false confidence accumulates. This system avoids those failure modes via continuous planning artifact updates and human phase gates. But the tools in this space are evolving, and if spec-driven approaches add meaningful human checkpoints, there may be useful techniques to borrow.
 
-**Current baseline** *(as of 2026-03-20)*:
+**Current baseline** *(as of 2026-07-14)*:
 - Fowler (martinfowler.com, 2025): agents frequently ignore specs in autonomous tools. Parallel to Model-Driven Development's failure — model drifts from code, maintaining both becomes more expensive than just maintaining the code.
 - This system's distinction: plans serve the human (approved at each phase, adaptive, updated continuously). Spec-driven tools' plans serve the agent (autonomous generation target, static, allowed to drift).
 - The key prevention mechanism: state.md, decisions.md, lessons.md surface agent decisions into planning artifacts rather than leaving them undocumented.
+- Kiro has matured — now enforces human-in-the-loop at **every** phase (requirement, design, implementation). Converges with this system's phase gate model.
+- **"Harness Engineering"** is the emerging term for exactly what this system does — engineering the system around the AI agent (CLAUDE.md, hooks, skills, agents, phase gates) rather than just prompting. Used in AWS re:Invent 2025 talks and builder.aws articles.
 
 **Questions to ask when re-researching**:
 - Have Kiro, spec-kit, or similar tools added human gate patterns that bring them closer to this system's model?
@@ -219,7 +254,34 @@ This is a standing research agenda for the workflow system in this repository (s
 **Review cadence**: Semi-annual
 **Maps to**: plan:MVP, plan:feature, plan:shift, plan:phase, requirements.md management
 
-**Last checked**: 2026-03-20
+**Last checked**: 2026-07-14
+
+---
+
+### 8. Cost Efficiency and Instruction Overhead
+
+**Why it matters**: The research agenda tracks quality metrics only (SWE-bench, F1 scores). It has no trigger conditions for cost efficiency or instruction overhead. Models have improved significantly (Opus 4.8 at 88.6% vs 4.6 at 80.8%), and Claude Code now has effort levels (low through max). Some instructions may exist to correct failure modes that newer models no longer exhibit, and the system may be paying full-effort token costs for mechanical tasks.
+
+**Current baseline** *(as of 2026-07-14)*:
+- The deployed CLAUDE.md is ~147 lines. A typical `/plan:build` session loads: CLAUDE.md + iterative-build SKILL.md (~195 lines) + my-style SKILL.md (~116 lines) + reference files + planning files = ~500-800 lines of instructions before user code.
+- Claude Code has 5 effort levels (low, medium, high, xhigh, max). Research shows "Low quietly killed Opus 4.6" — Opus at low effort outperforms older models at default. Max effort is often wasteful for mechanical tasks.
+- No effort level guidance exists in any command, agent, or skill in this system.
+- No instruction has been systematically tested for whether it's still needed with current models (Opus 4.8, Sonnet 4.6).
+- Auto-memory MEMORY.md is currently empty — stable project patterns could accumulate here for cross-session persistence, reducing the need for always-loaded instructions.
+
+**Questions to ask when re-researching**:
+- Has the instruction load for a `/plan:build` session been measured? What fraction of context window does it consume?
+- Can specific instructions be removed without quality regression on a controlled build test?
+- Are effort levels producing measurable cost savings without quality loss?
+- Are there instructions in CLAUDE.md that duplicate what hooks/settings already enforce mechanically?
+- Should high-value lessons.md entries be selectively promoted to auto-memory for stronger cross-session persistence?
+
+**What would trigger a change**: If the instruction load for a `/plan:build` session exceeds a reasonable token budget and a controlled test shows removing specific instructions produces no quality regression, simplify. If effort level optimization shows measurable cost savings without quality regression, add guidance to commands/agents.
+
+**Review cadence**: Quarterly
+**Maps to**: CLAUDE.md template, all skills, all commands, all agents, auto-memory
+
+**Last checked**: 2026-07-14
 
 ---
 
@@ -228,7 +290,7 @@ This is a standing research agenda for the workflow system in this repository (s
 
 ### Online Session-Local Tool Synthesis
 **What it is**: Agents synthesizing custom analysis tools (parsers, static analyzers) during a session for the specific problem structure. Live-SWE-agent (arXiv 2511.13646) achieved 77.4% SWE-bench Verified this way.
-**Why not yet**: Tools don't persist across sessions, so style consistency gains don't carry forward. Requires careful sandboxing.
+**Why not yet**: Tools don't persist across sessions, so style consistency gains don't carry forward. Requires careful sandboxing. Live-SWE-agent's 77.4% is now far from SOTA (Fable 5 at 95.0%, Opus 4.8 at 88.6%).
 **Watch for**: Session-local tool synthesis that is safe and containable within Claude Code's environment, with a mechanism for promoting useful tools to the permanent toolkit.
 
 ### Trajectory Evaluation / Value Agent
@@ -255,6 +317,11 @@ This is a standing research agenda for the workflow system in this repository (s
 **What it is**: Instead of constraining the coding agent with negative instructions ("don't over-engineer", "don't add unnecessary tests"), let it build freely, then run a separate cleanup agent that removes unnecessary defensive code, over-engineered abstractions, redundant tests, and excessive error handling for impossible scenarios. From ECC's autonomous loops skill.
 **Why not yet**: Works best for greenfield code. On brownfield projects with existing complexity, the cleanup agent might remove things that look unnecessary but serve a purpose. Current code-fixer agent operates on style only and explicitly cannot touch logic. Would need a new agent definition with careful scoping.
 **Watch for**: A cleanup agent pattern that reliably distinguishes intentional complexity from over-engineering on brownfield code, OR a benchmark showing measurable reduction in code complexity without regression increase.
+
+### Agent Teams in Claude Code
+**What it is**: Coordinated multi-agent work beyond simple subagents. Agent Teams enable patterns like parallel feature development, concurrent audit passes, or long-running parallel work on the same codebase with shared state coordination.
+**Why not yet**: Emerging feature — maturity and reliability unclear. Current subagent model handles most needs. Parallel development patterns need careful merge conflict management.
+**Watch for**: Agent Teams stabilizing enough for parallel feature development on independent phases, or for concurrent audit/review passes that the current sequential approach can't handle.
 
 ### Continuous Learning / Instinct System
 **What it is**: An observation-and-extraction pipeline where hooks capture tool use events, a background agent analyzes them for behavioral patterns, and extracted patterns become "instincts" — atomic behavioral units with one trigger, one action, a confidence score (0.3-0.9), and domain tag. Instincts scoped per-project and promoted to global at high confidence. From ECC v1.9.0.
