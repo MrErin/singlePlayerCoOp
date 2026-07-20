@@ -184,6 +184,7 @@ Audits are **user-initiated** (`/plan:audit`), not automated. The roadmap includ
 
 - **my-style**: Coding standards (always)
 - **post-build-review**: Final review (project end)
+- **Versioning**: `/plan:archive` prepares changelog entries when `CHANGELOG.md` exists. Version bumps are user-initiated at release time.
 - **Domain skills**: Project-specific requirements
 
 # Notes

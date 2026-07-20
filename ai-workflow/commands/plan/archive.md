@@ -65,10 +65,19 @@ allowed-tools: Bash, Read, Write
    - Add a note to each entry: `Shipped in [archive-slug] (YYYY-MM-DD)`
    - If `_planning/backlog/` doesn't exist, skip this step silently.
 
-8. **Present the extraction for review**: Show the user what was written to `project-requirements/[name].md` and what lines were added to `index.md` and `core.md`. If backlog items were updated in step 7, include them: "Updated backlog items to shipped: F-008, B-003, Q-003." If decisions were cycled in step 5, include a summary: "Moved N decisions to project-requirements, archived M as feature-specific trade-offs, kept K as active." Say: "Review these before I clear the workspace. Edit the files directly if anything is missing or wrong."
+8. **Prepare changelog entries** (only if `CHANGELOG.md` exists in the project root):
+   - Read `CHANGELOG.md` to understand the existing format and most recent version.
+   - From the phase summaries already read in step 4, extract user-visible changes from the "Behavior Changes" and "What Was Built" sections.
+   - Categorize entries per [Keep a Changelog](https://keepachangelog.com/) format: Added, Changed, Fixed, Removed, Security.
+   - Update the `[Unreleased]` section of `CHANGELOG.md` with the categorized entries. If no `[Unreleased]` section exists, create one above the most recent version entry.
+   - Suggest a version bump level based on the changes (PATCH for fixes only, MINOR for new features or behavior changes, MAJOR for breaking changes). If the project is pre-1.0, note that minor bumps may include breaking changes.
+   - Do NOT modify the version string in any source file — version bumps happen at release time, not archive time.
+   - If `CHANGELOG.md` does not exist, skip this step silently.
+
+9. **Present the extraction for review**: Show the user what was written to `project-requirements/[name].md` and what lines were added to `index.md` and `core.md`. If backlog items were updated in step 7, include them: "Updated backlog items to shipped: F-008, B-003, Q-003." If decisions were cycled in step 5, include a summary: "Moved N decisions to project-requirements, archived M as feature-specific trade-offs, kept K as active." If changelog entries were prepared in step 8, show the categorized entries and suggested version bump level. Say: "Review these before I clear the workspace. Edit the files directly if anything is missing or wrong."
    - **STOP and wait for user confirmation before continuing.**
 
-9. **Clear the workspace** (only after user confirms step 8):
+10. **Clear the workspace** (only after user confirms step 9):
    - Delete `_planning/requirements.md`
    - Reset `_planning/roadmap.md` to an empty template (phases moved to archive)
    - Delete the `_planning/phases/` directory
@@ -78,11 +87,12 @@ allowed-tools: Bash, Read, Write
    - `decisions.md` is reset to empty template by step 5 (only "active undecided" entries survive)
    - If `_planning/audit-review.md` or `_planning/audit-auto.md` exist, copy them to `_planning/archive/[name]/` before clearing (the user may have already deleted them — skip silently if absent)
 
-10. **Output**: Confirm archive location, confirm `project-requirements/` was updated, and suggest next step: "Run `/plan:MVP` for a new project or `/plan:feature` for the next feature on this codebase."
+11. **Output**: Confirm archive location, confirm `project-requirements/` was updated. If changelog was updated, remind user that `[Unreleased]` entries are ready for the next release. Suggest next step: "Run `/plan:MVP` for a new project or `/plan:feature` for the next feature on this codebase."
 
 ## Rules
 
-- Do not clear workspace before user confirms extraction (step 8)
+- Do not clear workspace before user confirms extraction (step 9)
+- Changelog preparation (step 8) is opt-in by file detection — if `CHANGELOG.md` exists, prepare entries; if not, skip silently. Do not ask the user whether to maintain a changelog.
 - `decisions.md` is **cycled at archive** — codified decisions move to `project-requirements/`, feature-specific trade-offs archive with the feature, only active undecided items survive into the next cycle
 - `deferred.md`, `codebase.md`, and `lessons.md` stay at root and are never deleted — only `lessons.md` gets an archive copy
 - Phase summaries are required reading in step 4 — they capture behavior changes the requirements doc may not mention
