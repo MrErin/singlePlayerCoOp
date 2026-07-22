@@ -106,7 +106,6 @@ Secret and credential files are blocked by the settings deny list and `block-sec
 
 - Standard dev tools already installed: pytest, coverage, mutmut, hypothesis, ruff
 - Git is available for reading (status, diff, log) — commits are handled by the user
-- `format-on-save.py` hook runs automatically after every file write — no need to manually format after edits
 
 ## Ephemeral Environment
 
@@ -141,18 +140,16 @@ If a package import fails (`ModuleNotFoundError`, `ImportError`), diagnose befor
 
 `PermissionError` or `Operation not permitted` from `shutil`, `os.chmod`, `os.fchmod`, or `copystat` is always a fish tank seccomp limitation. Do not retry or work around — stop and report to user.
 
-## Testing Tools
+## Testing
 
-Use the wrapper scripts, never raw commands. They handle output formatting, suppress noise, and write detailed results to `/project/mutmut_output/` for token-efficient inspection via the Read tool.
+**The user runs all test suites.** Do not run full test suites (`pytest`, `npm test`, `npx vitest`) yourself. The fish tank creates friction with test running — missing packages, version mismatches, seccomp blocks — and full-suite runs consume context with fix-rerun-fix churn. The `block-test-suite.py` hook enforces this.
 
-**Order of operations — always coverage first, mutation second:**
+**What you can do:**
+- Run targeted tests on a specific file or class: `pytest path/to/test_file.py::TestClass`
+- Run `pytest --collect-only -q path/to/file.py` to verify test collection
 
-1. `coverage-wrapper run` then `coverage-wrapper gaps` — cheap (one test run)
-2. `mutmut-wrapper run` — expensive (one run per mutant), only after branch coverage ≥80%
-3. Never skip to mutation testing. If coverage is poor, mutation results are noise.
-
-Run `coverage-wrapper --help` or `mutmut-wrapper --help` for full command reference.
+**What to ask the user to do:**
+- Run full test suites and paste failures
+- Run `coverage-wrapper` and `mutmut-wrapper` and paste results
 
 **Do NOT modify `pyproject.toml` mutmut config** unless the user asks.
-
-If `mutmut-wrapper` fails with `PermissionError` during file copy, the entrypoint shutil patch may not have deployed. Report to the user — do not attempt to create or modify `sitecustomize.py` yourself.

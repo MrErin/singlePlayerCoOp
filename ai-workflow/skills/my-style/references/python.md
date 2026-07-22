@@ -61,3 +61,7 @@ def get_user(user_id: int) -> dict | None:
 ```
 
 For SQL query formatting and parameterization, see `references/sql.md`.
+
+## Edit Ordering with Linters
+
+**When adding or changing imports alongside body edits:** update body references first, then add or restore the import. Linters (ruff, prettier) may run after every write and will remove imports that aren't yet referenced. Adding the import first causes it to be deleted before the body edit lands.

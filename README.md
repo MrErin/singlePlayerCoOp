@@ -96,7 +96,7 @@ Hooks enforce safety and formatting at the tool boundary. These run automaticall
 | `block-secrets`     | Prevents reading secret files (.env, *.pem, *.key, credentials.*, etc.)                 |
 | `block-git`         | Prevents git writes (commits, pushes, rebases) — user handles version control           |
 | `block-workarounds` | Blocks environment workarounds in production code (sys.modules manipulation, etc.)      |
-| `format-on-save`    | Auto-formats files after writes using project linters                                   |
+| `block-test-suite`  | Blocks full test suite runs — user runs tests and pastes results                        |
 | `allow-readonly`    | Permits read-only git operations (status, diff, log)                                    |
 
 # System Conventions

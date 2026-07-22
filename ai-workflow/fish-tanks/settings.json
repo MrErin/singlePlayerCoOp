@@ -10,16 +10,8 @@
       "mcp__context7__*",
       "mcp__web_reader__*",
       "Bash(claude*)",
-      "Bash(pytest*)",
-      "Bash(python3 -m pytest*)",
-      "Bash(coverage*)",
-      "Bash(python3 -m coverage*)",
-      "Bash(mutmut-wrapper*)",
-      "Bash(coverage-wrapper*)",
-      "Bash(npm test*)",
-      "Bash(npm run test*)",
-      "Bash(npx vitest*)",
-      "Bash(npx jest*)"
+      "Bash(pytest *)",
+      "Bash(python3 -m pytest *)"
     ],
     "deny": [
       "Bash(sudo *)",
@@ -107,6 +99,10 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/block-workarounds.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-test-suite.py"
           }
         ]
       },
@@ -137,18 +133,7 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ~/.claude/hooks/format-on-save.py",
-            "timeout": 15
-          }
-        ]
-      }
-    ],
+    "PostToolUse": [],
     "Stop": [
       {
         "matcher": "",
