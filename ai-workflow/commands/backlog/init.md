@@ -16,6 +16,7 @@ allowed-tools: Bash, Read, Write, Glob
    ```
    _planning/backlog/
    ├── _inbox.md
+   ├── priorities.md
    ├── bugs.md
    ├── features.md
    ├── questions.md
@@ -49,6 +50,27 @@ But don't stress about it. Triage sorts everything out.
 ---
 
 -
+```
+
+### priorities.md
+
+```markdown
+# 🎯 Priorities
+
+Manually curated shortlist. IDs reference catalog entries (bugs.md, features.md, etc.).
+Move items between sections freely. This file is the "what's next" view — the catalog files are the source of truth for details.
+
+## Now
+
+_Blocking or degrading current work._
+
+## Next
+
+_First candidates when current feature completes._
+
+## Later
+
+_Important but not urgent._
 ```
 
 ### bugs.md

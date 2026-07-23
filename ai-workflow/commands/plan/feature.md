@@ -54,9 +54,10 @@ Check for `[slug]-product-brief.md` in the current or parent directory. If found
 
 Check if `_planning/backlog/` exists. If it does:
 
-1. Ask: "Do you have backlog items to incorporate? Reference them by ID (e.g., F-008, B-003) or say 'no' to skip."
-2. If yes: read the referenced entries and any linked specs. Use their descriptions as seed context.
-3. At the end: update each referenced item's status from `open` to `planned`, and add `**Incorporates:** F-008, B-003` to the requirements doc.
+1. If `priorities.md` exists, read it and show the user their Now / Next items as candidates: "Your current priorities list these as candidates — want to incorporate any?"
+2. Ask: "Any other backlog items to incorporate? Reference them by ID (e.g., F-008, B-003) or say 'no' to skip."
+3. If yes: read the referenced entries and any linked specs. Use their descriptions as seed context.
+4. At the end: update each referenced item's status from `open` to `planned`, and add `**Incorporates:** F-008, B-003` to the requirements doc.
 
 ## Running Draft
 

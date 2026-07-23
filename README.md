@@ -59,11 +59,10 @@ The backlog system lives in `_planning/backlog/`. It lets me dump random ideas, 
 
 | Command              | What it does                                                          | When to use                                              |
 | -------------------- | --------------------------------------------------------------------- | -------------------------------------------------------- |
-| `/backlog:init`      | Creates `_planning/backlog/` with catalog files and inbox             | Once per project, when adopting the backlog workflow     |
+| `/backlog:init`      | Creates `_planning/backlog/` with catalog files, inbox, and priorities | Once per project, when adopting the backlog workflow     |
 | `/backlog:triage`    | Processes inbox items, assigns stable IDs, appends to catalog files   | After dumping ideas into `_inbox.md`                     |
-| `/backlog:status`    | Shows counts by type/status, lists open items, flags stale entries    | Quick check of what's queued without opening four files  |
 
-Backlog items use permanent IDs (`B-001`, `F-012`, `Q-003`, `D-007`) that never change or get reused. Status flows: `open` → `planned` → `shipped` (or `wont-fix`).
+Backlog items use permanent IDs (`B-001`, `F-012`, `Q-003`, `D-007`) that never change or get reused. Shipped items are removed from catalog files at `/plan:archive` time (the changelog and archived requirements preserve the record). `priorities.md` is a manually-curated shortlist of what's next.
 
 # Skills
 

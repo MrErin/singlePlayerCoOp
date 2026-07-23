@@ -104,7 +104,7 @@ Single-task mode:
     - `_planning/lessons.md` — entries already appended during step 7 verification (if any issues were found)
     - `_planning/codebase.md`:
         - **Setup phase:** Generate it (captures the project structure just created)
-        - **Other phases:** Update only if new directories, dependencies, or architectural patterns were introduced. Skip if structure unchanged.
+        - **Other phases:** Check if any files listed in codebase.md's Key Files or Project Structure sections were modified, created, renamed, or deleted in this phase (compare against files touched). If so, update those sections. Skip only if no listed files were touched.
 10. **Output quick summary:**
     - **One-sentence:** What this phase accomplished
     - **Files changed:** List with one-line descriptions

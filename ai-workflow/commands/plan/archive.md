@@ -55,14 +55,17 @@ allowed-tools: Bash, Read, Write
    **Why:** `decisions.md` is read by every `/plan:*` command and the `code-reviewer` agent. Uncapped growth wastes tokens on every invocation. Decisions that have been codified into `project-requirements/` are redundant at best and stale at worst.
 
 6. **Triage deferred items**: Read `_planning/deferred.md`.
-   - If there are open items, present them to the user: "These items were deferred during this feature. For each one: carry forward to next feature, promote to a phase shift via `/plan:shift`, or close as won't-fix."
+   - If there are open items, present them to the user: "These items were deferred during this feature. For each one:"
+     - **promote to backlog** — create a backlog entry with the next available ID (requires `_planning/backlog/` to exist), remove from deferred
+     - **won't-fix** — remove from deferred
    - Do NOT close or remove open items automatically — the user decides.
-   - Once the user has made decisions, update `deferred.md` to reflect them (remove won't-fix items, leave carry-forwards as open).
+   - For items promoted to backlog: follow the entry templates from `/backlog:triage` (bug, feature, question, or data-change). Ask the user for the type if ambiguous. Set status to `open`.
+   - Once the user has made decisions, update `deferred.md` to reflect them.
 
-7. **Update backlog statuses**: If `_planning/backlog/` exists:
+7. **Clean shipped backlog items**: If `_planning/backlog/` exists:
    - Read the archived `requirements.md` for any `**Incorporates:**` lines listing backlog IDs (e.g., `F-008, B-003, Q-003`)
-   - For each referenced ID, find its entry in the corresponding catalog file and update its status from `planned` to `shipped`
-   - Add a note to each entry: `Shipped in [archive-slug] (YYYY-MM-DD)`
+   - For each referenced ID, delete its entire entry (heading through next heading or end of file) from the corresponding catalog file
+   - The changelog and archived requirements.md preserve the historical record — no need to mark items shipped before deleting
    - If `_planning/backlog/` doesn't exist, skip this step silently.
 
 8. **Prepare changelog entries** (only if `CHANGELOG.md` exists in the project root):
@@ -74,7 +77,7 @@ allowed-tools: Bash, Read, Write
    - Do NOT modify the version string in any source file — version bumps happen at release time, not archive time.
    - If `CHANGELOG.md` does not exist, skip this step silently.
 
-9. **Present the extraction for review**: Show the user what was written to `project-requirements/[name].md` and what lines were added to `index.md` and `core.md`. If backlog items were updated in step 7, include them: "Updated backlog items to shipped: F-008, B-003, Q-003." If decisions were cycled in step 5, include a summary: "Moved N decisions to project-requirements, archived M as feature-specific trade-offs, kept K as active." If changelog entries were prepared in step 8, show the categorized entries and suggested version bump level. Say: "Review these before I clear the workspace. Edit the files directly if anything is missing or wrong."
+9. **Present the extraction for review**: Show the user what was written to `project-requirements/[name].md` and what lines were added to `index.md` and `core.md`. If backlog items were removed in step 7, include them: "Removed shipped backlog items: F-008, B-003, Q-003." If decisions were cycled in step 5, include a summary: "Moved N decisions to project-requirements, archived M as feature-specific trade-offs, kept K as active." If changelog entries were prepared in step 8, show the categorized entries and suggested version bump level. Say: "Review these before I clear the workspace. Edit the files directly if anything is missing or wrong."
    - **STOP and wait for user confirmation before continuing.**
 
 10. **Clear the workspace** (only after user confirms step 9):
@@ -83,7 +86,8 @@ allowed-tools: Bash, Read, Write
    - Delete the `_planning/phases/` directory
    - Delete any `phase_shift_requirements_*.md` files from `_planning/` root
    - Update `_planning/state.md`: clear the current phase, wipe the session log, set status to "archived — ready for next feature", and add a one-line entry noting the archive slug and date
-   - Leave `deferred.md`, `codebase.md`, `lessons.md`, and `audit-scorecard.md` at root — these persist across features unchanged
+   - Reset `deferred.md` to its template state (header, rules, empty Open/Resolved sections) — all items should have been dispositioned in step 6. If any carry-forwards remain, keep only those in the Open section.
+   - Leave `codebase.md`, `lessons.md`, and `audit-scorecard.md` at root — these persist across features unchanged
    - `decisions.md` is reset to empty template by step 5 (only "active undecided" entries survive)
    - If `_planning/audit-review.md` or `_planning/audit-auto.md` exist, copy them to `_planning/archive/[name]/` before clearing (the user may have already deleted them — skip silently if absent)
 
@@ -94,7 +98,8 @@ allowed-tools: Bash, Read, Write
 - Do not clear workspace before user confirms extraction (step 9)
 - Changelog preparation (step 8) is opt-in by file detection — if `CHANGELOG.md` exists, prepare entries; if not, skip silently. Do not ask the user whether to maintain a changelog.
 - `decisions.md` is **cycled at archive** — codified decisions move to `project-requirements/`, feature-specific trade-offs archive with the feature, only active undecided items survive into the next cycle
-- `deferred.md`, `codebase.md`, and `lessons.md` stay at root and are never deleted — only `lessons.md` gets an archive copy
+- `deferred.md` is reset at archive (not deleted) — items are dispositioned in step 6, then the file resets to template state with only carry-forwards surviving
+- `codebase.md` and `lessons.md` stay at root and are never deleted — only `lessons.md` gets an archive copy
 - Phase summaries are required reading in step 4 — they capture behavior changes the requirements doc may not mention
 - Deferred triage (step 6) must happen before workspace clear — do not skip it even if deferred.md looks empty
 - Keep `index.md` entries dense: one line per requirement
