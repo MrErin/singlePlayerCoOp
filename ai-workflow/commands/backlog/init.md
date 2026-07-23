@@ -84,7 +84,7 @@ Tracked bugs with stable IDs. Once assigned, an ID never changes or gets reused.
 |--------|---------|
 | `open` | Not yet planned |
 | `planned` | Pulled into an active feature |
-| `shipped` | Fixed and deployed |
+
 | `wont-fix` | Intentionally declined |
 
 ---
@@ -106,7 +106,7 @@ Feature ideas and enhancements with stable IDs.
 |--------|---------|
 | `open` | Not yet planned |
 | `planned` | Pulled into an active feature |
-| `shipped` | Completed and deployed |
+
 | `wont-fix` | Intentionally declined |
 
 ---
@@ -117,13 +117,12 @@ Feature ideas and enhancements with stable IDs.
 ```markdown
 # 🤔 Questions
 
-Open design questions and uncertainties. Questions graduate to features once they have an answer — set status to `shipped` with a note pointing to the new feature entry.
+Open design questions and uncertainties. Resolved questions are removed at archive time — link to the new feature entry in the question's description before archiving.
 
 | Status | Meaning |
 |--------|---------|
 | `open` | Still thinking |
 | `planned` | Being addressed in active feature |
-| `shipped` | Resolved (see linked feature) |
 | `wont-fix` | No longer relevant |
 
 ---
@@ -140,7 +139,7 @@ Content updates, seed data modifications, and dataset tasks.
 |--------|---------|
 | `open` | Not yet planned |
 | `planned` | Pulled into an active feature |
-| `shipped` | Applied and deployed |
+
 | `wont-fix` | Intentionally declined |
 
 ---

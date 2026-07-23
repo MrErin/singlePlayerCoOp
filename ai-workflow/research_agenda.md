@@ -285,6 +285,33 @@ This is a standing research agenda for the workflow system in this repository (s
 
 ---
 
+### 9. AI Code Antipattern Discovery
+
+**Why it matters**: AI-generated code introduces failure patterns that differ from human-written code — hallucinated packages, placeholder credentials, scope over-exposure, orthogonal damage. New patterns emerge as models change, adoption scales, and attackers adapt. If the antipatterns reference falls behind, the audit and code-fixer miss real issues.
+
+**Current baseline** *(as of 2026-07-23)*:
+- `my-style/references/antipatterns.md` covers: environment workarounds, error handling, state/mutability, over-engineering, AI-specific tells, testing antipatterns, mock protocol mismatch, enum exhaustiveness, database/API patterns, import antipatterns, linter bypasses, hallucinated APIs & package hallucination, resource management, hardcoded secrets (including AI placeholder patterns), copy-paste artifacts, dead code, scope/visibility over-exposure.
+- Key external sources: Snyk (package hallucination), GitGuardian State of Secrets Sprawl (credential patterns), Trend Micro (slopsquatting), Karpathy's four structural failure patterns, arXiv empirical studies on agent-generated code maintainability.
+- 45% of AI-generated code introduces OWASP Top 10 vulnerabilities (Veracode 2026, unchanged across testing cycles).
+- AI-assisted commits show 3.2% secret-leak rate vs 1.5% baseline (GitGuardian 2026).
+- 74 AI-linked CVEs through March 2026, ~6x monthly increase (Georgia Tech Vibe Security Radar).
+
+**Questions to ask when re-researching**:
+- Are there newly documented AI code failure patterns from security research (Snyk, GitGuardian, CSA, OWASP), empirical studies (arXiv), or post-incident analysis not yet in `antipatterns.md`?
+- Have the OWASP Top 10 vulnerability rates in AI-generated code improved or worsened? Are new vulnerability categories emerging?
+- Are there new supply-chain attack vectors specific to AI-generated code beyond slopsquatting?
+- Has the credential leak rate in AI-assisted commits changed? Are there new placeholder patterns to detect?
+- Are practitioners documenting new testing antipatterns specific to AI-generated tests?
+
+**What would trigger a change**: A documented antipattern category not covered by the existing reference, or a significant shift in vulnerability rates that suggests existing checks are insufficient. Each finding maps to: a new section or entries in `antipatterns.md`, new grep patterns in `/plan:audit` Pass 1, or new checks in `/plan:review`.
+
+**Review cadence**: Quarterly
+**Maps to**: `my-style/references/antipatterns.md`, `/plan:audit` Pass 1, `/plan:review` structural verification
+
+**Last checked**: 2026-07-23
+
+---
+
 ## Watching
 *(Ideas not ready to incorporate — monitor for maturity)*
 
@@ -332,6 +359,11 @@ This is a standing research agenda for the workflow system in this repository (s
 
 ## Incorporated Findings
 *(Newest first — add new entries at top when findings are acted on)*
+
+### 2026-07-23 — AI Antipatterns Update: Package Hallucination, Placeholder Credentials, Scope Visibility
+**Research**: Multiple 2025-2026 sources — Snyk (package hallucination), Trend Micro (slopsquatting), GitGuardian State of Secrets Sprawl 2026, arXiv studies on agent-generated code maintainability, Karpathy's structural failure patterns.
+**Decision**: Added three new detection categories to `my-style/references/antipatterns.md`: (1) package hallucination / slopsquatting (hallucinated package names as supply-chain risk), (2) AI-specific placeholder credentials (`password123`, `supersecretkey`, etc.), (3) scope/visibility over-exposure (public functions with no external callers). Added corresponding mechanical checks to `/plan:audit` Pass 1 (all AUTO tier). Added orthogonal damage detection to `/plan:review` step 3c.
+**Rationale**: Existing antipatterns covered most documented AI code issues. These three gaps represent genuinely new risk categories (supply-chain attacks via hallucinated packages, AI-specific credential patterns, systematic scope over-exposure) that weren't in the original reference. Orthogonal damage (Karpathy's "collateral changes") is better caught per-phase in review than per-feature in audit.
 
 ### 2026-03-20 — Centralized Semgrep Rules Repository
 **Research**: Semgrep MCP installation and custom rule syntax.

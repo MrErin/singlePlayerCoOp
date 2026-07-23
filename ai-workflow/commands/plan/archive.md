@@ -86,7 +86,7 @@ allowed-tools: Bash, Read, Write
    - Delete the `_planning/phases/` directory
    - Delete any `phase_shift_requirements_*.md` files from `_planning/` root
    - Update `_planning/state.md`: clear the current phase, wipe the session log, set status to "archived — ready for next feature", and add a one-line entry noting the archive slug and date
-   - Reset `deferred.md` to its template state (header, rules, empty Open/Resolved sections) — all items should have been dispositioned in step 6. If any carry-forwards remain, keep only those in the Open section.
+   - Reset `deferred.md` to its template state (header, rules, empty Open/Resolved sections) — all items should have been dispositioned in step 6.
    - Leave `codebase.md`, `lessons.md`, and `audit-scorecard.md` at root — these persist across features unchanged
    - `decisions.md` is reset to empty template by step 5 (only "active undecided" entries survive)
    - If `_planning/audit-review.md` or `_planning/audit-auto.md` exist, copy them to `_planning/archive/[name]/` before clearing (the user may have already deleted them — skip silently if absent)
@@ -98,7 +98,7 @@ allowed-tools: Bash, Read, Write
 - Do not clear workspace before user confirms extraction (step 9)
 - Changelog preparation (step 8) is opt-in by file detection — if `CHANGELOG.md` exists, prepare entries; if not, skip silently. Do not ask the user whether to maintain a changelog.
 - `decisions.md` is **cycled at archive** — codified decisions move to `project-requirements/`, feature-specific trade-offs archive with the feature, only active undecided items survive into the next cycle
-- `deferred.md` is reset at archive (not deleted) — items are dispositioned in step 6, then the file resets to template state with only carry-forwards surviving
+- `deferred.md` is reset at archive (not deleted) — items are dispositioned in step 6 (promoted to backlog or won't-fixed), then the file resets to template state
 - `codebase.md` and `lessons.md` stay at root and are never deleted — only `lessons.md` gets an archive copy
 - Phase summaries are required reading in step 4 — they capture behavior changes the requirements doc may not mention
 - Deferred triage (step 6) must happen before workspace clear — do not skip it even if deferred.md looks empty

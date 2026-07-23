@@ -92,6 +92,8 @@ allowed-tools: Read, Write, Glob
    • F-026 — Dark mode toggle
    • F-027 — Export to CSV
    • Q-002 — Should we support offline mode?
+
+   If any of these are urgent, add them to `priorities.md`.
    ```
 
 ## Edge Cases
