@@ -81,6 +81,23 @@ def add_item(item, cart=None):
 
 ---
 
+## Scope/Visibility Over-Exposure (MEDIUM)
+
+AI defaults to public/broad scope because it generates functions in isolation without class-wide or module-wide context.
+
+| Pattern | Detection | Severity | Action |
+|---------|-----------|----------|--------|
+| Public helper used only internally | Function without `_` prefix, called only within its own module | MEDIUM | Add `_` prefix to signal internal use |
+| Module-level function that should be a method | Function takes an object as first arg and only operates on it | MEDIUM | Move to the class as a method |
+| Overly broad variable scope | Variable assigned at function top, only used in one branch | LOW | Move declaration into the branch |
+| Everything-public class | Class with no private methods despite having internal helpers | MEDIUM | Prefix internal methods with `_` |
+
+**Why it matters:** Over-exposed APIs create implicit contracts. Other code (and future AI sessions) will call public functions that were only meant as internal helpers, making refactoring harder. Research found 11-15% of AI code smells are scope/visibility issues.
+
+**Detection:** Grep for function definitions, then grep for their callers. Functions with no external callers that lack a `_` prefix are candidates.
+
+---
+
 ## AI-Specific Tells (MEDIUM)
 
 Patterns that strongly suggest AI-generated code without human review.
@@ -249,9 +266,9 @@ user.name = data.get('name')  # type: ignore[assignment]  # "data might have wro
 
 ---
 
-## Hallucinated APIs (CRITICAL)
+## Hallucinated APIs & Package Hallucination (CRITICAL)
 
-AI confidently generates calls to functions, methods, or packages that don't exist. 20-40% hallucination rate on API names in studies.
+AI confidently generates calls to functions, methods, or packages that don't exist. 20-40% hallucination rate on API names in studies. A related supply-chain risk ("slopsquatting") occurs when LLMs hallucinate plausible package names that attackers then register in public registries to deliver malware.
 
 | Pattern | Detection | Severity | Action |
 |---------|-----------|----------|--------|
@@ -260,10 +277,12 @@ AI confidently generates calls to functions, methods, or packages that don't exi
 | Fake package import | `import` of package not in requirements | HIGH | Verify package exists on PyPI/npm |
 | Plausible but wrong attribute | `response.data.items` when API returns `response.results` | CRITICAL | Test against real API response |
 | Deprecated API usage | Using removed functions from older library versions | HIGH | Check current library docs |
+| Hallucinated package name | Import of package not in lock file and not in stdlib | CRITICAL | Verify package exists in registry; do NOT install unverified packages |
+| Plausible typosquat | Import name is close-but-not-identical to a popular package (e.g., `request` vs `requests`) | CRITICAL | Verify exact package name against registry |
 
-**Why it matters:** Code compiles and looks correct but crashes at runtime. AI predicts plausible API shapes from training data without verifying against actual library signatures.
+**Why it matters:** Code compiles and looks correct but crashes at runtime. AI predicts plausible API shapes from training data without verifying against actual library signatures. Hallucinated package names create a supply-chain attack vector — attackers register the phantom name and deliver malware to anyone who installs it.
 
-**Detection:** Run import smoke tests and `py_compile` checks. For runtime attributes, verify against library documentation or a REPL session.
+**Detection:** Run import smoke tests and `py_compile` checks. For runtime attributes, verify against library documentation or a REPL session. Cross-check all imports against the project's lock file (requirements.txt / package-lock.json) and the language's stdlib module list.
 
 ---
 
@@ -295,7 +314,7 @@ with open('data.csv') as f:
 
 ## Hardcoded Secrets (CRITICAL)
 
-API keys, passwords, and tokens embedded directly in source code. AI reproduces tutorial patterns where secrets are inline for convenience.
+API keys, passwords, and tokens embedded directly in source code. AI reproduces tutorial patterns where secrets are inline for convenience. LLMs also reuse the same placeholder secrets across projects — the same JWT signing keys, passwords, and API tokens appear in app after app, making them effectively public.
 
 | Pattern | Search | Severity | Action |
 |---------|--------|----------|--------|
@@ -304,8 +323,11 @@ API keys, passwords, and tokens embedded directly in source code. AI reproduces 
 | Connection string with credentials | `://user:pass@` in source | CRITICAL | Use env var for connection string |
 | Auth header with token | `Bearer ` + string literal | HIGH | Inject token at runtime |
 | Commented-out credentials | `# password: ...` or `# mongodb+srv://user:pass@` | HIGH | Remove entirely |
+| Known placeholder passwords | `password123`, `admin123`, `changeme`, `secret123`, `test1234`, `letmein` | CRITICAL | Replace with env var; rotate if ever deployed |
+| Placeholder signing keys | `your-secret-key`, `supersecretkey`, `change-me`, `TODO` adjacent to secret/key variable | CRITICAL | Generate real key, move to env var |
+| Tutorial-pattern credentials | `username = "admin"` paired with `password =` string literal in same scope | HIGH | Replace with env var lookup |
 
-**Why it matters:** Credentials in source code end up in version control. Even after removal, they persist in git history. AI reproduces this pattern because training data is full of tutorials with inline secrets.
+**Why it matters:** Credentials in source code end up in version control. Even after removal, they persist in git history. AI reproduces this pattern because training data is full of tutorials with inline secrets. AI-assisted commits have a 3.2% secret-leak rate vs 1.5% baseline (GitGuardian 2026).
 
 ---
 

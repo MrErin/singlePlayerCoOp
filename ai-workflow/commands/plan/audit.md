@@ -1,5 +1,5 @@
 ---
-description: Full codebase sweep producing two outputs — an agent-executable auto-fix list (audit-auto.md) for delegation to a cheap model, and a gamified human review deck (audit-review.md) for decisions that require judgment. Covers debt analysis, test analysis, and documentation drift.
+description: Full codebase sweep producing two outputs — an agent-executable auto-fix list (audit-auto.md) covering everything with an unambiguous fix, and a slim review deck (audit-review.md) containing only items that require a human decision between valid alternatives. Covers debt analysis, test analysis, and documentation drift.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, Agent
 ---
 
@@ -35,29 +35,25 @@ Before starting, check if `_planning/audit-review.md` exists:
 5. **Scaffold both documents**:
    - Read `commands/plan/references/audit-template.md` for review card formats.
    - Read `commands/plan/references/audit-auto-template.md` for the auto-fix list format.
-   - Write `_planning/audit-review.md` with `<!-- STATUS: DRAFT -->`, `<!-- DOC PASS: PENDING -->`, `<!-- DEBT PASS: PENDING -->`, `<!-- TEST PASS: PENDING -->`, document header, scorecard placeholder, and type-grouped card sections (📄 DOC → Debt types → Test types).
+   - Write `_planning/audit-review.md` with `<!-- STATUS: DRAFT -->`, `<!-- DOC PASS: PENDING -->`, `<!-- DEBT PASS: PENDING -->`, `<!-- TEST PASS: PENDING -->`, document header, scorecard placeholder, and three sections (Documentation Drift, Debt, Tests).
    - Write `_planning/audit-auto.md` with document header and empty module sections.
 
 ---
 
 ## Classification Rules
 
-Every finding is routed to one of two tiers. Apply these rules before writing any item.
+Every finding is routed to one of two tiers. The deciding question is: **"Is there a decision to make — a choice between valid alternatives or a tradeoff to accept?"** If the fix has one correct answer, it's AUTO regardless of how many files it touches or how risky it feels. Risk determines whether the agent should be *careful*, not whether a human needs to *decide*.
 
-**Backlog deduplication** — before writing any card or AUTO item, check it against `_planning/backlog/bugs.md` (loaded in Setup). If the finding describes the same issue as an existing bug entry, skip it entirely. Do not create a cross-reference card — the backlog is already tracking it.
+**Backlog deduplication** — before writing any item, check it against `_planning/backlog/bugs.md` (loaded in Setup). If the finding describes the same issue as an existing bug entry, skip it entirely.
 
-**AUTO tier** — executable by an agent without human judgment:
-- Unused imports (confirmed not dynamically referenced)
-- Confirmed dead code (no callers, no dynamic dispatch, not a test fixture or API endpoint)
-- Missing type annotations on simple functions (no complex generics or protocol types involved)
-- Style/naming violations that are purely mechanical (casing, underscore consistency)
-- Redundant/duplicate tests confirmed identical (same code path, same assertions)
-- Orphan tests for confirmed-deleted or confirmed-renamed production code
-- Trivial assertion fixes (`>=` where `==` is clearly correct; untested field in return object)
-- Missing trivial tests for pure functions with deterministic, obvious behavior
-- Unused variables, dead branches, unreachable code
+**AUTO tier** (default) — the fix is unambiguous, even if large:
+- Everything with one correct fix: dead code, unused imports, missing types, naming violations, stale comments, long functions with obvious split points, missing tests where the behavior is clear, orphan tests, redundant tests, trivial assertion fixes, linter violations, doc sync mismatches
+- Coverage gaps where what to test is obvious (pure functions, clear branches, error paths)
+- Survived mutants where the missing assertion is clear
+- Test smells with a mechanical fix (rename, remove conditional, add assertion)
+- Code quality issues with one right answer (extract function, add context manager, parameterize query)
 
-**Renames require a mandatory protocol:**
+**Renames require a mandatory protocol** (but are still AUTO):
 
 Before any rename, the agent MUST:
 1. Grep for the symbol across the entire codebase (not just the current file)
@@ -65,30 +61,18 @@ Before any rename, the agent MUST:
 3. Verify each match is the same symbol (not a homonym in different scope)
 4. Update ALL matches in a single pass
 
-**Escalate if:**
-- Symbol has >20 matches (too many to verify safely)
-- Matches span config files, migrations, or external references
-- Symbol name is common enough to have false positives (e.g., `process`, `handle`, `run`)
+**Escalate (move to REVIEW) if:** >20 matches, spans config/migrations, or symbol name has false-positive risk.
 
-**Safe to auto-fix if:**
-- <10 matches, all clearly the same symbol
-- Matches are confined to source and test files
-- No ambiguous usages found
+**REVIEW tier** — there is a genuine decision with multiple valid approaches:
+- Architectural changes where there are multiple valid restructurings
+- Security concerns (tradeoff between security and usability/complexity)
+- Design principle violations where the fix could go several ways (how to split responsibilities, where to draw module boundaries)
+- Dead code where usage is ambiguous (dynamic dispatch, plugin systems)
+- Behavior changes — the "fix" would change what users see
+- Refactors touching shared interfaces where downstream impact is unclear
+- Any item where you can articulate two or more reasonable approaches
 
-**REVIEW tier** — requires human judgment:
-- Architectural pattern changes (any structural redesign)
-- Design principle violations (SRP, DI, separation of concerns)
-- Security concerns of any kind
-- Dead code where usage is ambiguous (dynamic dispatch, monkey patching, plugin systems)
-- Refactors touching shared interfaces
-- Mutant analysis (determining which test should catch what and why it doesn't)
-- Coverage gaps requiring new test logic or understanding of business rules
-- Test smells requiring test redesign (not just a trivial assertion fix)
-- Seam/integration test needs
-- Any fix with Medium or High risk
-- Any item where the correct answer depends on context or tradeoffs
-
-**When uncertain**: default to REVIEW. An over-cautious review deck is better than an agent making architectural decisions.
+**When uncertain**: default to AUTO with an escalation note. The auto-fix doc has an Escalations section — an item that turns out harder than expected gets flagged there. A wrongly-escalated AUTO wastes agent time on one item; a wrongly-classified REVIEW wastes human time on a non-decision.
 
 ---
 
@@ -131,7 +115,7 @@ The subagent checks for drift and classifies each finding as AUTO or REVIEW:
 | Contradictory requirements | requirements.md and decisions.md say different things about same concern |
 | Stale phase intent | Roadmap phase intent doesn't match what was actually built (per phase_summary.md or code) |
 
-**Output format:** The subagent returns findings as a list with tier classification. Main agent writes AUTO findings to `audit-auto.md` and REVIEW findings as 📄 DOC cards to `audit-review.md`.
+**Output format:** The subagent returns findings as a list with tier classification. Main agent writes AUTO findings to `audit-auto.md` and REVIEW findings (only those with ambiguous resolution) as 📄 DOC cards to `audit-review.md`.
 
 **The subagent must NOT modify files** — only read and report.
 
@@ -152,22 +136,36 @@ Update the draft marker to `<!-- DEBT PASS: IN_PROGRESS -->`.
 Parse the output. Route each finding per the classification rules:
 - Autofix-capable violations (ruff `fix` field present; eslint `fixable`) → **AUTO tier**: add to `audit-auto.md` as a single grouped item per rule (e.g., "Fix 14 E501 line-length violations across 6 files"). Do not list every line individually.
 - Non-autofix violations where the fix is unambiguous and mechanical → **AUTO tier**
-- Non-autofix violations requiring judgment (ruff B/C/S rules; complex restructuring) → **REVIEW tier**: QUALITY or ARCH card as appropriate
+- Non-autofix violations requiring judgment (ruff B/C/S rules; complex restructuring) → **AUTO** if the fix is unambiguous; **REVIEW** only if there are multiple valid approaches
 
 Note total linter violation count in the Debt Summary. Skip any grep pattern below that ruff already caught.
 
-**Quick antipattern scan** — use Grep for patterns ruff doesn't cover. Route each match per the classification rules above (all patterns below are REVIEW tier):
+**Quick antipattern scan** — use Grep for patterns ruff doesn't cover. Most antipatterns have one correct fix and route to AUTO. Route to REVIEW only if the fix is ambiguous (e.g., a bare `except:` that might be intentional error suppression).
 
-| Pattern | Card type | Severity |
-|---------|-----------|----------|
-| `sys.modules[` | 🔥 ARCH | Critical |
-| `except:` or `except.*: pass` | 🔥 ARCH | Critical |
-| `=[` or `={}` in function signature | 🔥 ARCH | Critical |
-| `from unittest.mock import` in `src/` | 🔥 ARCH | High |
-| `+` or f-string in SQL | 🗃️ DATA | High |
-| query inside loop over results | 🗃️ DATA | High |
+| Pattern | Typical fix | Default tier |
+|---------|-------------|-------------|
+| `sys.modules[` | Remove monkey-patching | AUTO |
+| `except:` or `except.*: pass` | Add specific exception type | AUTO (REVIEW if suppression may be intentional) |
+| `=[` or `={}` in function signature | Use `None` default + factory | AUTO |
+| `from unittest.mock import` in `src/` | Move to test file | AUTO |
+| `+` or f-string in SQL | Parameterize query | AUTO |
+| query inside loop over results | Batch query | AUTO (REVIEW if restructuring is non-obvious) |
 
 See `my-style/references/antipatterns.md` for the full detection pattern list and severity mappings.
+
+**Package hallucination check** — verify all imports resolve to real packages. AUTO tier.
+1. Collect all `import` / `from X import` statements across source files (exclude stdlib modules).
+2. Cross-check each against the project's lock file (requirements.txt, pyproject.toml, package.json, or package-lock.json).
+3. Flag any import that doesn't resolve to a listed dependency or stdlib module — these may be hallucinated packages and a potential supply-chain risk (slopsquatting).
+
+**Placeholder credential scan** — grep for known AI-generated placeholder secrets. AUTO tier.
+- `password123`, `admin123`, `changeme`, `secret123`, `test1234`, `letmein`
+- `your-secret-key`, `supersecretkey`, `change-me`
+- `sk_test_`, `sk_live_`, `ghp_`, `glpat_`, `AKIA` (existing)
+- Any string literal assigned to a variable named `password`, `secret`, `api_key`, `token`, or `signing_key`
+
+**Scope/visibility check** — during per-module analysis. AUTO tier.
+- For each module, identify functions without a `_` prefix that have no callers outside their own file (grep for the function name across the codebase). Flag as over-exposed — fix is to add `_` prefix.
 
 **Per-module analysis** (highest priority first, sequential — one module at a time):
 
@@ -189,7 +187,7 @@ Debt-specific checks per module:
 - **External service integration:** Is provider config externalized? Does retry logic distinguish transient from permanent errors? Is adding a provider low-friction (≤3 files)?
 - **Configuration:** Are constants centralized or scattered? Are display strings duplicated between constants and views?
 - **Code duplication:** Are filter lists, column lists, or input preparation logic duplicated across methods or files?
-- **Extensibility:** For each module, estimate the file touch count for adding a new table, provider, screen, or enum value. Flag any scenario that's high friction (7+ files) as an 🔥 ARCH card.
+- **Extensibility:** For each module, estimate the file touch count for adding a new table, provider, screen, or enum value. Flag any scenario that's high friction (7+ files) — route to REVIEW only if there are multiple valid ways to reduce friction.
 
 **After each module**: Write AUTO findings to `audit-auto.md` and REVIEW findings as cards to the appropriate type section in `audit-review.md` before moving to the next module.
 
@@ -205,18 +203,18 @@ Update the draft marker to `<!-- TEST PASS: IN_PROGRESS -->`.
 
 1. Run `coverage-wrapper run` → get branch coverage percentage. Append results to `audit-review.md`.
 2. Run `coverage-wrapper gaps` → identify uncovered files. Append results to `audit-review.md`.
-3. **Derive 🎯 GAP cards mechanically** from the `coverage-wrapper gaps` output. Each uncovered file or function becomes a GAP card. Write these directly to the 🎯 Coverage Gaps section in `audit-review.md` — no subagent needed.
+3. **Derive coverage gap items** from the `coverage-wrapper gaps` output. Each uncovered file or function becomes an AUTO item if what to test is obvious, or a REVIEW card if the behavior to test is unclear or requires understanding business rules.
 4. Assess:
    - **Below 80%**: Skip mutation testing entirely. Add note to document: "Mutation testing deferred — branch coverage must reach 80% first."
    - **80–90%**: Run `mutmut-wrapper run` (no pattern filter). Append results.
    - **Above 90%**: Run `mutmut-wrapper run`, then `mutmut-wrapper show-all`. Read `mutmut_output/survived_all.txt` for diffs. Append results.
 
-**Quick antipattern scan for test files** — use Grep before per-module analysis:
-- `sys.modules[` in test files → 🔍 SMELL card (REVIEW)
-- `MagicMock` in `src/` → 🔍 SMELL card (REVIEW)
-- `assert True` or assertion-free tests → route per classification rules
-- **Phantom mocks:** `grep -r 'patch("' tests/` — for each unique patch path, attempt to resolve the import. Paths that don't exist are phantom mocks → 🔍 SMELL card (REVIEW — phantom mock patches nothing, real code runs untested)
-- **Dead mock smell:** Files where `patch(` count ≥ 3× the `def test_` count — likely asserting only on mocks, never on real output → 🔍 SMELL card (REVIEW)
+**Quick antipattern scan for test files** — use Grep before per-module analysis. Most test antipatterns have a clear fix and route to AUTO. Route to REVIEW only when the test redesign has multiple valid approaches.
+- `sys.modules[` in test files → AUTO (remove and use proper imports)
+- `MagicMock` in `src/` → AUTO (move to test file)
+- `assert True` or assertion-free tests → AUTO (add real assertion or delete)
+- **Phantom mocks:** `grep -r 'patch("' tests/` — for each unique patch path, attempt to resolve the import. Paths that don't exist are phantom mocks → AUTO (fix patch path or delete test)
+- **Dead mock smell:** Files where `patch(` count ≥ 3× the `def test_` count → REVIEW (likely needs test redesign — multiple valid approaches)
 
 **Quantitative metrics scan** — run before per-module analysis. Adjust path from `codebase.md`. Write results directly into the Test Quality section of `audit-review.md`.
 
@@ -230,8 +228,8 @@ Update the draft marker to `<!-- TEST PASS: IN_PROGRESS -->`.
 | Largest file assertion share | `grep -c "assert" tests/test_*.py \| sort -t: -k2 -n` | Flag if one file >30% of total |
 
 Route findings:
-- Undocumented skipped tests → 🔍 SMELL (REVIEW)
-- Empty tests (pass/no assertions) → AUTO if obvious fix; REVIEW if behavior unclear
+- Undocumented skipped tests → AUTO (add skip reason or remove skip)
+- Empty tests (pass/no assertions) → AUTO (add assertion or delete)
 - Assertion ratio <1.5 or >5 → note in Warning Signs checklist, not a card unless systemic
 
 **Per-module test analysis** (same priority order as Pass 1):
@@ -265,8 +263,8 @@ When all modules are complete: update marker to `<!-- TEST PASS: COMPLETE -->`.
 
 Before finalizing either document, check for `_planning/audit-scorecard.md`:
 
-1. If it exists: read the most recent entry (newest at top). Extract Previous values from its Coverage & Mutation, Test Quality, Debt, and Test Cards sections.
-2. Populate the **Previous** and **Δ** columns in the current `audit-review.md` scorecard. Δ = Current − Previous. For card counts and zero-coverage modules, negative Δ is improvement (↓ is good). For coverage, mutation score, and assertion ratio, positive Δ is improvement (↑ is good).
+1. If it exists: read the most recent entry (newest at top). Extract Previous values from its Coverage & Mutation, Test Quality, and Summary sections.
+2. Populate the **Previous** and **Δ** columns in the current `audit-review.md` scorecard. Δ = Current − Previous. For card/item counts and zero-coverage modules, negative Δ is improvement (↓ is good). For coverage, mutation score, and assertion ratio, positive Δ is improvement (↑ is good).
 3. If `audit-scorecard.md` does not exist: leave Previous and Δ blank. Note "First audit — no baseline yet" in the scorecard header.
 
 After both documents are finalized, prepend a new snapshot entry to `_planning/audit-scorecard.md` (create if it doesn't exist). Load `commands/plan/references/audit-scorecard-template.md` for the entry format.
@@ -288,16 +286,14 @@ After both documents are finalized, prepend a new snapshot entry to `_planning/a
 
 ## Rules
 
-- **Emojis are required — not optional.** Every review card heading must open with its type emoji (📄 🔥 ⚙️ 🧹 🗃️ ♿ 🔍 🎯 💀 🧪 🔗 🔁 👻). Every Difficulty field must include a colored circle (🟢 🟡 🔴 ⚫). These are functional visual cues — never omit them.
-- Auto-fix items do not use card emojis. They use the terse format from `audit-auto-template.md`.
+- **Emojis are required — not optional.** Every review card heading must open with its type emoji. These are functional visual cues — never omit them.
+- Auto-fix items use the terse format from `audit-auto-template.md`.
 - Do not rewrite production code during analysis. Trivial test assertion fixes are allowed.
 - Analyze each module sequentially — read files, review, write findings, then move to the next module. No parallel subagents.
 - Always run `coverage-wrapper` before `mutmut-wrapper` — never skip the order of operations.
 - Use `coverage-wrapper` and `mutmut-wrapper` — never raw `coverage` or `mutmut` commands.
 - Write findings to disk after each module — do not batch all writes to the end.
-- **When uncertain about tier**: default to REVIEW.
-- Review cards: provide a brief corrected example when the fix is obvious. Explain why the issue matters.
-- Auto items: no examples, no explanation beyond the one-line why.
+- **When uncertain about tier**: default to AUTO with an escalation note. The agent can always escalate; the human shouldn't have to triage non-decisions.
 
 
 $ARGUMENTS

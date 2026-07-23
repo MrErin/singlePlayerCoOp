@@ -1,235 +1,43 @@
-# Code Audit Card & Document Templates
+# Code Audit Review Card & Document Templates
 
-Load this file when ready to generate `code_audit.md` output.
+Load this file when ready to generate `audit-review.md` output.
+
+Review cards are for items that require a **decision** — choosing between valid alternatives or accepting a tradeoff. If the fix has one correct answer, it belongs in `audit-auto.md` instead.
 
 ---
 
-## Emoji Reference — Required in Every Card
+## Emoji Reference
 
-**Type emoji goes in the card heading. Difficulty emoji goes in the Difficulty field. Never omit either.**
+**Type emoji goes in the card heading. Never omit it.**
 
 | Emoji | Prefix | Domain | What it flags |
 |-------|--------|--------|---------------|
 | 📄 | DOC | Doc | Documentation drift — planning docs out of sync with codebase or each other |
-| 🔥 | ARCH | Debt | Architecture violations — invisible deps, global state, env workarounds, swallowed errors |
+| 🔥 | ARCH | Debt | Architecture violations — structural issues with multiple valid fixes |
 | ⚙️ | DESIGN | Debt | Design principle violations — SRP, DI, separation of concerns |
-| 🧹 | QUALITY | Debt | Code quality — long functions, missing types, stale comments, dead code |
-| 🗃️ | DATA | Debt | DB/SQL issues — context managers, parameterized queries, N+1 |
-| ♿ | ACCESS | Debt | Web accessibility — semantic HTML, ARIA, keyboard nav |
-| 🔍 | SMELL | Test | Test smell — bad naming, conditionals, setup problems |
-| 🎯 | GAP | Test | Coverage gap — untested behavior, branch, or edge case |
-| 💀 | MUTANT | Test | Survived mutant — logic change not caught by any test |
-| 🧪 | UPGRADE | Test | Property-based testing candidate |
-| 🔗 | SEAM | Test | Missing integration test at module boundary |
-| 🔁 | REDUNDANT | Test | Duplicate tests covering the same path with the same assertions |
-| 👻 | ORPHAN | Test | Test for renamed or deleted code |
-
-**Difficulty scale (use for all card types):**
-- 🟢 Quick — under 30 min
-- 🟡 Medium — 30–60 min
-- 🔴 Large — 1–3 hr
-- ⚫ XL — 3+ hr
+| 🗃️ | DATA | Debt | DB/SQL issues requiring design decisions |
+| ♿ | ACCESS | Debt | Accessibility issues requiring UX decisions |
+| 🔒 | SEC | Debt | Security concerns with usability/complexity tradeoffs |
+| 🔍 | SMELL | Test | Test smell requiring redesign (not just a mechanical fix) |
+| 🎯 | GAP | Test | Coverage gap where what to test is unclear |
+| 💀 | MUTANT | Test | Survived mutant where the right assertion is ambiguous |
+| 🔗 | SEAM | Test | Missing integration test where boundary contract is unclear |
 
 ---
 
-## Card Templates
-
-### 📄 DOC-[NNN]: [Drift Description]
+## Card Template (all types use the same format)
 
 ```markdown
-### 📄 DOC-[NNN]: [Drift Description]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large]
-- **Files**: [planning doc(s) affected]
-- **Drift type**: [status mismatch | stale listing | feature drift | decision violation | contradiction]
-- **What's out of sync**: [specific discrepancy between doc and reality]
-- **Fix**: [update doc to reflect reality / investigate which is correct / escalate to user]
-- **Done when**: [clear completion criteria — usually doc updated to match codebase]
-- **Time box**: [N minutes]
-```
-
----
-
-### 🔥 ARCH-[NNN]: [Issue Name]
-
-```markdown
-### 🔥 ARCH-[NNN]: [Issue Name]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Risk**: [Low — isolated change | Medium — shared interface | High — core component]
+### [EMOJI] [PREFIX]-[NNN]: [Short Description]
 - **Files**: [affected file paths]
-- **What's wrong**: [what the violation is and where]
-- **Fix**: [specific action — what exactly to do, not just "refactor"]
-- **Done when**: [clear completion criteria]
-- **Time box**: [N minutes]
+- **What's wrong**: [1-2 sentences — what the issue is]
+- **Options**:
+  - A: [first valid approach and its tradeoff]
+  - B: [second valid approach and its tradeoff]
+- **Recommendation**: [which option and why, or "needs discussion"]
 ```
 
----
-
-### ⚙️ DESIGN-[NNN]: [Issue Name]
-
-```markdown
-### ⚙️ DESIGN-[NNN]: [Issue Name]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Risk**: [Low | Medium | High]
-- **Files**: [affected file paths]
-- **What's wrong**: [what principle is violated and where]
-- **Fix**: [specific action]
-- **Done when**: [clear completion criteria]
-- **Time box**: [N minutes]
-```
-
----
-
-### 🧹 QUALITY-[NNN]: [Issue Name]
-
-```markdown
-### 🧹 QUALITY-[NNN]: [Issue Name]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Risk**: [Low | Medium | High]
-- **Files**: [affected file paths]
-- **What's wrong**: [what the quality issue is]
-- **Fix**: [specific action]
-- **Done when**: [clear completion criteria]
-- **Time box**: [N minutes]
-```
-
----
-
-### 🗃️ DATA-[NNN]: [Issue Name]
-
-```markdown
-### 🗃️ DATA-[NNN]: [Issue Name]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Risk**: [Low | Medium | High]
-- **Files**: [affected file paths]
-- **What's wrong**: [the data handling issue]
-- **Fix**: [specific action]
-- **Done when**: [clear completion criteria]
-- **Time box**: [N minutes]
-```
-
----
-
-### ♿ ACCESS-[NNN]: [Issue Name]
-
-```markdown
-### ♿ ACCESS-[NNN]: [Issue Name]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Risk**: Low
-- **Files**: [affected file paths]
-- **What's wrong**: [the accessibility issue]
-- **Fix**: [specific action]
-- **Done when**: [clear completion criteria]
-- **Time box**: [N minutes]
-```
-
----
-
-### 🔍 SMELL-[NNN]: [Smell Name]
-
-```markdown
-### 🔍 SMELL-[NNN]: [Smell Name]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **File**: [test file path]::[test function name]
-- **Smell**: [which smell from the test standards]
-- **What's suspicious**: [1–2 sentence description]
-- **Your mission**: [specific question to answer or action to take]
-- **Done when**: [clear completion criteria]
-- **Time box**: [N minutes]
-```
-
----
-
-### 🎯 GAP-[NNN]: [Untested Behavior]
-
-```markdown
-### 🎯 GAP-[NNN]: [Untested Behavior]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Source file**: [production code path]::[function/method name]
-- **What's untested**: [specific behavior, branch, or edge case]
-- **Why it matters**: [what could go wrong]
-- **Your mission**: Write a test that would catch a bug in this behavior
-- **Starter hint**: [suggest what to assert, not how]
-- **Done when**: A new test exists that fails if the described behavior breaks
-- **Time box**: [N minutes]
-```
-
----
-
-### 💀 MUTANT-[NNN]: [Description of Mutation]
-
-```markdown
-### 💀 MUTANT-[NNN]: [Description of Mutation]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Source file**: [production code file]:[line number]
-- **Mutation**: [what was changed, e.g., "Changed `>` to `>=`"]
-- **Survived?**: Yes — no test caught this
-- **Nearest test**: [test file most likely responsible]
-- **Your mission**: Find which test should catch this and why it doesn't. Fix or write a new test.
-- **Done when**: Re-running this mutation results in a killed mutant
-- **Time box**: [N minutes]
-```
-
----
-
-### 🧪 UPGRADE-[NNN]: [Function Name]
-
-```markdown
-### 🧪 UPGRADE-[NNN]: [Function Name]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **File**: [test file path]::[test function name(s)]
-- **Subject**: [production function/class being tested]
-- **Why it's a candidate**: [property or invariant that makes this suitable for property-based testing]
-- **What's missing**: [the invariant to test — stated as a rule, not an example]
-- **Your mission**: Add Hypothesis (Python) or fast-check (TypeScript) tests. Keep existing tests.
-- **Done when**: At least one property-based test exists for the stated invariant
-- **Time box**: [N minutes]
-```
-
----
-
-### 🔗 SEAM-[NNN]: [Module A → Module B]
-
-```markdown
-### 🔗 SEAM-[NNN]: [Module A → Module B]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Boundary**: [call site — function in Module A that calls Module B]
-- **What crosses the boundary**: [data or behavior being handed off]
-- **Why it's untested**: [both sides unit-tested but the handoff has no test]
-- **What could go wrong**: [failure mode unit tests on each side would miss]
-- **Your mission**: Write one integration test that exercises the full path. Do not mock the boundary itself.
-- **Done when**: A test exists that fails if the contract between modules breaks
-- **Time box**: [N minutes]
-```
-
----
-
-### 🔁 REDUNDANT-[NNN]: [Description]
-
-```markdown
-### 🔁 REDUNDANT-[NNN]: [Description]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **Files**: [test file(s) and function names]
-- **What's duplicated**: [code path or behavior both tests exercise]
-- **Why it matters**: [maintenance cost — what breaks when this is touched]
-- **Your mission**: Confirm truly redundant (same path, same assertions). If so, delete the weaker one. If they differ meaningfully, document why both are needed.
-- **Done when**: Either one test is deleted, or you've documented why both are needed
-- **Time box**: [N minutes]
-```
-
----
-
-### 👻 ORPHAN-[NNN]: [Test Name]
-
-```markdown
-### 👻 ORPHAN-[NNN]: [Test Name]
-- **Difficulty**: [🟢 Quick | 🟡 Medium | 🔴 Large | ⚫ XL]
-- **File**: [test file path]::[test function name]
-- **Subject**: [function/class/behavior the test appears to target]
-- **Why it may be obsolete**: [what changed — rename, removal, or behavior shift]
-- **Your mission**: Confirm whether this test still tests anything real. Delete if not, update if salvageable.
-- **Done when**: Either deleted or updated to test real current behavior
-- **Time box**: [N minutes]
-```
+Keep cards tight. If you can't articulate two valid options, the item belongs in `audit-auto.md`.
 
 ---
 
@@ -283,31 +91,14 @@ Check these before closing. A checked box means the signal is present — invest
 - [ ] Tests with 0 assertions exist — coverage theater
 - [ ] No negative/error path tests visible in test names — missing edge cases
 
-### Debt Summary
+### Summary
 
-| Severity | Current | Previous | Δ |
-|----------|---------|----------|---|
-| 📄 DOC (Drift) | [n] | | |
-| 🔥 ARCH (Critical) | [n] | | |
-| ⚙️ DESIGN (High) | [n] | | |
-| 🧹 QUALITY (Medium) | [n] | | |
-| 🗃️ DATA | [n] | | |
-| ♿ ACCESS | [n] | | |
-| **Total review cards** | [n] | | |
-| **Auto-fix items** | [n] | | |
-
-### Test Cards
-
-| Type | Current | Previous | Δ |
-|------|---------|----------|---|
-| 🔍 SMELL | [n] | | |
-| 🎯 GAP | [n] | | |
-| 💀 MUTANT | [n] | | |
-| 🧪 UPGRADE | [n] | | |
-| 🔗 SEAM | [n] | | |
-| 🔁 REDUNDANT | [n] | | |
-| 👻 ORPHAN | [n] | | |
-| **Total** | [n] | | |
+| Category | Review cards | Auto-fix items |
+|----------|-------------|----------------|
+| 📄 DOC | [n] | [n] |
+| Debt (🔥 ⚙️ 🗃️ ♿ 🔒) | [n] | [n] |
+| Test (🔍 🎯 💀 🔗) | [n] | [n] |
+| **Total** | [n] | [n] |
 
 ### Untested Modules
 
@@ -317,61 +108,17 @@ Check these before closing. A checked box means the signal is present — invest
 
 ## 📄 Documentation Drift
 
-[DOC cards written during Pass 0]
+[DOC cards — only items where the correct resolution is ambiguous]
 
 ---
 
 ## Debt
 
-### 🔥 Architecture Violations
-
-[ARCH cards written during Pass 1]
-
-### ⚙️ Design Violations
-
-[DESIGN cards written during Pass 1]
-
-### 🧹 Code Quality
-
-[QUALITY cards written during Pass 1]
-
-### 🗃️ Data Issues
-
-[DATA cards written during Pass 1]
-
-### ♿ Accessibility
-
-[ACCESS cards written during Pass 1]
+[ARCH, DESIGN, DATA, ACCESS, SEC cards — only items with multiple valid approaches]
 
 ---
 
 ## Tests
 
-### 🔍 Test Smells
-
-[SMELL cards written during Pass 2]
-
-### 🎯 Coverage Gaps
-
-[GAP cards — derived mechanically from `coverage-wrapper gaps` output]
-
-### 💀 Survived Mutants
-
-[MUTANT cards written during Pass 2]
-
-### 🧪 Property-Based Testing Candidates
-
-[UPGRADE cards written during Pass 2]
-
-### 🔗 Integration Test Gaps
-
-[SEAM cards written during Pass 2]
-
-### 🔁 Duplicate Tests
-
-[REDUNDANT cards written during Pass 2]
-
-### 👻 Orphan Tests
-
-[ORPHAN cards written during Pass 2]
+[SMELL, GAP, MUTANT, SEAM cards — only items where what to test or how to restructure is unclear]
 ```

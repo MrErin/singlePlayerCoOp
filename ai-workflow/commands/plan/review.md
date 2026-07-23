@@ -42,7 +42,13 @@ This is an independent verification pass. You are in a fresh context — do not 
         - Configuration is centralized, not scattered
         - New structural elements (tables, providers, screens) are low-friction additions (≤3 files to change)
     b. **Scope verification:** List all files actually modified in this phase (use `git diff --name-only`). Cross-reference against the plan's task list. Flag plan-specified files that were not touched (silent skips) and files modified outside the plan's scope (scope creep).
-    c. **Constraint reconciliation:** Extract all explicit constraints from the plan and `_planning/decisions.md` (dependency restrictions, interface contracts, scope limits, style mandates beyond `my-style` defaults). Verify each constraint against the final codebase state. Report any stated constraint not honored in the output.
+    c. **Orthogonal damage check:** For each file modified in this phase, use `git diff` to inspect the changes. Flag any of these patterns — they indicate the agent made collateral changes unrelated to its task:
+        - Comments removed or rewritten in functions that weren't part of any task
+        - Code reformatted or restructured in unchanged functions (not from the linter/formatter)
+        - Import reordering or additions unrelated to the phase's work
+        - Variable renames in code paths not touched by any task
+        These are not necessarily bugs, but they indicate the agent was operating outside its scope. Add findings to "Review Findings" with a note to the user to verify each change was intentional.
+    d. **Constraint reconciliation:** Extract all explicit constraints from the plan and `_planning/decisions.md` (dependency restrictions, interface contracts, scope limits, style mandates beyond `my-style` defaults). Verify each constraint against the final codebase state. Report any stated constraint not honored in the output.
     Add all findings to a "Review Findings" section.
 
 4. **Verify task completion:** For each task in the plan, confirm it was actually completed as described.

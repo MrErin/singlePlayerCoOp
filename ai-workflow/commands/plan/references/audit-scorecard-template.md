@@ -36,25 +36,13 @@ _Append-only. Newest entry at top. Persists across /plan:archive — do not dele
 | Skipped tests | [n] |
 | Largest file assertion share | [n%] |
 
-### Debt
-| DOC | [n] |
-| ARCH | [n] |
-| DESIGN | [n] |
-| QUALITY | [n] |
-| DATA | [n] |
-| ACCESS | [n] |
-| Total review cards | [n] |
-| Auto-fix items | [n] |
-
-### Test Cards
-| SMELL | [n] |
-| GAP | [n] |
-| MUTANT | [n] |
-| UPGRADE | [n] |
-| SEAM | [n] |
-| REDUNDANT | [n] |
-| ORPHAN | [n] |
-| Total | [n] |
+### Summary
+| Category | Review cards | Auto-fix items |
+|----------|-------------|----------------|
+| DOC | [n] | [n] |
+| Debt | [n] | [n] |
+| Test | [n] | [n] |
+| **Total** | [n] | [n] |
 
 ---
 ```
